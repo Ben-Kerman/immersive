@@ -36,8 +36,9 @@ end
 function Menu:redraw()
 	if self.enabled then
 		local lines = {"{\\an4"}
-		for _, info in ipairs(self.data.info) do
-			table.insert(lines, string.format([[{\b1}%s{\b0}: %s]], info.name, info.value))
+		for _, info in ipairs(self.data.infos) do
+			local display = info.display and info.display(info.value) or info.value
+			table.insert(lines, string.format([[{\b1}%s{\b0}: %s]], info.name, display))
 		end
 
 		if self.show_bindings then
