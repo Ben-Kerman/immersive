@@ -1,6 +1,7 @@
 require "menu"
 require "subtitle"
 
+local menu
 local reset
 
 local subs = {}
@@ -25,6 +26,12 @@ local function toggle_auto_select()
 	auto_select_active = not auto_select_active
 end
 
+local function cancel()
+	mp.unobserve_property(handle_sub_text)
+	reset()
+	menu:disable()
+end
+
 local bindings = {
 	{key = "q", desc = "Set start to start of active line", action = function() end},
 	{key = "e", desc = "Set end to end of active line", action = function() end},
@@ -44,7 +51,7 @@ local start = {name = "Start", value = -1, display = display_time}
 local stop = {name = "Stop", value = -1, display = display_time}
 local infos = {start, stop}
 
-local menu = Menu:new{infos = infos, bindings = bindings}
+menu = Menu:new{infos = infos, bindings = bindings}
 
 reset = function()
 	subs = {}
