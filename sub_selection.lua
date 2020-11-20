@@ -3,15 +3,17 @@ require "subtitle"
 
 local subs = {}
 
-local function insert_sub(sub)
+local function select_sub()
+	local sub = Subtitle:new(
+		mp.get_property("sub-text"),
+		mp.get_property_number("sub-start"),
+		mp.get_property_number("sub-end"))
 	table.insert(subs, sub)
 	table.sort(subs)
 end
 
 local function handle_sub_text(_, sub_text)
-	if sub_text ~= nil and sub_text ~= "" then
-		insert_sub(create_subtitle(sub_text, mp.get_property_number("sub-start"), mp.get_property_number("sub-end")))
-	end
+	if sub_text ~= nil and sub_text ~= "" then select_sub() end
 end
 
 local auto_select_active = false
