@@ -9,12 +9,17 @@ local set_stop
 local subs = {}
 
 local function select_sub()
-	local sub = Subtitle:new(
-		mp.get_property("sub-text"),
-		mp.get_property_number("sub-start"),
-		mp.get_property_number("sub-end"))
-	table.insert(subs, sub)
-	table.sort(subs)
+	local sub_text = mp.get_property("sub-text")
+	if sub_text == nil or sub_text == "" then
+		mp.osd_message("No active subtitle line, nothing selected")
+	else
+		local sub = Subtitle:new(
+			sub_text,
+			mp.get_property_number("sub-start"),
+			mp.get_property_number("sub-end"))
+		table.insert(subs, sub)
+		table.sort(subs)
+	end
 end
 
 local function handle_sub_text(_, sub_text)
