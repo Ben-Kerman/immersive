@@ -1,6 +1,8 @@
 require "menu"
 require "subtitle"
 
+local reset
+
 local subs = {}
 
 local function select_sub()
@@ -44,5 +46,14 @@ local infos = {start, stop}
 
 local menu = Menu:new{infos = infos, bindings = bindings}
 
-sub_selection = {}
+reset = function()
+	subs = {}
+	start.value = -1
+	stop.value = -1
+end
+
+function begin_sub_selection()
+	reset()
+	menu:enable()
+end
 
