@@ -66,7 +66,7 @@ local bindings = {
 
 local function display_time(value)
 	if value >= 0 then return tostring(value)
-	else return "{\\i1}not set{\\i0}" end
+	else return "{\\i1}auto{\\i0}" end
 end
 local scrot = {name = "Screenshot", value = -1, display = display_time}
 local start = {name = "Start", value = -1, display = display_time}
