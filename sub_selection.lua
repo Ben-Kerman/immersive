@@ -6,7 +6,7 @@ local menu
 local reset
 local set_scrot, set_start, set_stop
 
-local subs = {}
+local selection = {}
 
 local function select_sub()
 	local sub_text = mp.get_property("sub-text")
@@ -19,9 +19,9 @@ local function select_sub()
 			mp.get_property_number("sub-end"))
 
 		-- check for end time, lines with identical start times get combined by mpv
-		if not list_find(subs, function(s) return s.stop == sub.stop end) then
-			table.insert(subs, sub)
-			table.sort(subs)
+		if not list_find(selection, function(s) return s.stop == sub.stop end) then
+			table.insert(selection, sub)
+			table.sort(selection)
 		end
 	end
 end
@@ -44,7 +44,7 @@ local function cancel()
 end
 
 reset = function()
-	subs = {}
+	selection = {}
 	set_scrot(nil)
 	set_start()
 	set_stop()
