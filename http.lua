@@ -4,7 +4,7 @@ local http = {}
 
 function http.request(method, url, data)
 	local status, stdout = sys.subprocess {
-			"curl",-- "-s",
+			"curl","-s",
 			url,
 			"-X", method,
 			"-d", data
