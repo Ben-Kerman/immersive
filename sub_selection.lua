@@ -3,6 +3,8 @@ require "subtitle"
 
 local menu
 local reset
+local set_start
+local set_stop
 
 local subs = {}
 
@@ -48,15 +50,29 @@ local function display_time(value)
 	else return "{\\i1}not set{\\i0}" end
 end
 local start = {name = "Start", value = -1, display = display_time}
-local stop = {name = "Stop", value = -1, display = display_time}
+local stop = {name = "End", value = -1, display = display_time}
 local infos = {start, stop}
+
+local function set_time(time, value)
+	local new_val
+	if type(value) == "string" then
+		new_val = mp.get_property_number(value)
+	else new_val = value end
+
+	if new_val == nil then time.value = -1
+	else time.value = new_val end
+
+	menu:redraw()
+end
+set_start = function(value) set_time(start, value) end
+set_stop = function(value) set_time(stop, value) end
 
 menu = Menu:new{infos = infos, bindings = bindings}
 
 reset = function()
 	subs = {}
-	start.value = -1
-	stop.value = -1
+	set_start()
+	set_stop()
 end
 
 function begin_sub_selection()
