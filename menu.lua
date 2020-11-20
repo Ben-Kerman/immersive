@@ -8,8 +8,7 @@ function Menu:new(data, enabled)
 		enabled = enabled and true,
 		show_bindings = false
 	}
-	setmetatable(m, Menu)
-	return m
+	return setmetatable(m, Menu)
 end
 
 function Menu:enable()

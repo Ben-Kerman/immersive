@@ -1,4 +1,7 @@
+require "utf_8"
+
 Subtitle = {}
+Subtitle.__index = Subtitle
 
 function Subtitle.__lt(a ,b)
 	if a.start == b.start then return a.stop < b.stop
@@ -13,4 +16,10 @@ function Subtitle:new(text, start, stop)
 	}
 	setmetatable(sub, Subtitle)
 	return sub
+end
+
+function Subtitle:short()
+	local cps = utf_8.codepoints(self.text:gsub("\n", "⏎"))
+	if #cps > 16 then return utf_8.string(list_slice(cps, 0, 16)) .. "…"
+	else return utf_8.string(cps) end
 end
