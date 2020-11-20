@@ -1,7 +1,7 @@
 local util = {}
 
 function util.list_find(list, predicate)
-	for i, val in ipairs(list) do
+	for _, val in ipairs(list) do
 		if predicate(val) then return val end
 	end
 end
@@ -20,6 +20,14 @@ function util.list_max(list, cmp)
 		if cmp(max, v) then max = v end
 	end
 	return max
+end
+
+function util.list_map(list, mapper)
+	local res = {}
+	for _, val in ipairs(list) do
+		table.insert(res, mapper(val))
+	end
+	return res
 end
 
 return util

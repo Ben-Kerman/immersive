@@ -114,7 +114,7 @@ finish = function()
 		end).stop or stop.value
 	}
 	cancel()
-	return selection, times
+	return util.list_map(selection, function(sub) return sub.text end), times
 end
 
 menu = Menu:new{infos = infos, bindings = bindings}
