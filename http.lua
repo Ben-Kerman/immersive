@@ -1,4 +1,4 @@
-sys = require "system"
+local sys = require "system"
 
 local http = {}
 
@@ -16,7 +16,7 @@ function http.request(method, url, data)
 end
 
 function http.post(url, data)
-	return http_request("POST", url, data)
+	return http.request("POST", url, data)
 end
 
 return http

@@ -44,7 +44,7 @@ local function encode(cp)
 	return bytes
 end
 
-utf_8 = {}
+local utf_8 = {}
 
 function utf_8.codepoints(str)
 	local cps, bytes = {}, table.pack(str:byte(1, #str))
@@ -85,3 +85,5 @@ function utf_8.string(cps)
 	end
 	return string.char(table.unpack(bytes))
 end
+
+return utf_8

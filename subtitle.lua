@@ -1,4 +1,5 @@
-require "utf_8"
+local utf_8 = require "utf_8"
+local util = require "util"
 
 Subtitle = {}
 Subtitle.__index = Subtitle
@@ -20,6 +21,6 @@ end
 
 function Subtitle:short()
 	local cps = utf_8.codepoints(self.text:gsub("\n", "⏎"))
-	if #cps > 16 then return utf_8.string(list_slice(cps, 0, 16)) .. "…"
+	if #cps > 16 then return utf_8.string(util.list_slice(cps, 0, 16)) .. "…"
 	else return utf_8.string(cps) end
 end

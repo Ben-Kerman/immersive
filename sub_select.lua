@@ -1,7 +1,7 @@
 require "menu"
 require "selection_overlay"
 require "subtitle"
-require "util"
+local util = require "util"
 
 local menu, sel_overlay
 local reset
@@ -20,7 +20,7 @@ local function select_sub()
 			mp.get_property_number("sub-end"))
 
 		-- check for end time, lines with identical start times get combined by mpv
-		if not list_find(selection, function(s) return s.stop == sub.stop end) then
+		if not util.list_find(selection, function(s) return s.stop == sub.stop end) then
 			table.insert(selection, sub)
 			table.sort(selection)
 		end
@@ -106,10 +106,11 @@ set_stop = function(value) set_time(stop, value) end
 menu = Menu:new{infos = infos, bindings = bindings}
 sel_overlay = SelectionOverlay:new(selection)
 
-sub_selection = {}
+local sub_select = {}
 
-function sub_selection.begin()
+function sub_select.begin()
 	reset()
 	menu:enable()
 end
 
+return sub_select

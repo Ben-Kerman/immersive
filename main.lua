@@ -1,3 +1,3 @@
-require "sub_selection"
+local sub_select = require "sub_select"
 
-mp.add_key_binding("a", "ankisubs-sub-select-begin", sub_selection.begin)
+mp.add_key_binding("a", "ankisubs-sub-select-begin", sub_select.begin)
