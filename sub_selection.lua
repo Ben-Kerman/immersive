@@ -1,5 +1,6 @@
 require "menu"
 require "subtitle"
+require "util"
 
 local menu
 local reset
@@ -16,8 +17,12 @@ local function select_sub()
 			sub_text,
 			mp.get_property_number("sub-start"),
 			mp.get_property_number("sub-end"))
-		table.insert(subs, sub)
-		table.sort(subs)
+
+		-- check for end time, lines with identical start times get combined by mpv
+		if not list_find(subs, function(s) return s.stop == sub.stop end) then
+			table.insert(subs, sub)
+			table.sort(subs)
+		end
 	end
 end
 
