@@ -1,14 +1,29 @@
 Menu = {}
 Menu.__index = Menu
 
-function Menu:new(data)
+function Menu:new(data, enabled)
 	local m = {
 		_overlay = mp.create_osd_overlay("ass-events"),
 		data = data,
+		enabled = enabled or true,
 		show_bindings = false
 	}
 	setmetatable(m, Menu)
 	return m
+end
+
+function Menu:enable()
+	mp.add_forced_key_binding("h", "_ankisubs-menu_show-bindings", function()
+		self.show_bindings = not self.show_bindings
+		self:redraw()
+	end)
+	self.enabled = true
+	self:redraw()
+end
+
+function Menu:disable()
+	mp.remove_forced_key_binding("_ankisubs-menu_show-bindings")
+	self.enabled = false
 end
 
 function Menu:redraw()
