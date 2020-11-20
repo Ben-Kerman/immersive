@@ -11,6 +11,20 @@ system.platform = (function()
 	return "lnx"
 end)()
 
+system.anki_base_dir = (function()
+	if system.platform == "lnx" then
+		local data_home = os.getenv("XDG_DATA_HOME")
+		if not data_home then
+			data_home = string.format([[%s/.local/share]], os.getenv("HOME"))
+		end
+		return string.format([[%s/Anki2]], data_home)
+	elseif system.platform == "win" then
+		return string.format([[%s/Anki2]], os.getenv("APPDATA"):gsub("\\", "/"))
+	elseif system.platform == "mac" then
+		return string.format([[%s/Library/Application Support/Anki2]], os.getenv("HOME"))
+	end
+end)()
+
 function system.subprocess(args)
 	local res = mp.command_native{
 		name = "subprocess",
