@@ -35,14 +35,16 @@ local function cancel()
 end
 
 local bindings = {
-	{key = "q", desc = "Set start to start of active line", action = function() end},
-	{key = "e", desc = "Set end to end of active line", action = function() end},
-	{key = "a", desc = "Select current line", action = function() end},
-	{key = "A", desc = "Toggle automatic selection", action = function() end},
-	{key = "k", desc = "Reset selection", action = function() end},
+	{key = "q", desc = "Force start to start of active line", action = function() set_start("sub-start") end},
+	{key = "e", desc = "Force end to end of active line", action = function() set_stop("sub-end") end},
+	{key = "Q", desc = "Force start to current time", action = function() set_start("time-pos") end},
+	{key = "E", desc = "Force end to current time", action = function() set_stop("time-pos") end},
+	{key = "a", desc = "Select current line", action = select_sub},
+	{key = "A", desc = "Toggle automatic selection", action = toggle_auto_select},
+	{key = "k", desc = "Reset selection", action = reset},
 	{key = "d", desc = "End selection and enter edit mode", action = function() end},
 	{key = "f", desc = "End selection and export immediately", action = function() end},
-	{key = "ESC", desc = "Cancel selection", action = function() end},
+	{key = "ESC", desc = "Cancel selection", action = cancel},
 }
 
 local function display_time(value)
