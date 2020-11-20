@@ -96,7 +96,9 @@ set_stop = function(value) set_time(stop, value) end
 menu = Menu:new{infos = infos, bindings = bindings}
 sel_overlay = SelectionOverlay:new(selection)
 
-function begin_sub_selection()
+sub_selection = {}
+
+function sub_selection.begin()
 	reset()
 	menu:enable()
 end
