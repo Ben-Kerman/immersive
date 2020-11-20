@@ -1,8 +1,9 @@
 require "menu"
+require "selection_overlay"
 require "subtitle"
 require "util"
 
-local menu
+local menu, sel_overlay
 local reset
 local set_scrot, set_start, set_stop
 
@@ -23,6 +24,7 @@ local function select_sub()
 			table.insert(selection, sub)
 			table.sort(selection)
 		end
+		sel_overlay:redraw()
 	end
 end
 
@@ -40,11 +42,14 @@ end
 local function cancel()
 	mp.unobserve_property(handle_sub_text)
 	reset()
+	sel_overlay:remove()
 	menu:disable()
 end
 
 reset = function()
 	selection = {}
+	sel_overlay.selection = selection
+	sel_overlay:redraw()
 	set_scrot(nil)
 	set_start()
 	set_stop()
@@ -89,6 +94,7 @@ set_start = function(value) set_time(start, value) end
 set_stop = function(value) set_time(stop, value) end
 
 menu = Menu:new{infos = infos, bindings = bindings}
+sel_overlay = SelectionOverlay:new(selection)
 
 function begin_sub_selection()
 	reset()
