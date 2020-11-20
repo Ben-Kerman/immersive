@@ -55,6 +55,16 @@ reset = function()
 	set_stop()
 end
 
+local function finish_word_sel()
+	menu:disable()
+	-- TODO
+end
+
+local function finish_export()
+	menu:disable()
+	-- TODO
+end
+
 local bindings = {
 	{key = "q", desc = "Force start to start of active line", action = function() set_start("sub-start") end},
 	{key = "e", desc = "Force end to end of active line", action = function() set_stop("sub-end") end},
@@ -64,8 +74,8 @@ local bindings = {
 	{key = "a", desc = "Select current line", action = select_sub},
 	{key = "A", desc = "Toggle automatic selection", action = toggle_auto_select},
 	{key = "k", desc = "Reset selection", action = reset},
-	{key = "d", desc = "End selection and enter edit mode", action = function() end},
-	{key = "f", desc = "End selection and export immediately", action = function() end},
+	{key = "d", desc = "End selection and enter edit mode", action = finish_word_sel},
+	{key = "f", desc = "End selection and export immediately", action = finish_export},
 	{key = "ESC", desc = "Cancel selection", action = cancel},
 }
 
