@@ -14,4 +14,12 @@ function util.list_slice(list, start, length)
 	return slice
 end
 
+function util.list_max(list, cmp)
+	local max = list[1]
+	for i, v in ipairs(list) do
+		if cmp(max, v) then max = v end
+	end
+	return max
+end
+
 return util

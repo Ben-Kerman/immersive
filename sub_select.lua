@@ -1,8 +1,10 @@
+local export = require "export"
 require "menu"
 require "selection_overlay"
 require "subtitle"
 local util = require "util"
 
+local finish
 local menu, sel_overlay
 local reset
 local set_scrot, set_start, set_stop
@@ -61,8 +63,7 @@ local function finish_word_sel()
 end
 
 local function finish_export()
-	menu:disable()
-	-- TODO
+	export.execute(finish())
 end
 
 local bindings = {
@@ -102,6 +103,19 @@ end
 set_scrot = function(value) set_time(scrot, value) end
 set_start = function(value) set_time(start, value) end
 set_stop = function(value) set_time(stop, value) end
+
+finish = function()
+	local selection = selection
+	local times = {
+		scrot = scrot.value < 0 and mp.get_property_number("time-pos") or scrot.value,
+		start = start.value < 0 and selection[1].start or start.value,
+		stop = stop.value < 0 and util.list_max(selection, function(a, b)
+			return a.stop < b.stop
+		end).stop or stop.value
+	}
+	cancel()
+	return selection, times
+end
 
 menu = Menu:new{infos = infos, bindings = bindings}
 sel_overlay = SelectionOverlay:new(selection)
