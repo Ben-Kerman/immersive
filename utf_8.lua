@@ -22,10 +22,8 @@ local function char_byte_num(lead_byte)
 end
 
 local function encode(cp)
-	local function make_cont_byte(pos)
-		return bit32.bor(0x80, bit32.extract(cp, pos * 6, 6))
-	end
-
+	-- determine how many bytes it takes to encode cp
+	-- if cp is ASCII or too large for UTF-8 return immediately
 	local byte_count
 	if cp < 0x80 then return {cp}
 	elseif cp < 0x800 then byte_count = 2
@@ -33,11 +31,14 @@ local function encode(cp)
 	elseif cp < 0x110000 then byte_count = 4
 	else return nil end -- code point can't be encoded as UTF-8
 
+	-- construct leading byte
 	local bytes = {
 		bit32.replace(bit32.rshift(cp, (byte_count - 1) * 6), 0xff, 8 - byte_count, byte_count)
 	}
+
+	-- construct continuation bytes
 	for pos = byte_count - 2, 0, -1 do
-		table.insert(bytes, make_cont_byte(pos))
+		table.insert(bytes, bit32.bor(0x80, bit32.extract(cp, pos * 6, 6)))
 	end
 
 	return bytes
