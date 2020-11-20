@@ -21,6 +21,28 @@ local function char_byte_num(lead_byte)
 	return num
 end
 
+local function encode(cp)
+	local function make_cont_byte(pos)
+		return bit32.bor(0x80, bit32.extract(cp, pos * 6, 6))
+	end
+
+	local byte_count
+	if cp < 0x80 then return {cp}
+	elseif cp < 0x800 then byte_count = 2
+	elseif cp < 0x10000 then byte_count = 3
+	elseif cp < 0x110000 then byte_count = 4
+	else return nil end -- code point can't be encoded as UTF-8
+
+	local bytes = {
+		bit32.replace(bit32.rshift(cp, (byte_count - 1) * 6), 0xff, 8 - byte_count, byte_count)
+	}
+	for pos = byte_count - 2, 0, -1 do
+		table.insert(bytes, make_cont_byte(pos))
+	end
+
+	return bytes
+end
+
 utf_8 = {}
 
 function utf_8.codepoints(str)
@@ -51,4 +73,14 @@ function utf_8.codepoints(str)
 		else return nil end -- shouldn't happen for valid UTF-8
 	end
 	return cps
+end
+
+function utf_8.string(cps)
+	local bytes = {}
+	for _, cp in ipairs(cps) do
+		for _, b in ipairs(encode(cp)) do
+			table.insert(bytes, b)
+		end
+	end
+	return string.char(table.unpack(bytes))
 end
