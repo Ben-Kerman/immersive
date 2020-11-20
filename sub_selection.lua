@@ -39,6 +39,13 @@ local function cancel()
 	menu:disable()
 end
 
+reset = function()
+	subs = {}
+	set_scrot(nil)
+	set_start()
+	set_stop()
+end
+
 local bindings = {
 	{key = "q", desc = "Force start to start of active line", action = function() set_start("sub-start") end},
 	{key = "e", desc = "Force end to end of active line", action = function() set_stop("sub-end") end},
@@ -75,12 +82,6 @@ set_start = function(value) set_time(start, value) end
 set_stop = function(value) set_time(stop, value) end
 
 menu = Menu:new{infos = infos, bindings = bindings}
-
-reset = function()
-	subs = {}
-	set_start()
-	set_stop()
-end
 
 function begin_sub_selection()
 	reset()
