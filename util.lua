@@ -26,7 +26,7 @@ function util.list_filter(list, predicate)
 	local res = {}
 	for _, val in ipairs(list) do
 		if predicate(val) then
-			table.insert(res, mapper(val))
+			table.insert(res, val)
 		end
 	end
 	return res
