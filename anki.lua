@@ -4,16 +4,44 @@ local util = require "util"
 
 local active_target_index = 1
 
+local function default_tgt_cfg()
+	return {
+		audio = {
+			extension = "mka",
+			format = "matroska",
+			codec = "libopus",
+			bitrate = "64k",
+			pad_start = 0.1,
+			pad_end = 0.1
+		},
+		image = {
+			format = "singlejpeg",
+			extension = "jpg",
+			maxwidth = 0,
+			maxheight = 0,
+			jpg = {
+				quality = 90
+			},
+			png = {
+				compression = 9
+			}
+		},
+		anki = {
+			tags = {"ankisubs"},
+			fields = {}
+		}
+	}
+end
+
 local anki = {
-	targets = {},
-	target_configs = {}
+	targets = {}
 }
 
 -- parse target definitions
 for name, profile, deck, note_type
 	in cfg.values.anki_targets:gmatch("%[([^:]+):([^;]+);([^;]+);([^%]]+)%]") do
 	table.insert(anki.targets, {
-		name = name, profile = profile, deck = deck, note_type = note_type
+		name = name, profile = profile, deck = deck, note_type = note_type, config = default_tgt_cfg()
 	})
 end
 
@@ -25,17 +53,41 @@ while true do
 	line = iter(lines, line)
 	if line == nil then break end
 
-	local target = line:match("%[([^%]]+)%]")
-	if target then
-		anki.target_configs[target] = {}
-		repeat
-			line = iter(lines, line)
-			if not line then break end
-			local field, content = line:match("([^=]+)=(.+)")
-			if field then
-				anki.target_configs[target][field] = content
-			end
-		until line == ""
+	local target_name = line:match("%[([^%]]+)%]")
+	if target_name then
+		local target = util.list_find(anki.targets, function(target)
+			return target.name == target_name
+		end)
+
+		if not target then mp.osd_message("Config for unknown target '" .. target_name .. "' found.")
+		else
+			repeat
+				line = iter(lines, line)
+				if not line then break end
+				local key, value = line:match("([^=]+)=(.*)")
+				if key then
+					local f_start, f_end = key:find("field:", 1, true)
+					if f_start == 1 then
+						target.config.anki.fields[key:sub(f_end + 1)] = value
+					elseif key == "anki/tags" then
+						target.config.anki.tags = util.string_split(value)
+					else
+						local components = util.string_split(key, "/")
+						local entry = target.config
+						print(require("luajson.json").encode(components))
+						for i, comp in ipairs(components) do
+							if not entry[comp] then
+								mp.osd_message("Config key '" .. key .. "' doesn't exist")
+							elseif i ~= #components then entry = entry[comp] end
+						end
+						if type(entry[components[#components]]) == "number" then
+							entry[components[#components]] = tonumber(value)
+						else entry[components[#components]] = value end
+					end
+				end
+				-- TODO else -> error
+			until line == ""
+		end
 	end
 end
 tgt_cfg_file:close()
