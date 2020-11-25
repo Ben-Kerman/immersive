@@ -112,11 +112,15 @@ function anki.generate_filename(series_id, extension)
 		return file:find(series_id, 1, true) == 1
 		       and file:match("%." .. extension .. "$")
 	end)
-	local max_number = util.list_max(util.list_map(existing, function(file)
-		local _, id_end = file:find(series_id, 1, true)
-		return tonumber((file:match("%-(%d+)", id_end + 1)))
-	end))
-	return string.format("%s-%04d.%s", series_id, max_number + 1, extension)
+	local next_number
+	if #existing == 0 then next_number = 0
+	else
+		next_number = 1 + util.list_max(util.list_map(existing, function(file)
+			local _, id_end = file:find(series_id, 1, true)
+			return tonumber((file:match("%-(%d+)", id_end + 1)))
+		end))
+	end
+	return string.format("%s-%04d.%s", series_id, next_number, extension)
 end
 
 return anki
