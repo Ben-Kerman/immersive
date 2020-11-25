@@ -15,12 +15,17 @@ local function default_tgt_cfg()
 			pad_end = 0.1
 		},
 		image = {
-			format = "singlejpeg",
 			extension = "jpg",
-			maxwidth = 0,
-			maxheight = 0,
-			jpg = {
-				quality = 90
+			codec = "mjpeg",
+			max_width = 0,
+			max_height = 0,
+			jpeg = {
+				qscale = 5
+			},
+			webp = {
+				lossless = false,
+				quality = 90,
+				compression = 4
 			},
 			png = {
 				compression = 9
