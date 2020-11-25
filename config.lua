@@ -1,11 +1,6 @@
 local config = {
 	values = {
-		anki_profile="",
-		anki_deck="",
-		anki_note_type="",
-		anki_field_text="",
-		anki_field_audio="",
-		anki_field_image=""
+		anki_targets=""
 	}
 }
 
