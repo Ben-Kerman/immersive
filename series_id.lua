@@ -3,17 +3,19 @@ local util = require "util"
 local id_conf = {}
 
 local id_cfg_path = mp.find_config_file("script-opts/" .. mp.get_script_name() .. "-ids.conf")
-local id_cfg_file = io.open(id_cfg_path, "r")
-for line in id_cfg_file:lines() do
-	local id, value = line:match("([^=]+)=(.+)")
-	if id then
-		local keywords = util.string_split(value:lower(), " ", true)
-		if keywords then
-			id_conf[id] = keywords
+if id_cfg_path then
+	local id_cfg_file = io.open(id_cfg_path, "r")
+	for line in id_cfg_file:lines() do
+		local id, value = line:match("([^=]+)=(.+)")
+		if id then
+			local keywords = util.string_split(value:lower(), " ", true)
+			if keywords then
+				id_conf[id] = keywords
+			end
 		end
 	end
+	id_cfg_file:close()
 end
-id_cfg_file:close()
 
 local function generate_id(filename)
 	return (filename:gsub("%.[^%.]+$", "")        -- file extension
