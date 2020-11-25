@@ -15,6 +15,10 @@ function util.list_slice(list, start, length)
 end
 
 function util.list_max(list, cmp)
+	if not cmp then
+		cmp = function(a ,b) return a < b end
+	end
+
 	local max = list[1]
 	for i, v in ipairs(list) do
 		if cmp(max, v) then max = v end
