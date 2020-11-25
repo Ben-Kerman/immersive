@@ -3,21 +3,21 @@ local sys = require "system"
 
 local function calc_dimension(cfg_val, prop_name)
 	if cfg_val < 0 then return cfg_val end
-	local prop = mp.get_property(prop_name)
+	local prop = mp.get_property_number(prop_name)
 	return cfg_val < prop and cfg_val or prop
 end
 
 local encoder = {}
 
-function encoder.audio(filename, start, stop)
-	local tgt_cfg = anki.active_target().audio
+function encoder.audio(path, start, stop)
+	local tgt_cfg = anki.active_target().config.audio
 	local real_start = start - tgt_cfg.pad_start
 	local real_stop = stop + tgt_cfg.pad_end
 
 	sys.subprocess{
 		"mpv",
 		mp.get_property("path"),
-		"--o=" .. filename,
+		"--o=" .. path,
 		"--no-ocopy-metadata",
 		"--vid=no",
 		"--aid=" .. mp.get_property("aid"),
@@ -30,15 +30,15 @@ function encoder.audio(filename, start, stop)
 	}
 end
 
-function encoder.image(filename, time)
-	local tgt_cfg = anki.active_target().image
-	local width = calc_dimension(tgt_cfg.image.max_width, "width")
-	local height = calc_dimension(tgt_cfg.image.max_height, "height")
+function encoder.image(path, time)
+	local tgt_cfg = anki.active_target().config.image
+	local width = calc_dimension(tgt_cfg.max_width, "width")
+	local height = calc_dimension(tgt_cfg.max_height, "height")
 
 	local args = {
 		"mpv",
 		mp.get_property("path"),
-		"--o=" .. filename,
+		"--o=" .. path,
 		"--no-ocopy-metadata",
 		"--vid=" .. mp.get_property("vid"),
 		"--aid=no",

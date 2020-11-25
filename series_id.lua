@@ -1,3 +1,5 @@
+local util = require "util"
+
 local id_conf = {}
 
 local id_cfg_path = mp.find_config_file("script-opts/" .. mp.get_script_name() .. "-ids.conf")

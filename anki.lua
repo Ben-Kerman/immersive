@@ -17,8 +17,8 @@ local function default_tgt_cfg()
 		image = {
 			extension = "jpg",
 			codec = "mjpeg",
-			max_width = 0,
-			max_height = 0,
+			max_width = -1,
+			max_height = -1,
 			jpeg = {
 				qscale = 5
 			},
