@@ -1,5 +1,6 @@
 local cfg = require "config"
 local sys = require "system"
+local util = require "util"
 
 local active_target_index = 1
 
@@ -46,6 +47,19 @@ end
 function anki.media_dir()
 	local profile = anki.active_target().profile
 	return string.format("%s/%s/collection.media", sys.anki_base_dir, profile)
+end
+
+function anki.generate_filename(series_id, extension)
+	local files = sys.list_files(anki.media_dir())
+	local existing = util.list_filter(files, function(file)
+		return file:find(series_id, 1, true) == 1
+		       and file:match("%." .. extension .. "$")
+	end)
+	local max_number = util.list_max(util.list_map(existing, function(file)
+		local _, id_end = file:find(series_id, 1, true)
+		return tonumber((file:match("%-(%d+)", id_end + 1)))
+	end))
+	return string.format("%s-%04d.%s", series_id, max_number + 1, extension)
 end
 
 return anki
