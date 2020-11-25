@@ -40,4 +40,27 @@ function util.list_map(list, mapper)
 	return res
 end
 
+function util.string_split(str, pattern, filter_empty)
+	if type(str) ~= "string"
+	   or type(pattern) ~= "string"
+	   or #pattern == 0 then
+		return nil
+	end
+	local res = {}
+	local start = 1
+	while true do
+		local m_start, m_end = str:find(pattern, start)
+		if m_start then
+			local sub = str:sub(start, m_start - 1)
+			if not filter_empty or #sub > 0 then table.insert(res, sub) end
+			start = m_end + 1
+		else
+			local sub = str:sub(start, #str)
+			if not filter_empty or #sub > 0  then table.insert(res, sub) end
+			break
+		end
+	end
+	return res
+end
+
 return util
