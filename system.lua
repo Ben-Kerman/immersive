@@ -25,6 +25,21 @@ system.anki_base_dir = (function()
 	end
 end)()
 
+function system.tmp_file_name()
+	local path
+	if system.platform == "lnx" then
+		local mktemp = io.popen("mktemp")
+		path = mktemp:read()
+		mktemp:close()
+	elseif system.platform == "win" then
+		path = os.getenv("TEMP") .. os.tmpname()
+	elseif system.platform == "mac" then
+		-- TODO
+	end
+	mp.register_event("shutdown", function() os.remove(path) end)
+	return path
+end
+
 function system.subprocess(args)
 	local res = mp.command_native{
 		name = "subprocess",
