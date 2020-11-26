@@ -1,3 +1,0 @@
-[submodule "luajson"]
-	path = luajson
-	url = https://github.com/rxi/json.lua.git

@@ -80,7 +80,6 @@ if tgt_cfg_path then
 						else
 							local components = util.string_split(key, "/")
 							local entry = target.config
-							print(require("luajson.json").encode(components))
 							for i, comp in ipairs(components) do
 								if not entry[comp] then
 									mp.osd_message("Config key '" .. key .. "' doesn't exist")

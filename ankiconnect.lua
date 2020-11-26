@@ -1,6 +1,6 @@
 local anki = require "anki"
-local json = require "luajson.json"
 local http = require "http"
+local mputil = require "mp.utils"
 
 local ankiconnect = {}
 
@@ -10,7 +10,7 @@ function ankiconnect.request(action, params)
 		params = params,
 		version = 6
 	}
-	return http.post("localhost:8765", json.encode(data))
+	return http.post("localhost:8765", mputil.format_json(data))
 end
 
 function ankiconnect.add_note(fields)
