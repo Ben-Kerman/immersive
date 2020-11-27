@@ -1,4 +1,4 @@
-local dict_util = require "dict.util"
+local dict_util = require "dict.dict_util"
 local mputil = require "mp.utils"
 local sys = require "system"
 local util = require "util"
@@ -55,6 +55,7 @@ function yomichan.import(dir)
 
 		table.insert(terms[id], {
 			term = term_entry[1],
+			alts = {},
 			rdng = reading,
 			defs = defs,
 			clss = term_entry[4],
@@ -63,6 +64,24 @@ function yomichan.import(dir)
 			ttgs = term_entry[8],
 		})
 	end)
+
+	for _, term_list in pairs(terms) do
+		table.sort(term_list, function(ta, tb) return ta.scor < tb.scor end)
+
+		local init_len = #term_list
+		for i, entry in ipairs(term_list) do
+			for k = i + 1, init_len do
+				if term_list[k] and util.list_compare(entry.defs, term_list[k].defs) then
+					table.insert(entry.alts, {
+						term = term_list[k].term,
+						rdng = term_list[k].rdng
+					})
+					term_list[k] = nil
+				end
+			end
+			util.compact_list(term_list, init_len)
+		end
+	end
 end
 
 return yomichan

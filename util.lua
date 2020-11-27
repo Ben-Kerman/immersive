@@ -65,6 +65,19 @@ function util.list_map(list, mapper)
 	return res
 end
 
+function util.compact_list(list, init_len)
+	local next_index = 1
+	for i = 1, init_len do
+		if list[i] then
+			if i ~= next_index then
+				list[next_index] = list[i]
+				list[i] = nil
+			end
+			next_index = next_index + 1
+		end
+	end
+end
+
 function util.string_split(str, pattern, filter_empty)
 	if type(str) ~= "string"
 	   or type(pattern) ~= "string"
