@@ -66,7 +66,7 @@ function yomichan.import(dir)
 	end)
 
 	for _, term_list in pairs(terms) do
-		table.sort(term_list, function(ta, tb) return ta.scor < tb.scor end)
+		table.sort(term_list, function(ta, tb) return ta.scor > tb.scor end)
 
 		local init_len = #term_list
 		for i, entry in ipairs(term_list) do
