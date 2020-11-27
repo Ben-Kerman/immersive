@@ -40,10 +40,23 @@ function yomichan.import(dir)
 	load_bank("term_bank_", function(term_entry)
 		local id = term_entry[7]
 		if not terms[id] then terms[id] = {} end
+
+		local defs = term_entry[6]
+		for _, def in ipairs(defs) do
+			if type(def) ~= "string" then
+				-- TODO handle complex def error
+			end
+		end
+
+		local reading = term_entry[2]
+		if reading == "" then
+			reading = nil
+		end
+
 		table.insert(terms[id], {
 			term = term_entry[1],
-			rdng = term_entry[2],
-			defs = term_entry[6],
+			rdng = reading,
+			defs = defs,
 			clss = term_entry[4],
 			scor = term_entry[5],
 			dtgs = term_entry[3],
