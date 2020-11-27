@@ -52,7 +52,7 @@ reset = function()
 	selection = {}
 	sel_overlay.selection = selection
 	sel_overlay:redraw()
-	set_scrot(nil)
+	set_scrot()
 	set_start()
 	set_stop()
 end
@@ -96,6 +96,7 @@ local function set_time(time, value)
 	else new_val = value end
 
 	if new_val == nil then time.value = -1
+	elseif new_val == time.value then time.value = -1
 	else time.value = new_val end
 
 	menu:redraw()
