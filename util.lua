@@ -20,6 +20,21 @@ function util.list_slice(list, start, length)
 	return slice
 end
 
+function util.list_compare(list_a, list_b, cmp)
+	if #list_a ~= #list_b then return false end
+
+	if not cmp then
+		cmp = function(a ,b) return a == b end
+	end
+
+	for i, val_a in ipairs(list_a) do
+		if not cmp(val_a, list_b[i]) then
+			return false
+		end
+	end
+	return true
+end
+
 function util.list_max(list, cmp)
 	if not cmp then
 		cmp = function(a ,b) return a < b end
