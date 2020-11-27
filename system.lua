@@ -1,3 +1,5 @@
+local mputil = require "mp.utils"
+
 local system = {}
 
 system.platform = (function()
@@ -51,26 +53,7 @@ function system.subprocess(args)
 end
 
 function system.list_files(dir)
-	local files = {}
-	local cmd
-
-	if system.platform == "lnx" then
-		cmd = string.format([[find '%s' -type f -printf '%%P\n']], dir)
-	elseif system.platform == "win" then
-		cmd = string.format([[powershell -Command "Get-ChildItem -Path \"%s\" -File -Name"]], dir)
-	elseif system.platform == "mac" then
-		-- TODO
-		mp.osd_message("list_files is not implemented on macOS")
-		return {}
-	end
-
-	local find = io.popen(cmd)
-	for file in find:lines() do
-		table.insert(files, file)
-	end
-	find:close()
-
-	return files
+	return mputil.readdir(dir, "files")
 end
 
 return system
