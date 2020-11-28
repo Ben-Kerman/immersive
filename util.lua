@@ -78,6 +78,13 @@ function util.compact_list(list, init_len)
 	end
 end
 
+function util.string_trim(str)
+	local _, lead_end = str:find("^%s+")
+	local trail_start, _ = str:find("%s+$")
+	return str:sub(lead_end and lead_end + 1 or 1,
+	               trail_start and trail_start - 1 or #str)
+end
+
 function util.string_split(str, pattern, filter_empty)
 	if type(str) ~= "string"
 	   or type(pattern) ~= "string"
