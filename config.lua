@@ -18,6 +18,14 @@ function config.load(path)
 
 	local result = {}
 	local section_name, section_entries
+
+	local function insert_section()
+		table.insert(result, {
+			name = section_name,
+			entries = section_entries
+		})
+	end
+
 	for line in io.lines(path) do
 		local trimmed = util.string_trim(line, "start")
 		if #trimmed ~= 0 and not util.string_starts(trimmed, "#") then
@@ -26,12 +34,7 @@ function config.load(path)
 				if not new_section_name then
 					-- TODO handle error
 				else
-					if section_name then
-						table.insert(result, {
-							name = section_name,
-							entries = section_entries
-						})
-					end
+					if section_name then insert_section() end
 					section_name, section_entries = new_section_name, {}
 				end
 			elseif section_name then
@@ -42,12 +45,7 @@ function config.load(path)
 			end
 		end
 	end
-	if section_name then
-		table.insert(result, {
-			name = section_name,
-			entries = section_entries
-		})
-	end
+	if section_name then insert_section() end
 	return result
 end
 
