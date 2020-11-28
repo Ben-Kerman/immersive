@@ -51,7 +51,7 @@ for name, profile, deck, note_type
 end
 
 -- parse target config file
-local raw_tgt_cfg = cfg.load(mp.find_config_file("script-opts/" .. mp.get_script_name() .. "-targets.conf"))
+local raw_tgt_cfg = cfg.load_subcfg("targets")
 for tgt_name, entries in pairs(raw_tgt_cfg) do
 	local tgt_cfg = util.list_find(anki.targets, function(tgt)
 		return tgt.name == tgt_name
