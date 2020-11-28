@@ -87,11 +87,18 @@ function util.string_ends(str, suffix)
 	return last_pos == #str
 end
 
-function util.string_trim(str)
+function util.string_trim(str, where)
 	local _, lead_end = str:find("^%s+")
 	local trail_start, _ = str:find("%s+$")
-	return str:sub(lead_end and lead_end + 1 or 1,
-	               trail_start and trail_start - 1 or #str)
+
+	local first, last
+	if not where or where == "start" then
+		first = lead_end and lead_end + 1 or 1
+	else first = 1 end
+	if not where or where == "end" then
+		last = trail_start and trail_start - 1 or #str
+	else last = #str end
+	return str:sub(first, last)
 end
 
 function util.string_split(str, pattern, filter_empty)
