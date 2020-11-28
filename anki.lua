@@ -51,13 +51,13 @@ for name, profile, deck, note_type
 end
 
 -- parse target config file
-local raw_tgt_cfg = cfg.load_subcfg("targets")
-for tgt_name, entries in pairs(raw_tgt_cfg) do
+local raw_tgt_cfgs = cfg.load_subcfg("targets")
+for _, raw_tgt_cfg in ipairs(raw_tgt_cfgs) do
 	local tgt_cfg = util.list_find(anki.targets, function(tgt)
-		return tgt.name == tgt_name
+		return tgt.name == raw_tgt_cfg.name
 	end).config
 
-	for key, value in pairs(entries) do
+	for key, value in pairs(raw_tgt_cfg.entries) do
 		if util.string_starts(key, "field:") then
 			tgt_cfg.anki.fields[key:sub(7)] = value
 		elseif key == "anki/tags" then

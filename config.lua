@@ -17,7 +17,7 @@ function config.load(path)
 	end
 
 	local result = {}
-	local section_name, section_content
+	local section_name, section_entries
 	for line in io.lines(path) do
 		local trimmed = util.string_trim(line, "start")
 		if #trimmed ~= 0 and not util.string_starts(trimmed, "#") then
@@ -27,19 +27,27 @@ function config.load(path)
 					-- TODO handle error
 				else
 					if section_name then
-						result[section_name] = section_content
+						table.insert(result, {
+							name = section_name,
+							entries = section_entries
+						})
 					end
-					section_name, section_content = new_section_name, {}
+					section_name, section_entries = new_section_name, {}
 				end
 			elseif section_name then
 				local key, value = trimmed:match("([^=]+)=(.*)")
-				section_content[key] = value
+				section_entries[key] = value
 			else
 				-- TODO handle error
 			end
 		end
 	end
-	if section_name then result[section_name] = section_content end
+	if section_name then
+		table.insert(result, {
+			name = section_name,
+			entries = section_entries
+		})
+	end
 	return result
 end
 
