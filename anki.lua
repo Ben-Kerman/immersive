@@ -51,51 +51,31 @@ for name, profile, deck, note_type
 end
 
 -- parse target config file
-local tgt_cfg_path = mp.find_config_file("script-opts/" .. mp.get_script_name() .. "-targets.conf")
-if tgt_cfg_path then
-	local tgt_cfg_file = io.open(tgt_cfg_path)
-	local iter, lines, line = tgt_cfg_file:lines()
-	while true do
-		line = iter(lines, line)
-		if line == nil then break end
+local raw_tgt_cfg = cfg.load(mp.find_config_file("script-opts/" .. mp.get_script_name() .. "-targets.conf"))
+for tgt_name, entries in pairs(raw_tgt_cfg) do
+	local tgt_cfg = util.list_find(anki.targets, function(tgt)
+		return tgt.name == tgt_name
+	end).config
 
-		local target_name = line:match("%[([^%]]+)%]")
-		if target_name then
-			local target = util.list_find(anki.targets, function(target)
-				return target.name == target_name
-			end)
-
-			if not target then mp.osd_message("Config for unknown target '" .. target_name .. "' found.")
-			else
-				repeat
-					line = iter(lines, line)
-					if not line then break end
-					local key, value = line:match("([^=]+)=(.*)")
-					if key then
-						local f_start, f_end = key:find("field:", 1, true)
-						if f_start == 1 then
-							target.config.anki.fields[key:sub(f_end + 1)] = value
-						elseif key == "anki/tags" then
-							target.config.anki.tags = util.string_split(value)
-						else
-							local components = util.string_split(key, "/")
-							local entry = target.config
-							for i, comp in ipairs(components) do
-								if not entry[comp] then
-									mp.osd_message("Config key '" .. key .. "' doesn't exist")
-								elseif i ~= #components then entry = entry[comp] end
-							end
-							if type(entry[components[#components]]) == "number" then
-								entry[components[#components]] = tonumber(value)
-							else entry[components[#components]] = value end
-						end
-					end
-					-- TODO else -> error
-				until line == ""
+	for key, value in pairs(entries) do
+		if util.string_starts(key, "field:") then
+			tgt_cfg.anki.fields[key:sub(7)] = value
+		elseif key == "anki/tags" then
+			tgt_cfg.anki.tags = util.string_split(value)
+		else
+			local components = util.string_split(key, "/")
+			local entry = tgt_cfg
+			for i, comp in ipairs(components) do
+				if not entry[comp] then
+					-- TODO handle error
+				elseif i ~= #components then entry = entry[comp] end
 			end
+
+			local old_val = entry[components[#components]]
+			local new_val = type(old_val) == "number" and tonumber(value) or value
+			entry[components[#components]] = new_val
 		end
 	end
-	tgt_cfg_file:close()
 end
 
 function anki.active_target()
