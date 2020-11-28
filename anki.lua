@@ -110,8 +110,7 @@ end
 function anki.generate_filename(series_id, extension)
 	local files = sys.list_files(anki.media_dir())
 	local existing = util.list_filter(files, function(file)
-		return file:find(series_id, 1, true) == 1
-		       and file:match("%." .. extension .. "$")
+		return util.string_starts(file, series_id) and file:match("%." .. extension .. "$")
 	end)
 	local next_number
 	if #existing == 0 then next_number = 0

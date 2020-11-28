@@ -78,6 +78,15 @@ function util.compact_list(list, init_len)
 	end
 end
 
+function util.string_starts(str, prefix)
+	return str:find(prefix, 1, true) == 1
+end
+
+function util.string_ends(str, suffix)
+	local _, last_pos str:find(suffix, 1, true)
+	return last_pos == #str
+end
+
 function util.string_trim(str)
 	local _, lead_end = str:find("^%s+")
 	local trail_start, _ = str:find("%s+$")

@@ -20,7 +20,7 @@ function yomichan.import(dir)
 
 	local function load_bank(prefix, action)
 		for _, tag_bank in ipairs(util.list_filter(files, function(filename)
-			return filename:find(prefix, 1, true) == 1
+			return util.string_starts(filename, prefix)
 		end)) do
 			local bank_data = dict_util.parse_json_file(mputil.join_path(dir, tag_bank))
 			for _, entry in ipairs(bank_data) do
