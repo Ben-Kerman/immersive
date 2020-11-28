@@ -5,7 +5,7 @@ local util = require "util"
 
 local yomichan = {}
 
-function yomichan.import(dir)
+function yomichan.load(dir)
 	local files = sys.list_files(dir)
 	if not util.list_find(files, "index.json") then
 		return nil, "no index file found"
@@ -82,6 +82,8 @@ function yomichan.import(dir)
 			util.compact_list(term_list, init_len)
 		end
 	end
+
+	return {}
 end
 
 return yomichan
