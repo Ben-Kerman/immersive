@@ -83,22 +83,21 @@ function yomichan.load(dir)
 					end
 				end
 
-				local readings = {{
+				local readings = entry.rdng and {{
 					rdng = entry.rdng,
 					vars = {entry.term}
-				}}
+				}} or {{rdng = entry.term}}
 				if #entry.alts ~= 0 then
 					for _, alt in ipairs(entry.alts) do
 						local reading = util.list_find(readings, function(reading)
 							return alt.rdng == reading.rdng
 						end)
 
-						if reading then
-							table.insert(reading.vars, alt.term)
-						else table.insert(readings, {
-							rdng = alt.rdng,
-							vars = {alt.term}
-						}) end
+						if reading then table.insert(reading.vars, alt.term)
+						else table.insert(readings, alt.rdng and {
+								rdng = alt.rdng,
+								vars = {alt.term}
+							} or {rdng = alt.term }) end
 					end
 				end
 				entry.term = nil
