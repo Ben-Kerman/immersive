@@ -65,6 +65,7 @@ function yomichan.load(dir)
 		})
 	end)
 
+	local term_list = {}
 	for _, entry_list in pairs(term_map) do
 		table.sort(entry_list, function(ta, tb) return ta.scor > tb.scor end)
 
@@ -106,6 +107,7 @@ function yomichan.load(dir)
 			end
 		end
 		util.compact_list(entry_list, init_len)
+		table.insert(term_list, entry_list)
 	end
 
 	return {}
