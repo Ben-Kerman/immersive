@@ -83,6 +83,28 @@ function yomichan.load(dir)
 						term_list[k] = nil
 					end
 				end
+
+				local readings = {{
+					rdng = entry.rdng,
+					vars = {entry.term}
+				}}
+				if #entry.alts ~= 0 then
+					for _, alt in ipairs(entry.alts) do
+						local reading = util.list_find(readings, function(reading)
+							return alt.rdng == reading.rdng
+						end)
+
+						if reading then
+							table.insert(reading.vars, alt.term)
+						else table.insert(readings, {
+							rdng = alt.rdng,
+							vars = {alt.term}
+						}) end
+					end
+				end
+				entry.term = nil
+				entry.alts = nil
+				entry.rdng = readings
 			end
 		end
 		util.compact_list(term_list, init_len)
