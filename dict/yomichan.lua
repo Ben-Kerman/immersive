@@ -36,10 +36,10 @@ function yomichan.load(dir)
 		}
 	end)
 
-	local terms = {}
+	local term_map = {}
 	load_bank("term_bank_", function(term_entry)
 		local id = term_entry[7]
-		if not terms[id] then terms[id] = {} end
+		if not term_map[id] then term_map[id] = {} end
 
 		local defs = term_entry[6]
 		for _, def in ipairs(defs) do
@@ -53,7 +53,7 @@ function yomichan.load(dir)
 			reading = nil
 		end
 
-		table.insert(terms[id], {
+		table.insert(term_map[id], {
 			term = term_entry[1],
 			alts = {},
 			rdng = reading,
@@ -65,22 +65,20 @@ function yomichan.load(dir)
 		})
 	end)
 
-	local original_ids = {}
-	for original_id, term_list in pairs(terms) do
-		table.insert(original_ids, original_id)
-		table.sort(term_list, function(ta, tb) return ta.scor > tb.scor end)
+	for _, entry_list in pairs(term_map) do
+		table.sort(entry_list, function(ta, tb) return ta.scor > tb.scor end)
 
-		local init_len = #term_list
+		local init_len = #entry_list
 		for i = 1, init_len do
-			local entry = term_list[i]
+			local entry = entry_list[i]
 			if entry then
 				for k = i + 1, init_len do
-					if term_list[k] and util.list_compare(entry.defs, term_list[k].defs) then
+					if entry_list[k] and util.list_compare(entry.defs, entry_list[k].defs) then
 						table.insert(entry.alts, {
-							term = term_list[k].term,
-							rdng = term_list[k].rdng
+							term = entry_list[k].term,
+							rdng = entry_list[k].rdng
 						})
-						term_list[k] = nil
+						entry_list[k] = nil
 					end
 				end
 
@@ -107,7 +105,7 @@ function yomichan.load(dir)
 				entry.rdng = readings
 			end
 		end
-		util.compact_list(term_list, init_len)
+		util.compact_list(entry_list, init_len)
 	end
 
 	return {}
