@@ -65,7 +65,9 @@ function yomichan.load(dir)
 		})
 	end)
 
-	for _, term_list in pairs(terms) do
+	local original_ids = {}
+	for original_id, term_list in pairs(terms) do
+		table.insert(original_ids, original_id)
 		table.sort(term_list, function(ta, tb) return ta.scor > tb.scor end)
 
 		local init_len = #term_list
