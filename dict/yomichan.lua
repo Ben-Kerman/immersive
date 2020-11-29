@@ -71,18 +71,21 @@ function yomichan.load(dir)
 		table.sort(term_list, function(ta, tb) return ta.scor > tb.scor end)
 
 		local init_len = #term_list
-		for i, entry in ipairs(term_list) do
-			for k = i + 1, init_len do
-				if term_list[k] and util.list_compare(entry.defs, term_list[k].defs) then
-					table.insert(entry.alts, {
-						term = term_list[k].term,
-						rdng = term_list[k].rdng
-					})
-					term_list[k] = nil
+		for i = 1, init_len do
+			local entry = term_list[i]
+			if entry then
+				for k = i + 1, init_len do
+					if term_list[k] and util.list_compare(entry.defs, term_list[k].defs) then
+						table.insert(entry.alts, {
+							term = term_list[k].term,
+							rdng = term_list[k].rdng
+						})
+						term_list[k] = nil
+					end
 				end
 			end
-			util.compact_list(term_list, init_len)
 		end
+		util.compact_list(term_list, init_len)
 	end
 
 	return {}
