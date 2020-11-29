@@ -61,7 +61,7 @@ function yomichan.load(dir)
 			clss = term_entry[4],
 			scor = term_entry[5],
 			dtgs = term_entry[3],
-			ttgs = term_entry[8],
+			ttgs = term_entry[8]
 		})
 	end)
 

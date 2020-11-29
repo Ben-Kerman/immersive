@@ -18,6 +18,7 @@ function config.load(path)
 
 	local result = {}
 	local section_name, section_entries
+	local block_token, block_key, block_value
 
 	local function insert_section()
 		table.insert(result, {
@@ -27,21 +28,36 @@ function config.load(path)
 	end
 
 	for line in io.lines(path) do
-		local trimmed = util.string_trim(line, "start")
-		if #trimmed ~= 0 and not util.string_starts(trimmed, "#") then
-			if util.string_starts(trimmed, "[") then
-				local new_section_name = line:match("%[([^%]]+)%]")
-				if not new_section_name then
-					-- TODO handle error
+		if block_token then
+			if util.string_trim(line) == block_token then
+				section_entries[block_key] = table.concat(block_value, "\n")
+				block_token, block_key, block_value = nil
+			else table.insert(block_value, line) end
+		else
+			local trimmed = util.string_trim(line, "start")
+			if #trimmed ~= 0 and not util.string_starts(trimmed, "#") then
+				if util.string_starts(trimmed, "[") then
+					local new_section_name = line:match("%[([^%]]+)%]")
+					if not new_section_name then
+						-- TODO handle error
+					else
+						if section_name then insert_section() end
+						section_name, section_entries = new_section_name, {}
+					end
+				elseif section_name then
+					local key, value = trimmed:match("^([^=]+)=(.*)$")
+					if key then
+						local block_token_match = value:match("%[([^%[]*)%[")
+						if block_token_match then
+							block_token = "]" .. block_token_match .. "]"
+							block_key, block_value = key, {}
+						else section_entries[key] = value end
+					else
+						-- TODO handle error
+					end
 				else
-					if section_name then insert_section() end
-					section_name, section_entries = new_section_name, {}
+					-- TODO handle error
 				end
-			elseif section_name then
-				local key, value = trimmed:match("([^=]+)=(.*)")
-				section_entries[key] = value
-			else
-				-- TODO handle error
 			end
 		end
 	end
