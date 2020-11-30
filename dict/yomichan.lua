@@ -43,6 +43,11 @@ local function create_index(term_list)
 end
 
 local function verify(dir)
+	local stat_res = mputil.file_info(dir)
+	if not stat_res or not stat_res.is_dir then
+		return nil, "path doesn't exist of is not a directory"
+	end
+
 	local files = sys.list_files(dir)
 	if not util.list_find(files, "index.json") then
 		return nil, "no index found"
@@ -62,15 +67,15 @@ local function verify(dir)
 		return nil, "no term banks found"
 	end
 
-	return true
+	return true, files
 end
 
-local function import(dir)
-	local verif_res, verif_msg = verify(dir)
-	if not verif_res then return nil, verif_msg end
+local function import(id, dir)
+	local verif_res, files_or_error = verify(dir)
+	if not verif_res then return nil, files_or_error end
 
 	local function load_bank(prefix, action)
-		for _, tag_bank in ipairs(util.list_filter(files, function(filename)
+		for _, tag_bank in ipairs(util.list_filter(files_or_error, function(filename)
 			return util.string_starts(filename, prefix)
 		end)) do
 			local bank_data = dict_util.parse_json_file(mputil.join_path(dir, tag_bank))
