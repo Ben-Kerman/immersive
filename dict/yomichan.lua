@@ -174,6 +174,11 @@ local function import(id, dir)
 		table.insert(term_list, entry_list)
 	end
 
+	dict_util.write_json_file(dict_util.cache_path(id), {
+		terms = term_list,
+		tags = tag_map
+	})
+
 	return term_list, tag_map
 end
 
