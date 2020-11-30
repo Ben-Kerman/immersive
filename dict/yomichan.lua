@@ -38,9 +38,7 @@ local function create_index(term_list)
 	return index, start_index
 end
 
-local yomichan = {}
-
-function yomichan.load(dir)
+local function import(dir)
 	local files = sys.list_files(dir)
 	if not util.list_find(files, "index.json") then
 		return nil, "no index file found"
@@ -144,7 +142,13 @@ function yomichan.load(dir)
 		table.insert(term_list, entry_list)
 	end
 
-	return {}
+	return term_list
+end
+
+local yomichan = {}
+
+function yomichan.load(dir)
+	import(dir)
 end
 
 return yomichan
