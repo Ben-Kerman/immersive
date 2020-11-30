@@ -184,8 +184,16 @@ end
 
 local yomichan = {}
 
-function yomichan.load(dir)
-	import(dir)
+function yomichan.load(dict_id, config)
+	local terms, tag_map = (function()
+		local cache_path = dict_util.cache_path(dict_id)
+		if mputil.file_info(cache_path) then
+			local data = dict_util.parse_json_file(cache_path)
+			return data.terms, data.tags
+		else return import(dict_id, config.location) end
+	end)()
+
+	return true
 end
 
 return yomichan
