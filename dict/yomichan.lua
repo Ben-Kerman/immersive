@@ -1,7 +1,42 @@
 local dict_util = require "dict.dict_util"
 local mputil = require "mp.utils"
 local sys = require "system"
+local utf_8 = require "utf_8"
 local util = require "util"
+
+local function create_index(term_list)
+	local function index_insert(index, key, value)
+		if index[key] then table.insert(index[key], value)
+		else index[key] = {value} end
+	end
+
+	local index, start_index = {}, {}
+	for entry_list_pos, entry_list in ipairs(term_list) do
+		local search_terms = {}
+		for _, entry in ipairs(entry_list) do
+			for _, reading in ipairs(entry.rdng) do
+				search_terms[reading.rdng] = true
+				if reading.vars then
+					for _, var in ipairs(reading.vars) do
+						search_terms[var] = true
+					end
+				end
+			end
+		end
+
+		local initial_chars = {}
+		for term, _ in pairs(search_terms) do
+			initial_chars[utf_8.string(utf_8.codepoints(term, 1, 1))] = true
+
+			index_insert(index, term, entry_list_pos)
+		end
+		for initial_char, _ in pairs(initial_chars) do
+			index_insert(start_index, initial_char, entry_list_pos)
+		end
+	end
+
+	return index, start_index
+end
 
 local yomichan = {}
 
