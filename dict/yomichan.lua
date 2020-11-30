@@ -38,10 +38,10 @@ local function create_index(term_list)
 	return index, start_index
 end
 
-local function import(dir)
+local function verify(dir)
 	local files = sys.list_files(dir)
 	if not util.list_find(files, "index.json") then
-		return nil, "no index file found"
+		return nil, "no index found"
 	end
 
 	local index = dict_util.parse_json_file(mputil.join_path(dir, "index.json"))
@@ -50,6 +50,20 @@ local function import(dir)
 	if format ~= 3 then
 		return nil, "only v3 Yomichan dictionaries are supported"
 	end
+
+	local term_banks = util.list_find(files, function(filename)
+		return util.string_starts(filename, "term_bank_")
+	end)
+	if #term_banks == 0 then
+		return nil, "no term banks found"
+	end
+
+	return true
+end
+
+local function import(dir)
+	local verif_res, verif_msg = verify(dir)
+	if not verif_res then return nil, verif_msg end
 
 	local function load_bank(prefix, action)
 		for _, tag_bank in ipairs(util.list_filter(files, function(filename)
@@ -62,9 +76,9 @@ local function import(dir)
 		end
 	end
 
-	local tags = {}
+	local tag_map = {}
 	load_bank("tag_bank_", function(tag_entry)
-		tags[tag_entry[1]] = {
+		tag_map[tag_entry[1]] = {
 			desc = tag_entry[4]
 		}
 	end)
@@ -77,7 +91,7 @@ local function import(dir)
 		local defs = term_entry[6]
 		for _, def in ipairs(defs) do
 			if type(def) ~= "string" then
-				-- TODO handle complex def error
+				return nil, "complex definition are not supported (ID: " .. id .. ")"
 			end
 		end
 
@@ -142,7 +156,7 @@ local function import(dir)
 		table.insert(term_list, entry_list)
 	end
 
-	return term_list
+	return term_list, tag_map
 end
 
 local yomichan = {}
