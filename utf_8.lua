@@ -23,6 +23,23 @@ local function char_byte_num(lead_byte)
 	return num
 end
 
+local function decode(str, pos)
+	local lead_byte = str:byte(pos)
+	local byte_count = char_byte_num(lead_byte)
+	-- extract leading bits of the code point
+	local cp = bit_op.extract(lead_byte, 0, 7 - byte_count)
+	for i = pos + 1, pos + byte_count - 1 do
+		local byte = str:byte(i)
+		-- no more bytes or byte isn't a cont. byte --> invalid UTF-8
+		if byte == nil or not is_cont(byte) then return nil end
+
+		-- shift tmp number and or in bits from byte
+		cp = bit_op.bor(bit_op.lshift(cp, 6), bit_op.extract(byte, 0, 6))
+	end
+
+	return cp, byte_count
+end
+
 local function encode(cp)
 	-- determine how many bytes it takes to encode cp
 	-- if cp is ASCII or too large for UTF-8 return immediately
@@ -49,30 +66,21 @@ end
 local utf_8 = {}
 
 function utf_8.codepoints(str)
-	local cps, bytes = {}, table.pack(str:byte(1, #str))
+	local cps = {}
 
-	local next_cp = 0
-	local iter, _, i = ipairs(bytes)
+	local pos = 1
 	while true do
-		i, b = iter(bytes, i)
-		if i == nil then break end
+		local byte = str:byte(pos)
+		if byte == nil then break end
 
-		-- for ASCII the byte value is the code point
-		if is_ascii(b) then table.insert(cps, b)
-		elseif is_lead(b) then
-			local byte_num = char_byte_num(b)
-			-- extract leading bits of the code point
-			next_cp = bit_op.extract(b, 0, 7 - byte_num)
-			for k = 1, byte_num - 1 do
-				i, cb = iter(bytes, i)
-				-- no more bytes or cb isn't a cont. byte --> invalid UTF-8
-				if i == nil or not is_cont(cb) then return nil end
-
-				-- shift tmp number and or in bits from cb
-				next_cp = bit_op.bor(bit_op.lshift(next_cp, 6), bit_op.extract(cb, 0, 6))
-			end
-			table.insert(cps, next_cp)
-			next_cp = 0
+		if is_ascii(byte) then
+			-- for ASCII the byte value is the code point
+			table.insert(cps, byte)
+			pos = pos + 1
+		elseif is_lead(byte) then
+			local cp, width = decode(str, pos)
+			table.insert(cps, cp)
+			pos = pos + width
 		else return nil end -- shouldn't happen for valid UTF-8
 	end
 	return cps
