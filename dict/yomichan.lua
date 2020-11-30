@@ -12,6 +12,7 @@ local function create_index(term_list)
 
 	local index, start_index = {}, {}
 	for entry_list_pos, entry_list in ipairs(term_list) do
+		-- find all unique readings/spelling variants
 		local search_terms = {}
 		for _, entry in ipairs(entry_list) do
 			for _, reading in ipairs(entry.rdng) do
@@ -24,12 +25,15 @@ local function create_index(term_list)
 			end
 		end
 
+		-- build index from search_terms and find first characters
 		local initial_chars = {}
 		for term, _ in pairs(search_terms) do
 			initial_chars[utf_8.string(utf_8.codepoints(term, 1, 1))] = true
 
 			index_insert(index, term, entry_list_pos)
 		end
+
+		-- build first character index
 		for initial_char, _ in pairs(initial_chars) do
 			index_insert(start_index, initial_char, entry_list_pos)
 		end
@@ -76,6 +80,7 @@ local function import(dir)
 		end
 	end
 
+	-- import tags
 	local tag_map = {}
 	load_bank("tag_bank_", function(tag_entry)
 		tag_map[tag_entry[1]] = {
@@ -83,11 +88,13 @@ local function import(dir)
 		}
 	end)
 
+	-- import terms
 	local term_map = {}
 	load_bank("term_bank_", function(term_entry)
 		local id = term_entry[7]
 		if not term_map[id] then term_map[id] = {} end
 
+		-- check for complex definitions
 		local defs = term_entry[6]
 		for _, def in ipairs(defs) do
 			if type(def) ~= "string" then
@@ -112,14 +119,17 @@ local function import(dir)
 		})
 	end)
 
+	-- convert terms to usable format
 	local term_list = {}
 	for _, entry_list in pairs(term_map) do
+		-- sort by Yomichan usage score
 		table.sort(entry_list, function(ta, tb) return ta.scor > tb.scor end)
 
 		local init_len = #entry_list
 		for i = 1, init_len do
 			local entry = entry_list[i]
 			if entry then
+				-- combine entries with the same definitions
 				for k = i + 1, init_len do
 					if entry_list[k] and util.list_compare(entry.defs, entry_list[k].defs) then
 						table.insert(entry.alts, {
@@ -130,6 +140,7 @@ local function import(dir)
 					end
 				end
 
+				-- group spellings by reading
 				local readings = entry.rdng and {{
 					rdng = entry.rdng,
 					vars = {entry.term}
@@ -153,6 +164,8 @@ local function import(dir)
 			end
 		end
 		util.compact_list(entry_list, init_len)
+
+		-- having entries as a list makes JSON import/export easier
 		table.insert(term_list, entry_list)
 	end
 
