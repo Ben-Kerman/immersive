@@ -15,7 +15,7 @@ local function is_cont(byte)
 	return bit_op.band(byte, 0xc0) == 0x80
 end
 
-local function char_byte_num(lead_byte)
+local function char_byte_count(lead_byte)
 	local mask, num = 0x80, 0
 	while bit_op.band(lead_byte, mask) ~= 0 do
 		mask, num = bit_op.rshift(mask, 1), num + 1
@@ -23,9 +23,9 @@ local function char_byte_num(lead_byte)
 	return num
 end
 
-local function decode(str, pos)
-	local lead_byte = str:byte(pos)
-	local byte_count = char_byte_num(lead_byte)
+local function decode(str, pos, byte_count, lead_byte)
+	if not lead_byte then lead_byte = str:byte(pos) end
+	if not byte_count then byte_count = char_byte_count(lead_byte) end
 	-- extract leading bits of the code point
 	local cp = bit_op.extract(lead_byte, 0, 7 - byte_count)
 	for i = pos + 1, pos + byte_count - 1 do
@@ -65,23 +65,29 @@ end
 
 local utf_8 = {}
 
-function utf_8.codepoints(str)
+function utf_8.codepoints(str, from, to)
+	if not from then from = 1 end
+	if not to then to = #str end
+
 	local cps = {}
 
-	local pos = 1
+	local byte_pos, char_pos = 1, 1
 	while true do
-		local byte = str:byte(pos)
+		local byte = str:byte(byte_pos)
 		if byte == nil then break end
 
 		if is_ascii(byte) then
 			-- for ASCII the byte value is the code point
 			table.insert(cps, byte)
-			pos = pos + 1
+			byte_pos = byte_pos + 1
 		elseif is_lead(byte) then
-			local cp, width = decode(str, pos)
-			table.insert(cps, cp)
-			pos = pos + width
+			local byte_count = char_byte_count(byte)
+			local cp, width = decode(str, byte_pos, byte_count, byte)
+			if char_pos >= from then table.insert(cps, cp) end
+			byte_pos = byte_pos + width
 		else return nil end -- shouldn't happen for valid UTF-8
+		char_pos = char_pos + 1
+		if char_pos > to then break end
 	end
 	return cps
 end
