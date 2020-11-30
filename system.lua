@@ -56,4 +56,12 @@ function system.list_files(dir)
 	return mputil.readdir(dir, "files")
 end
 
+function system.create_dir(path)
+	if system.platform == "lnx" or system.platform == "mac" then
+		os.execute(string.format("mkdir -p '%s'", path))
+	elseif system.platform == "win" then
+		-- TODO
+	end
+end
+
 return system
