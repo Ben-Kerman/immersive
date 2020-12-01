@@ -191,6 +191,62 @@ local function import(id, dir)
 	return term_list, tag_map
 end
 
+local function generate_dict_table(terms, tags, index, start_index)
+	local function get_quick_def(entry)
+		local readings, variants, defs = {}, {}, {}
+		for _, sub_entry in ipairs(entry) do
+			for _, reading in ipairs(sub_entry.rdng) do
+				table.insert(readings, reading.rdng)
+				if reading.vars then
+					for i, var in ipairs(reading.vars) do
+						if not util.list_find(variants, var) then
+							table.insert(variants, var)
+						end
+					end
+				end
+			end
+			for _, def in ipairs(sub_entry.defs) do
+				table.insert(defs, def)
+			end
+		end
+		return {readings = readings, variants = variants, defs = defs}
+	end
+
+	local function export_entries(ids)
+		local entries = util.list_map(ids, function(id)
+			return {id = id, entries = terms[id]}
+		end)
+		table.sort(entries, function(entry_a, entry_b)
+			return entry_a.entries[1].scor > entry_b.entries[1].scor
+		end)
+		return util.list_map(entries, function(entry)
+			local quick_def = get_quick_def(entry.entries)
+			quick_def.id = entry.id
+			return quick_def
+		end)
+	end
+
+	return {
+		look_up_exact = function(term)
+			return export_entries(index[term])
+		end,
+		look_up_start = function(term)
+			local first_char = utf_8.string(utf_8.codepoints(term, 1, 1))
+			local start_matches = start_index[first_char]
+			local matches = util.list_filter(start_matches, function(id)
+				if util.list_find(list_search_terms(terms[id]), function(search_term)
+					return util.string_starts(search_term, term)
+				end) then return true end
+			end)
+			return export_entries(matches)
+		end,
+		get_definition = function(id)
+			-- TODO
+			return terms[id]
+		end
+	}
+end
+
 local yomichan = {}
 
 function yomichan.load(dict_id, config)
@@ -202,7 +258,9 @@ function yomichan.load(dict_id, config)
 		else return import(dict_id, config.location) end
 	end)()
 
-	return true
+	local index, start_index = create_index(terms)
+
+	return generate_dict_table(terms, tag_map, index, start_index)
 end
 
 return yomichan
