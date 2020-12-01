@@ -15,8 +15,7 @@ function Subtitle:new(text, start, stop)
 		start = start,
 		stop = stop
 	}
-	setmetatable(sub, Subtitle)
-	return sub
+	return setmetatable(sub, Subtitle)
 end
 
 function Subtitle:short()
