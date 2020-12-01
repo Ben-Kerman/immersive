@@ -20,6 +20,10 @@ function util.list_slice(list, start, length)
 	return slice
 end
 
+function util.list_range(list, from, to)
+	return util.list_slice(list, from, to - from)
+end
+
 function util.list_compare(list_a, list_b, cmp)
 	if #list_a ~= #list_b then return false end
 

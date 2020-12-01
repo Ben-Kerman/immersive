@@ -209,6 +209,7 @@ local function generate_dict_table(terms, tags, index, start_index)
 				table.insert(defs, def)
 			end
 		end
+		if #variants == 0 then variants = nil end
 		return {readings = readings, variants = variants, defs = defs}
 	end
 
