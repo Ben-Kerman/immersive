@@ -4,6 +4,25 @@ local sys = require "system"
 local utf_8 = require "utf_8"
 local util = require "util"
 
+local function list_search_terms(entry)
+	local search_term_map = {}
+	for _, sub_entry in ipairs(entry) do
+		for _, reading in ipairs(sub_entry.rdng) do
+			search_term_map[reading.rdng] = true
+			if reading.vars then
+				for _, var in ipairs(reading.vars) do
+					search_term_map[var] = true
+				end
+			end
+		end
+	end
+	local search_terms = {}
+	for search_term, _ in pairs(search_term_map) do
+		table.insert(search_terms, search_term)
+	end
+	return search_terms
+end
+
 local function create_index(term_list)
 	local function index_insert(index, key, value)
 		if index[key] then table.insert(index[key], value)
@@ -13,21 +32,11 @@ local function create_index(term_list)
 	local index, start_index = {}, {}
 	for entry_list_pos, entry_list in ipairs(term_list) do
 		-- find all unique readings/spelling variants
-		local search_terms = {}
-		for _, entry in ipairs(entry_list) do
-			for _, reading in ipairs(entry.rdng) do
-				search_terms[reading.rdng] = true
-				if reading.vars then
-					for _, var in ipairs(reading.vars) do
-						search_terms[var] = true
-					end
-				end
-			end
-		end
+		local search_terms = list_search_terms(entry_list)
 
 		-- build index from search_terms and find first characters
 		local initial_chars = {}
-		for term, _ in pairs(search_terms) do
+		for _, term in ipairs(search_terms) do
 			initial_chars[utf_8.string(utf_8.codepoints(term, 1, 1))] = true
 
 			index_insert(index, term, entry_list_pos)
