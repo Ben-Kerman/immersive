@@ -1,4 +1,25 @@
 local utf_8 = require "utf_8"
+local util = require "util"
+local mputil = require "mp.utils"
+
+local overlay = mp.create_osd_overlay("ass-events")
+
+local function default_update_handler(has_sel, curs_index, segments)
+	if has_sel then
+		table.insert(segments, 2, "{\\b1\\u1}")
+		table.insert(segments, 4, "{\\b0\\u0}")
+	end
+
+	if curs_index < 0 then
+		curs_index = #segments + curs_index + 1
+	end
+	table.insert(segments, curs_index, "|")
+
+	table.insert(segments, 1, "{\\an5}")
+
+	overlay.data = table.concat(segments)
+	overlay:update()
+end
 
 TextSelect = {}
 TextSelect.__index = TextSelect
@@ -31,6 +52,8 @@ function TextSelect:move_curs(amount, change_sel)
 	else self:reset_sel() end
 
 	self.curs_pos = new_curs_pos
+
+	self:update()
 end
 
 function TextSelect:move_curs_word(change_sel)
@@ -48,12 +71,13 @@ function TextSelect:disable()
 	end
 end
 
-function TextSelect:new(text, init_cursor_pos)
+function TextSelect:new(text, update_handler, init_cursor_pos)
 	local ts
 	ts = {
 		cdpts = utf_8.codepoints(text),
 		curs_pos = init_cursor_pos and init_cursor_pos or 1,
 		sel = {from = 0, to = 0},
+		update_handler = update_handler and update_handler or default_update_handler,
 		bindings = {
 			{key = "LEFT", action = function() ts:move_curs(-1) end},
 			{key = "RIGHT", action = function() ts:move_curs(1) end},
@@ -66,4 +90,21 @@ function TextSelect:new(text, init_cursor_pos)
 		}
 	}
 	return setmetatable(ts, TextSelect)
+end
+
+function TextSelect:update()
+	local segments = {}
+	local curs_index
+	local has_sel = self:sel_len() ~= 0
+	if has_sel then
+		table.insert(segments, utf_8.string(util.list_range(self.cdpts, 1, self.sel.from - 1)))
+		table.insert(segments, utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1)))
+		table.insert(segments, utf_8.string(util.list_range(self.cdpts, self.sel.to, #self.cdpts)))
+		curs_index = self.curs_pos == self.sel.from and 2 or -1
+	else
+		table.insert(segments, utf_8.string(util.list_range(self.cdpts, 1, self.curs_pos - 1)))
+		table.insert(segments, utf_8.string(util.list_range(self.cdpts, self.curs_pos, #self.cdpts)))
+		curs_index = 2
+	end
+	self.update_handler(has_sel, curs_index, segments)
 end
