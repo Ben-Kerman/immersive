@@ -6,8 +6,8 @@ local overlay = mp.create_osd_overlay("ass-events")
 
 local function default_update_handler(has_sel, curs_index, segments)
 	if has_sel then
-		table.insert(segments, 2, "{\\b1\\u1}")
-		table.insert(segments, 4, "{\\b0\\u0}")
+		table.insert(segments, 2, "{\\u1}")
+		table.insert(segments, 4, "{\\u0}")
 	end
 
 	if curs_index < 0 then
@@ -59,16 +59,22 @@ end
 function TextSelect:move_curs_word(change_sel)
 end
 
-function TextSelect:enable()
+function TextSelect:start()
 	for i, binding in ipairs(self.bindings) do
 		mp.add_forced_key_binding(binding.key, "_ankisubs-text_select_binding-" .. i, binding.action, {repeatable = true})
 	end
 end
 
-function TextSelect:disable()
+function TextSelect:finish(force_sel)
+	if force_sel and self:sel_len() == 0 then
+		mp.osd_message("Please select some text")
+		return nil
+	end
 	for i, binding in ipairs(self.bindings) do
 		mp.remove_key_binding("_ankisubs-text_select_binding-" .. i)
 	end
+	overlay:remove()
+	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
 end
 
 function TextSelect:new(text, update_handler, init_cursor_pos)
