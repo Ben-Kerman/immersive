@@ -13,7 +13,12 @@ local function default_update_handler(has_sel, curs_index, segments)
 	if curs_index < 0 then
 		curs_index = #segments + curs_index + 1
 	end
-	table.insert(segments, curs_index, "|")
+	local curs_size = mp.get_property_number("osd-font-size") * 8
+	local pbo = curs_size / 6
+	local curs_style =
+		[[\r\1a&H00&\3a&H00&\4a&H00&\1c&Hffffff&\3c&Hffffff&\4c&H000000&\xbord0.75\ybord0\xshad1.5\yshad0]]
+	local curs_cmd = string.format("{%s\\p4\\pbo%d}m 0 0 l 1 0 l 1 %d l 0 %d{\\p0\\r}", curs_style, pbo, curs_size, curs_size)
+	table.insert(segments, curs_index, curs_cmd)
 
 	table.insert(segments, 1, "{\\an5}")
 
@@ -63,6 +68,7 @@ function TextSelect:start()
 	for i, binding in ipairs(self.bindings) do
 		mp.add_forced_key_binding(binding.key, "_ankisubs-text_select_binding-" .. i, binding.action, {repeatable = true})
 	end
+	self:update()
 end
 
 function TextSelect:finish(force_sel)
