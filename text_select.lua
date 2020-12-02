@@ -64,7 +64,74 @@ function TextSelect:move_curs(amount, change_sel)
 	self:update()
 end
 
-function TextSelect:move_curs_word(change_sel)
+local whitespace_cps = {
+	9, 32, 160, 5760, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8239, 8287, 12288
+}
+local function is_space(cp)
+	return not not util.list_find(whitespace_cps, cp)
+end
+
+local function classify_cp(cp)
+	if not cp then return "nil" end
+	if is_space(cp) then return "space" end
+
+	if (0x3041 <= cp and cp <= 0x309f) then return "hiragana" end
+	if (0x30a0 <= cp and cp <= 0x30ff) then return "katakana" end
+	if (0xff65 <= cp and cp <= 0xff9f) then return "hw-katakana" end
+
+	if (0x0010 <= cp and cp <= 0x0019) or (0x0041 <= cp and cp <= 0x005A) or (0x0061 <= cp and cp <= 0x007A) -- Basic Latin/ASCII
+	or (0x00c0 <= cp and cp <= 0x00ff and cp ~= 0x00D7 and cp ~= 0x00F7) -- Latin-1 Supplement
+	or (0x0100 <= cp and cp <= 0x017f) -- Latin Extended-A
+	or (0x0180 <= cp and cp <= 0x024f) -- Latin Extended-B
+	or (0x02b0 <= cp and cp <= 0x02ff) -- Spacing Modifier Letters
+	or (0x1e00 <= cp and cp <= 0x1eff) -- Latin Extended Additional
+	or (0x2c60 <= cp and cp <= 0x2c7f) -- Latin Extended-C
+	or (0xa720 <= cp and cp <= 0xa7ff) -- Latin Extended-D
+	or (0xab30 <= cp and cp <= 0xab6f) -- Latin Extended-E
+	or (0xFB00 <= cp and cp <= 0xFB06) -- Alphabetic Presentation Forms
+	or (0xff10 <= cp and cp <= 0xff19) or (0xff21 <= cp and cp <= 0xff3a) or (0xff41 <= cp and cp <= 0xff5a) -- Halfwidth and Fullwidth Forms
+	then return "latin" end
+
+	if  (0x4E00 <= cp and cp <=  0x9FFF) -- CJK Unified Ideographs
+	or  (0x3300 <= cp and cp <=  0x33FF) -- CJK Compatibility
+	or  (0x3400 <= cp and cp <=  0x4DBF) -- CJK Unified Ideographs Extension A
+	or  (0xFE30 <= cp and cp <=  0xFE4F) -- CJK Compatibility Forms
+	or  (0xF900 <= cp and cp <=  0xFAFF) -- CJK Compatibility Ideographs
+	or (0x20000 <= cp and cp <= 0x2A6DF) -- CJK Unified Ideographs Extension B
+	or (0x2A700 <= cp and cp <= 0x2B73F) -- CJK Unified Ideographs Extension C
+	or (0x2B740 <= cp and cp <= 0x2B81F) -- CJK Unified Ideographs Extension D
+	or (0x2B820 <= cp and cp <= 0x2CEAF) -- CJK Unified Ideographs Extension E
+	or (0x2CEB0 <= cp and cp <= 0x2EBEF) -- CJK Unified Ideographs Extension F
+	or (0x30000 <= cp and cp <= 0x3134F) -- CJK Unified Ideographs Extension G
+	or (0x2F800 <= cp and cp <= 0x2FA1F) -- CJK Compatibility Ideographs Supplement
+	then return "ideograph" end
+
+	return "other"
+end
+
+function TextSelect:move_curs_word(dir, change_sel)
+	local offset = dir < 0 and -1 or 0
+	local function get_cp(pos)
+		return self.cdpts[pos + offset]
+	end
+
+	local bound = dir < 0 and 1 or #self.cdpts + 1
+
+	local new_pos = self.curs_pos
+	while is_space(get_cp(new_pos)) and new_pos ~= bound do
+		new_pos = new_pos + dir
+	end
+
+	local starting_class = classify_cp(get_cp(new_pos))
+	for i = new_pos, bound, dir do
+		if classify_cp(get_cp(i)) ~= starting_class then
+			new_pos = i
+			break
+		end
+	end
+	if not new_pos then new_pos = bound end
+
+	self:move_curs(new_pos - self.curs_pos, change_sel)
 end
 
 function TextSelect:start()
