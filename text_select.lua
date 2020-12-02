@@ -165,10 +165,14 @@ function TextSelect:new(text, update_handler, init_cursor_pos)
 			{key = "RIGHT", action = function() ts:move_curs(1) end},
 			{key = "Ctrl+LEFT", action = function() ts:move_curs_word(-1) end},
 			{key = "Ctrl+RIGHT", action = function() ts:move_curs_word(1) end},
+			{key = "HOME", action = function() ts:move_curs(-ts.curs_pos + 1) end},
+			{key = "END", action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1) end},
 			{key = "Shift+LEFT", action = function() ts:move_curs(-1, true) end},
 			{key = "Shift+RIGHT", action = function() ts:move_curs(1, true) end},
 			{key = "Ctrl+Shift+LEFT", action = function() ts:move_curs_word(-1, true) end},
-			{key = "Ctrl+Shift+RIGHT", action = function() ts:move_curs_word(1, true) end}
+			{key = "Ctrl+Shift+RIGHT", action = function() ts:move_curs_word(1, true) end},
+			{key = "Shift+HOME", action = function() ts:move_curs(-ts.curs_pos + 1, true) end},
+			{key = "Shift+END", action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1, true) end}
 		}
 	}
 	return setmetatable(ts, TextSelect)
