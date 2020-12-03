@@ -16,12 +16,13 @@ function LineSelect:move_sel(dir)
 	self:update()
 end
 
-function LineSelect:new(lines, sel_renderer, renderer)
+function LineSelect:new(lines, sel_renderer, renderer, update_handler)
 	local ls
 	ls = {
 		_overlay = mp.create_osd_overlay("ass-events"),
 		lines = lines,
 		renderer = renderer and renderer or default_renderer,
+		update_handler = update_handler,
 		sel_renderer = sel_renderer and sel_renderer or default_sel_renderer,
 		active = 1,
 		bindings = {
@@ -48,6 +49,7 @@ function LineSelect:finish()
 end
 
 function LineSelect:update()
+	if self.update_handler then self.update_handler(self.lines[self.active]) end
 	local rendered_lines = {"{\\an5}"}
 	for i, line in ipairs(self.lines) do
 		local renderer = i == self.active and self.sel_renderer or self.renderer
