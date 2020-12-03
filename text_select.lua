@@ -5,6 +5,14 @@ local mputil = require "mp.utils"
 local overlay = mp.create_osd_overlay("ass-events")
 
 local function default_update_handler(has_sel, curs_index, segments)
+	overlay.data = TextSelect.base_update_handler(has_sel, curs_index, segments)
+	overlay:update()
+end
+
+TextSelect = {}
+TextSelect.__index = TextSelect
+
+function TextSelect.base_update_handler(has_sel, curs_index, segments)
 	if has_sel then
 		table.insert(segments, 2, "{\\u1}")
 		table.insert(segments, 4, "{\\u0}")
@@ -17,12 +25,8 @@ local function default_update_handler(has_sel, curs_index, segments)
 
 	table.insert(segments, 1, "{\\an5}")
 
-	overlay.data = table.concat(segments)
-	overlay:update()
+	return table.concat(segments)
 end
-
-TextSelect = {}
-TextSelect.__index = TextSelect
 
 function TextSelect.default_cursor(font_size)
 	local curs_size = font_size * 8
