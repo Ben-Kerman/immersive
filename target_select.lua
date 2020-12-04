@@ -4,7 +4,7 @@ require "menu"
 require "line_select"
 require "text_select"
 
-local line_sel, tgt_word_sel, tgt_word_sel_ssa
+local line_sel, tgt_word_sel
 local lookup_result, def_sel
 local sub_selection, timestamps
 local target_words = {}
@@ -23,12 +23,12 @@ local function target_select_update_handler(has_sel, curs_index, segments)
 	table.insert(segments, 1, "{\\b1}")
 	table.insert(segments, "{\\b0}")
 
-	tgt_word_sel_ssa = table.concat(segments)
-	if line_sel then line_sel:update() end
-end
+	local ssa_str = table.concat(segments)
 
-local function sel_renderer()
-	return tgt_word_sel_ssa
+	if line_sel then
+		line_sel.sel_renderer = function() return ssa_str end
+		line_sel:update()
+	end
 end
 
 local function line_renderer(sub)
@@ -46,8 +46,8 @@ local function update_handler(sub)
 end
 
 local function initialize_target_select()
+	line_sel = LineSelect:new(sub_selection, nil, line_renderer, update_handler)
 	update_handler(sub_selection[1])
-	line_sel = LineSelect:new(sub_selection, sel_renderer, line_renderer, update_handler)
 	line_sel:start()
 end
 
