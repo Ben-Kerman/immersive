@@ -95,7 +95,8 @@ local function select_target_def(prefix)
 			def_sel = LineSelect:new(lookup_result.defs, sel_def_renderer, def_renderer)
 			def_sel:start()
 		else
-			-- TODO handle error
+			mp.osd_message("No entry found for selected word")
+			initialize_target_select()
 		end
 	end
 end
