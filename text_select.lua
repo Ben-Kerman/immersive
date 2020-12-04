@@ -16,6 +16,7 @@ TextSelect.__index = TextSelect
 function TextSelect.base_update_handler(has_sel, curs_index, segments)
 	if has_sel then
 		table.insert(segments, 2, "{\\u1}")
+		table.insert(segments, 4, "{\\u0}")
 	end
 
 	if curs_index < 0 then
