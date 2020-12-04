@@ -46,7 +46,7 @@ local function update_handler(sub)
 end
 
 local function initialize_target_select()
-	line_sel = LineSelect:new(sub_selection, nil, line_renderer, update_handler)
+	line_sel = LineSelect:new(sub_selection, nil, line_renderer, update_handler, 9)
 	update_handler(sub_selection[1])
 	line_sel:start()
 end
@@ -92,7 +92,7 @@ local function select_target_def(prefix)
 		end
 
 		if lookup_result then
-			def_sel = LineSelect:new(lookup_result.defs, sel_def_renderer, def_renderer)
+			def_sel = LineSelect:new(lookup_result.defs, sel_def_renderer, def_renderer, nil, 5)
 			def_sel:start()
 		else
 			mp.osd_message("No entry found for selected word")

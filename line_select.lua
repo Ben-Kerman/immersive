@@ -18,7 +18,7 @@ function LineSelect:move_sel(dir)
 	self:update()
 end
 
-function LineSelect:new(lines, sel_renderer, renderer, update_handler)
+function LineSelect:new(lines, sel_renderer, renderer, update_handler, limit)
 	local ls
 	ls = {
 		_overlay = mp.create_osd_overlay("ass-events"),
@@ -26,6 +26,7 @@ function LineSelect:new(lines, sel_renderer, renderer, update_handler)
 		renderer = renderer and renderer or default_renderer,
 		update_handler = update_handler,
 		sel_renderer = sel_renderer and sel_renderer or default_sel_renderer,
+		limit = limit,
 		active = 1,
 		bindings = {
 			{key = "UP", action = function() ls:move_sel(-1) end, repeatable = true},
@@ -48,11 +49,37 @@ end
 
 function LineSelect:update()
 	if self.update_handler then self.update_handler(self.lines[self.active]) end
-	local rendered_lines = {"{\\an5}"}
-	for i, line in ipairs(self.lines) do
-		local renderer = i == self.active and self.sel_renderer or self.renderer
-		table.insert(rendered_lines, renderer(line))
+	
+	local first, last
+	if not self.limit or self.limit >= #self.lines then
+		first, last = 1, #self.lines
+	else
+		first = math.ceil(self.active - self.limit / 2)
+		if first < 1 then first = 1 end
+
+		last = math.floor(self.active + self.limit / 2) - (self.limit + 1) % 2
+		if last > #self.lines then last = #self.lines end
+
+		if first == 1 then
+			last = self.limit
+		elseif last == #self.lines then
+			first = #self.lines - self.limit + 1
+		end
 	end
+
+	local rendered_lines = {"{\\an5}"}
+	if first ~= 1 then table.insert(rendered_lines, "...") end
+
+	for i, line in ipairs(self.lines) do
+		if first <= i and i <= last then
+			local renderer = i == self.active and self.sel_renderer or self.renderer
+			table.insert(rendered_lines, renderer(line))
+		end
+		if i == last then break end
+	end
+
+	if last ~= #self.lines then table.insert(rendered_lines, "...") end
+
 	self._overlay.data = table.concat(rendered_lines, "\\N")
 	self._overlay:update()
 end
