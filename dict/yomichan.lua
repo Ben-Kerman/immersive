@@ -196,7 +196,9 @@ local function generate_dict_table(terms, tags, index, start_index)
 		local readings, variants, defs = {}, {}, {}
 		for _, sub_entry in ipairs(entry) do
 			for _, reading in ipairs(sub_entry.rdng) do
-				table.insert(readings, reading.rdng)
+				if not util.list_find(readings, reading.rdng) then
+					table.insert(readings, reading.rdng)
+				end
 				if reading.vars then
 					for i, var in ipairs(reading.vars) do
 						if not util.list_find(variants, var) then
@@ -214,6 +216,8 @@ local function generate_dict_table(terms, tags, index, start_index)
 	end
 
 	local function export_entries(ids)
+		if not ids then return nil end
+
 		local entries = util.list_map(ids, function(id)
 			return {id = id, entries = terms[id]}
 		end)
@@ -242,8 +246,13 @@ local function generate_dict_table(terms, tags, index, start_index)
 			return export_entries(matches)
 		end,
 		get_definition = function(id)
+			local entry = terms[id]
+			local word
+			if entry[1].rdng[1].vars then
+				word = entry[1].rdng[1].vars[1]
+			else word = entry[1].rdng[1].rdng end
 			-- TODO
-			return terms[id]
+			return {word = word, definition = "<definition>"}
 		end
 	}
 end
