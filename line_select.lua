@@ -1,3 +1,5 @@
+local helper = require "helper"
+
 local function default_sel_renderer(line)
 	return "{\\b1}" .. line .. "{\\b0}"
 end
@@ -26,24 +28,20 @@ function LineSelect:new(lines, sel_renderer, renderer, update_handler)
 		sel_renderer = sel_renderer and sel_renderer or default_sel_renderer,
 		active = 1,
 		bindings = {
-			{key = "UP", action = function() ls:move_sel(-1) end},
-			{key = "DOWN", action = function() ls:move_sel(1) end},
+			{key = "UP", action = function() ls:move_sel(-1) end, repeatable = true},
+			{key = "DOWN", action = function() ls:move_sel(1) end, repeatable = true},
 		}
 	}
 	return setmetatable(ls, LineSelect)
 end
 
 function LineSelect:start()
-	for i, binding in ipairs(self.bindings) do
-		mp.add_forced_key_binding(binding.key, "_ankisubs-line_select_binding-" .. i, binding.action, {repeatable = true})
-	end
+	helper.add_bindings(self.bindings, "_ankisubs-line_select_binding-")
 	self:update()
 end
 
 function LineSelect:finish()
-	for i, binding in ipairs(self.bindings) do
-		mp.remove_key_binding("_ankisubs-line_select_binding-" .. i)
-	end
+	helper.remove_bindings(self.bindings, "_ankisubs-line_select_binding-")
 	self._overlay:remove()
 	return self.lines[self.active]
 end

@@ -1,3 +1,5 @@
+local helper = require "helper"
+
 Menu = {}
 Menu.__index = Menu
 
@@ -16,18 +18,14 @@ function Menu:enable()
 		self.show_bindings = not self.show_bindings
 		self:redraw()
 	end)
-	for i, binding in ipairs(self.data.bindings) do
-		mp.add_forced_key_binding(binding.key, "_ankisubs-menu_binding-" .. i, binding.action)
-	end
+	helper.add_bindings(self.data.bindings, "_ankisubs-menu_binding-")
 	self.enabled = true
 	self:redraw()
 end
 
 function Menu:disable()
 	mp.remove_key_binding("_ankisubs-menu_show-bindings")
-	for i, _ in ipairs(self.data.bindings) do
-		mp.remove_key_binding("_ankisubs-menu_binding-" .. i)
-	end
+	helper.remnove_bindings(self.data.bindings, "_ankisubs-menu_binding-")
 	self.enabled = false
 	self:redraw()
 end

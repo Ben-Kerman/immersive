@@ -1,3 +1,4 @@
+local helper = require "helper"
 local utf_8 = require "utf_8"
 local util = require "util"
 local mputil = require "mp.utils"
@@ -139,9 +140,7 @@ function TextSelect:move_curs_word(dir, change_sel)
 end
 
 function TextSelect:start()
-	for i, binding in ipairs(self.bindings) do
-		mp.add_forced_key_binding(binding.key, "_ankisubs-text_select_binding-" .. i, binding.action, {repeatable = true})
-	end
+	helper.add_bindings(self.bindings, "_ankisubs-text_select_binding-")
 	self:update()
 end
 
@@ -150,9 +149,7 @@ function TextSelect:finish(force_sel)
 		mp.osd_message("Please select some text")
 		return nil
 	end
-	for i, binding in ipairs(self.bindings) do
-		mp.remove_key_binding("_ankisubs-text_select_binding-" .. i)
-	end
+	helper.remove_bindings(self.bindings, "_ankisubs-text_select_binding-")
 	overlay:remove()
 	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
 end
@@ -165,18 +162,18 @@ function TextSelect:new(text, update_handler, init_cursor_pos)
 		sel = {from = 0, to = 0},
 		update_handler = update_handler and update_handler or default_update_handler,
 		bindings = {
-			{key = "LEFT", action = function() ts:move_curs(-1) end},
-			{key = "RIGHT", action = function() ts:move_curs(1) end},
-			{key = "Ctrl+LEFT", action = function() ts:move_curs_word(-1) end},
-			{key = "Ctrl+RIGHT", action = function() ts:move_curs_word(1) end},
-			{key = "HOME", action = function() ts:move_curs(-ts.curs_pos + 1) end},
-			{key = "END", action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1) end},
-			{key = "Shift+LEFT", action = function() ts:move_curs(-1, true) end},
-			{key = "Shift+RIGHT", action = function() ts:move_curs(1, true) end},
-			{key = "Ctrl+Shift+LEFT", action = function() ts:move_curs_word(-1, true) end},
-			{key = "Ctrl+Shift+RIGHT", action = function() ts:move_curs_word(1, true) end},
-			{key = "Shift+HOME", action = function() ts:move_curs(-ts.curs_pos + 1, true) end},
-			{key = "Shift+END", action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1, true) end}
+			{key = "LEFT", action = function() ts:move_curs(-1) end, repeatable = true},
+			{key = "RIGHT", action = function() ts:move_curs(1) end, repeatable = true},
+			{key = "Ctrl+LEFT", action = function() ts:move_curs_word(-1) end, repeatable = true},
+			{key = "Ctrl+RIGHT", action = function() ts:move_curs_word(1) end, repeatable = true},
+			{key = "HOME", action = function() ts:move_curs(-ts.curs_pos + 1) end, repeatable = true},
+			{key = "END", action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1) end, repeatable = true},
+			{key = "Shift+LEFT", action = function() ts:move_curs(-1, true) end, repeatable = true},
+			{key = "Shift+RIGHT", action = function() ts:move_curs(1, true) end, repeatable = true},
+			{key = "Ctrl+Shift+LEFT", action = function() ts:move_curs_word(-1, true) end, repeatable = true},
+			{key = "Ctrl+Shift+RIGHT", action = function() ts:move_curs_word(1, true) end, repeatable = true},
+			{key = "Shift+HOME", action = function() ts:move_curs(-ts.curs_pos + 1, true) end, repeatable = true},
+			{key = "Shift+END", action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1, true) end, repeatable = true}
 		}
 	}
 	return setmetatable(ts, TextSelect)
