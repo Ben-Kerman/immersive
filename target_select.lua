@@ -81,6 +81,7 @@ local function select_target_def(prefix)
 
 		line_sel:finish()
 		line_sel = nil
+		active_sub = nil
 
 		for i, dict in ipairs(dicts) do
 			local lookup_fn = prefix and dict.look_up_start or dict.look_up_exact
