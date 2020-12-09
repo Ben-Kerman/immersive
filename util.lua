@@ -82,6 +82,27 @@ function util.compact_list(list, init_len)
 	end
 end
 
+function util.map_filter_keys(map, predicate)
+	local res = {}
+	for key, val in pairs(map) do
+		if predicate(key, val) then
+			res[key] = val
+		end
+	end
+	return res
+end
+
+function util.map_map(map, mapper)
+	local res = {}
+	for key, val in pairs(map) do
+		local mapped_key, mapped_val = mapper(key, val)
+		local new_key = mapped_key and mapped_key or key
+		local new_val = mapped_val and mapped_val or val
+		res[new_key] = new_val
+	end
+	return res
+end
+
 function util.string_starts(str, prefix)
 	return str:find(prefix, 1, true) == 1
 end
