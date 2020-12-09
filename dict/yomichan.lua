@@ -191,7 +191,7 @@ local function import(id, dir)
 	return term_list, tag_map
 end
 
-local function generate_dict_table(terms, tags, index, start_index)
+local function generate_dict_table(config, terms, tags, index, start_index)
 	local function get_quick_def(entry)
 		local readings, variants, defs = {}, {}, {}
 		for _, sub_entry in ipairs(entry) do
@@ -251,8 +251,10 @@ local function generate_dict_table(terms, tags, index, start_index)
 			if entry[1].rdng[1].vars then
 				word = entry[1].rdng[1].vars[1]
 			else word = entry[1].rdng[1].rdng end
-			-- TODO
-			return {word = word, definition = "<definition>"}
+
+			local exporter_id = config.exporter and config.exporter or "default"
+			local exporter = require("dict.yomichan." .. exporter_id)
+			return {word = word, definition = exporter(entry, config)}
 		end
 	}
 end
@@ -270,7 +272,7 @@ function yomichan.load(dict_id, config)
 
 	local index, start_index = create_index(terms)
 
-	return generate_dict_table(terms, tag_map, index, start_index)
+	return generate_dict_table(config, terms, tag_map, index, start_index)
 end
 
 return yomichan
