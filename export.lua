@@ -1,12 +1,15 @@
-anki = require "anki"
-ankicon = require "ankiconnect"
-encoder = require "encoder"
-series_id = require "series_id"
+local anki = require "anki"
+local ankicon = require "ankiconnect"
+local encoder = require "encoder"
+local series_id = require "series_id"
+local templater = require "templater"
 
 local function replace_field_vars(field_def, text, audio_file, image_file)
-	return field_def:gsub("%{%{text%}%}", text:gsub("\n", "<br>"))
-	                :gsub("%{%{audio%}%}", string.format("[sound:%s]", audio_file))
-	                :gsub("%{%{image%}%}", string.format([[<img src="%s">]], image_file))
+	return templater.render(field_def, {
+		text = text:gsub("\n", "<br>"),
+		audio = string.format("[sound:%s]", audio_file),
+		image = string.format([[<img src="%s">]], image_file)
+	})
 end
 
 local export = {}

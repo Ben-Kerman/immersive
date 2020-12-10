@@ -1,4 +1,5 @@
 local util = require "util"
+local templater = require "templater"
 
 local function get_conf(config)
 	local default = {
@@ -53,8 +54,10 @@ return function(entry, config)
 		if reading.vars then
 			vars = table.concat(reading.vars, cfg.variant_sep)
 		end
-		return (cfg.reading_template:gsub("%{%{reading%}%}", reading.rdng)
-		                            :gsub("%{%{variants%}%}", vars))
+		return templater.render(cfg.reading_template, {
+			reading = reading.rdng,
+			variants = vars
+		})
 	end)
 
 	return table.concat(reading_strs, cfg.reading_sep)
