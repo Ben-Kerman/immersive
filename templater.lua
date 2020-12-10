@@ -2,7 +2,16 @@ local util = require "util"
 
 local function parse_substitution(subs_str)
 	local ident = subs_str:match("^([^%[]+)")
-	local from, to = subs_str:match("%[(%d*):(%d*)%]$")
+	local index = subs_str:match("%[(%d+)%]$")
+	local from, to, sep = subs_str:match("%[(%d*):(%d*)%]:?(.*)$")
+	print(subs_str, ident, index, from, to, sep)
+
+	if sep == "" then sep = nil end
+
+	if index then
+		local index_num = tonumber(index)
+		return ident, index_num, index_num
+	end
 
 	if from then
 		if from == "" then from = 1
@@ -11,7 +20,7 @@ local function parse_substitution(subs_str)
 		else to = tonumber(to) end
 	end
 
-	return ident, from, to
+	return ident, from and from or 1, to and to or -1, sep
 end
 
 local function segment_str(str)
@@ -25,9 +34,9 @@ local function segment_str(str)
 		if from > next_from then
 			table.insert(segments, str:sub(next_from, from - 1))
 		end
-		local ident, subs_from, subs_to = parse_substitution(val)
+		local ident, subs_from, subs_to, subs_sep = parse_substitution(val)
 		table.insert(segments, {
-			ident = ident, from = subs_from, to = subs_to
+			ident = ident, from = subs_from, to = subs_to, sep = subs_sep
 		})
 
 		next_from = to + 1
@@ -73,7 +82,8 @@ function templater.render(template, values)
 					list = util.list_map(list, value.transform)
 				end
 
-				table.insert(strings, table.concat(list, value.sep))
+				local sep = segment.sep and segment.sep or value.sep
+				table.insert(strings, table.concat(list, sep))
 			end
 		end
 	end
