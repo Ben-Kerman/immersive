@@ -21,6 +21,7 @@ function util.list_slice(list, start, length)
 end
 
 function util.list_range(list, from, to)
+	if to < 0 then to = #list + to + 1 end
 	return util.list_slice(list, from, to - from)
 end
 
