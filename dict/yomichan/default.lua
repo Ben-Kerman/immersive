@@ -62,7 +62,7 @@ return function(entry, config, tag_map)
 						end
 					end
 				end
-			else
+			elseif not exst_rdng then
 				table.insert(readings, reading)
 			end
 		end
