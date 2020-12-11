@@ -1,16 +1,15 @@
 local util = require "util"
 local templater = require "templater"
+local utf_8 = require "utf_8"
 
 local function get_conf(config)
 	local default = {
-		reading_sep = "　",
-		variant_sep = "・",
 		reading_template = "{{reading}}【{{variants}}】",
-		def_digits = nil,
-		def_prefix = "{{num}}. ",
-		def_sep = "; ",
-		tag_sep = ", ",
-		tag_template = [[<span style="font-size: 0.8em">{{tags}}</span>]]
+		digits = nil,
+		header_template = "{{readings[1]}}:{{readings[2:]}}",
+		tag_template = "<span style=\"font-size: 0.8em\">{{tags}}</span><br>\n",
+		def_template = "{{tag_list}}{{num}}. {{keywords}}",
+		template = "{{header}}<br>\n{{definitions}}"
 	}
 
 	local filtered = util.map_filter_keys(config, function(key)
@@ -65,15 +64,61 @@ return function(entry, config, tag_map)
 	end
 
 	local reading_strs = util.list_map(readings, function(reading)
-		local vars = ""
-		if reading.vars then
-			vars = table.concat(reading.vars, cfg.variant_sep)
-		end
+		local vars = reading.vars and reading.vars or {}
 		return templater.render(cfg.reading_template, {
-			reading = reading.rdng,
-			variants = vars
+			reading = {data = reading.rdng},
+			variants = {
+				data = vars,
+				sep = "・"
+			}
 		})
 	end)
 
-	return table.concat(reading_strs, cfg.reading_sep)
+	local last_tags
+	local definitions = util.list_map(entry, function(sub_entry, i)
+		local tag_list = ""
+
+		if last_tags ~= sub_entry.dtgs then
+			local tags = util.string_split(sub_entry.dtgs, " ")
+
+			tag_list = templater.render(cfg.tag_template, {
+				tags = {
+					data = tags,
+					transform = function(tag_id)
+						local tag_data = tag_map[tag_id]
+						return tag_data and tag_data.desc or "UNKNOWN TAG"
+					end,
+					sep = ", "
+				}
+			})
+			last_tags = sub_entry.dtgs
+		end
+
+		return templater.render(cfg.def_template, {
+			tag_list = {data = tag_list},
+			num = {
+				data = i,
+				transform = function(num) return format_number(num, cfg.digits) end
+			},
+			keywords = {
+				data = sub_entry.defs,
+				sep = "; "
+			}
+		})
+	end)
+
+	local header = templater.render(cfg.header_template, {
+		readings = {
+			data = reading_strs,
+			sep = "　"
+		}
+	})
+
+	return templater.render(cfg.template, {
+		header = {data = header},
+		definitions = {
+			data = definitions,
+			sep = "<br>\n"
+		}
+	})
 end
