@@ -73,34 +73,37 @@ function templater.render(template, values)
 			if not value then return nil end --TODO error msg
 
 			local data_type = type(value.data)
-			local is_empty_list = data_type == "table" and #value.data == 0
 			local is_map = data_type == "table"
 			               and value.data[1] == nil
 			               and next(value.data) ~= nil
 
-			if value.data and not is_empty_list then
-				if segment.prefix then
-					table.insert(strings, segment.prefix)
+			if data_type ~= "table" or is_map then
+				table.insert(strings, transform_data(value.data, value.transform))
+			elseif data_type == "table" then
+				local include = true
+
+				local list = value.data
+				if segment.from then
+					list = util.list_range(list, segment.from, segment.to)
 				end
 
-				if data_type ~= "table" or is_map then
-					table.insert(strings, transform_data(value.data, value.transform))
-				elseif data_type == "table" then
-					local list = value.data
-					if segment.from then
-						list = util.list_range(list, segment.from, segment.to)
-					end
+				if #list == 0 then
+					include = false
+				elseif value.transform then
+					list = util.list_map(list, value.transform)
+				end
 
-					if value.transform then
-						list = util.list_map(list, value.transform)
+				if include then
+					if segment.prefix then
+						table.insert(strings, segment.prefix)
 					end
 
 					local sep = segment.sep and segment.sep or value.sep
 					table.insert(strings, table.concat(list, sep))
-				end
 
-				if segment.suffix then
-					table.insert(strings, segment.suffix)
+					if segment.suffix then
+						table.insert(strings, segment.suffix)
+					end
 				end
 			end
 		end
