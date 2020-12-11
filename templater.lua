@@ -1,16 +1,13 @@
 local util = require "util"
 
 local function parse_substitution(subs_str)
-	local ident = subs_str:match("^([^%[]+)")
+	local _, ident_start, prefix, suffix = subs_str:find("^([^:]*):([^:]*):")
+	if not ident_start then ident_start = 0 end
+	local ident = subs_str:match("^([^%[]+)", ident_start + 1)
 	local index = subs_str:match("%[(%d+)%]$")
 	local from, to, sep = subs_str:match("%[(%d*):(%d*)%]:?(.*)$")
 
 	if sep == "" then sep = nil end
-
-	if index then
-		local index_num = tonumber(index)
-		return ident, index_num, index_num
-	end
 
 	if from then
 		if from == "" then from = 1
@@ -19,8 +16,15 @@ local function parse_substitution(subs_str)
 		else to = tonumber(to) end
 	end
 
+	if index then
+		local index_num = tonumber(index)
+		from, to = index_num, index_num
+	end
+
 	return {
 		ident = ident,
+		prefix = prefix,
+		suffix = suffix,
 		from = from and from or 1,
 		to = to and to or -1, sep
 	}
@@ -69,23 +73,35 @@ function templater.render(template, values)
 			if not value then return nil end --TODO error msg
 
 			local data_type = type(value.data)
+			local is_empty_list = data_type == "table" and #value.data == 0
 			local is_map = data_type == "table"
 			               and value.data[1] == nil
 			               and next(value.data) ~= nil
-			if data_type ~= "table" or is_map then
-				table.insert(strings, transform_data(value.data, value.transform))
-			elseif data_type == "table" then
-				local list = value.data
-				if segment.from then
-					list = util.list_range(list, segment.from, segment.to)
+
+			if value.data and not is_empty_list then
+				if segment.prefix then
+					table.insert(strings, segment.prefix)
 				end
 
-				if value.transform then
-					list = util.list_map(list, value.transform)
+				if data_type ~= "table" or is_map then
+					table.insert(strings, transform_data(value.data, value.transform))
+				elseif data_type == "table" then
+					local list = value.data
+					if segment.from then
+						list = util.list_range(list, segment.from, segment.to)
+					end
+
+					if value.transform then
+						list = util.list_map(list, value.transform)
+					end
+
+					local sep = segment.sep and segment.sep or value.sep
+					table.insert(strings, table.concat(list, sep))
 				end
 
-				local sep = segment.sep and segment.sep or value.sep
-				table.insert(strings, table.concat(list, sep))
+				if segment.suffix then
+					table.insert(strings, segment.suffix)
+				end
 			end
 		end
 	end
