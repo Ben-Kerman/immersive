@@ -1,5 +1,6 @@
-local util = require "util"
+local config = require "config"
 local templater = require "templater"
+local util = require "util"
 local utf_8 = require "utf_8"
 
 local function get_conf(config)
@@ -9,7 +10,9 @@ local function get_conf(config)
 		header_template = "{{readings[1]}}:{{ (:):readings[2:]}}",
 		tag_template = "<span style=\"font-size: 0.8em\">{{tags}}</span><br>\n",
 		def_template = "{{tag_list}}{{num}}. {{keywords}}",
-		template = "{{header}}<br>\n{{definitions}}"
+		template = "{{header}}<br>\n{{definitions}}",
+		use_single_template = true,
+		single_template = "{{header}} {{keywords}}"
 	}
 
 	local filtered = util.map_filter_keys(config, function(key)
@@ -17,7 +20,11 @@ local function get_conf(config)
 	end)
 
 	for key, val in pairs(filtered) do
-		default[string.sub(key, 8)] = val
+		key_no_prefix = string.sub(key, 8)
+		if type(default[key_no_prefix]) == "boolean" then
+			val = config.convert_bool(val)
+		end
+		default[key_no_prefix] = val
 	end
 
 	return default
@@ -92,7 +99,7 @@ return function(entry, config, tag_map)
 			last_tags = sub_entry.dtgs
 		end
 
-		return templater.render(cfg.def_template, {
+		return {
 			tag_list = {data = tag_list},
 			num = {
 				data = i,
@@ -102,7 +109,7 @@ return function(entry, config, tag_map)
 				data = sub_entry.defs,
 				sep = "; "
 			}
-		})
+		}
 	end)
 
 	local header = templater.render(cfg.header_template, {
@@ -112,11 +119,21 @@ return function(entry, config, tag_map)
 		}
 	})
 
-	return templater.render(cfg.template, {
-		header = {data = header},
-		definitions = {
-			data = definitions,
-			sep = "<br>\n"
-		}
-	})
+	if #definitions == 1 and cfg.collapse_single then
+		return templater.render(cfg.single_template, {
+			header = {data = header},
+			keywords = definitions[1].keywords
+		})
+	else
+		return templater.render(cfg.template, {
+			header = {data = header},
+			definitions = {
+				data = definitions,
+				transform = function(def_data)
+					return templater.render(cfg.def_template, def_data)
+				end,
+				sep = "<br>\n"
+			}
+		})
+	end
 end
