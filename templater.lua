@@ -19,7 +19,11 @@ local function parse_substitution(subs_str)
 		else to = tonumber(to) end
 	end
 
-	return ident, from and from or 1, to and to or -1, sep
+	return {
+		ident = ident,
+		from = from and from or 1,
+		to = to and to or -1, sep
+	}
 end
 
 local function segment_str(str)
@@ -33,10 +37,7 @@ local function segment_str(str)
 		if from > next_from then
 			table.insert(segments, str:sub(next_from, from - 1))
 		end
-		local ident, subs_from, subs_to, subs_sep = parse_substitution(val)
-		table.insert(segments, {
-			ident = ident, from = subs_from, to = subs_to, sep = subs_sep
-		})
+		table.insert(segments, parse_substitution(val))
 
 		next_from = to + 1
 		if next_from >= #str then break end
