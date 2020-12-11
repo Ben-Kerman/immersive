@@ -254,7 +254,7 @@ local function generate_dict_table(config, terms, tags, index, start_index)
 
 			local exporter_id = config.exporter and config.exporter or "default"
 			local exporter = require("dict.yomichan." .. exporter_id)
-			return {word = word, definition = exporter(entry, config)}
+			return {word = word, definition = exporter(entry, config, tags)}
 		end
 	}
 end

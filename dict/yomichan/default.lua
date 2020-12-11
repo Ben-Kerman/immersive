@@ -24,8 +24,23 @@ local function get_conf(config)
 	return default
 end
 
-return function(entry, config)
+local function format_number(num, digit_str)
+	local basic = tostring(num)
+	if not digit_str then return basic end
+
+	local replacements = utf_8.codepoints(digit_str)
+	local digits = utf_8.codepoints(basic)
+	local new_digits = {}
+	for _, digit in ipairs(digits) do
+		table.insert(new_digits, replacements[digit - 47])
+	end
+	local ret = utf_8.string(new_digits)
+	return ret
+end
+
+return function(entry, config, tag_map)
 	local cfg = get_conf(config)
+
 	local lines = {}
 
 	local readings = {}
