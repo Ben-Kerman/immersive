@@ -64,8 +64,8 @@ end
 
 function util.list_map(list, mapper)
 	local res = {}
-	for _, val in ipairs(list) do
-		table.insert(res, mapper(val))
+	for i, val in ipairs(list) do
+		table.insert(res, mapper(val, i))
 	end
 	return res
 end
