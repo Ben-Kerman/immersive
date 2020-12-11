@@ -70,4 +70,12 @@ function config.load_subcfg(name)
 	return config.load(mp.find_config_file(rel_path))
 end
 
+function config.convert_bool(str)
+	if str == "yes" or str == "true" then
+		return true
+	elseif str == "no" or str == "false" then
+		return false
+	else return nil end
+end
+
 return config
