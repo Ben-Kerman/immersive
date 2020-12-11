@@ -4,9 +4,9 @@ local utf_8 = require "utf_8"
 
 local function get_conf(config)
 	local default = {
-		reading_template = "{{reading}}【{{variants}}】",
 		digits = nil,
-		header_template = "{{readings[1]}}:{{readings[2:]}}",
+		reading_template = "{{reading}}{{【:】:variants}}",
+		header_template = "{{readings[1]}}:{{ (:):readings[2:]}}",
 		tag_template = "<span style=\"font-size: 0.8em\">{{tags}}</span><br>\n",
 		def_template = "{{tag_list}}{{num}}. {{keywords}}",
 		template = "{{header}}<br>\n{{definitions}}"
@@ -39,8 +39,6 @@ end
 
 return function(entry, config, tag_map)
 	local cfg = get_conf(config)
-
-	local lines = {}
 
 	local readings = {}
 	for _, sub_entry in ipairs(entry) do
