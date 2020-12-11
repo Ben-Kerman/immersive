@@ -4,7 +4,6 @@ local function parse_substitution(subs_str)
 	local ident = subs_str:match("^([^%[]+)")
 	local index = subs_str:match("%[(%d+)%]$")
 	local from, to, sep = subs_str:match("%[(%d*):(%d*)%]:?(.*)$")
-	print(subs_str, ident, index, from, to, sep)
 
 	if sep == "" then sep = nil end
 
@@ -51,7 +50,7 @@ local function segment_str(str)
 end
 
 local function transform_data(data, transform)
-	return transform and value.transform(data) or data
+	return transform and transform(data) or data
 end
 
 local templater = {}
@@ -61,7 +60,6 @@ function templater.render(template, values)
 
 	local strings = {}
 	for _, segment in ipairs(segments) do
-		print(require("mp.utils").format_json(segment))
 		local seg_type = type(segment)
 		if seg_type == "string" then
 			table.insert(strings, segment)
@@ -70,7 +68,10 @@ function templater.render(template, values)
 			if not value then return nil end --TODO error msg
 
 			local data_type = type(value.data)
-			if data_type == "string" or data_type == "table" and not value.data[1] then
+			local is_map = data_type == "table"
+			               and value.data[1] == nil
+			               and next(value.data) ~= nil
+			if data_type ~= "table" or is_map then
 				table.insert(strings, transform_data(value.data, value.transform))
 			elseif data_type == "table" then
 				local list = value.data
