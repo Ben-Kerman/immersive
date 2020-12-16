@@ -23,17 +23,17 @@ local base_defaults = (function()
 	local shad_size = p.num("osd-shadow-offset")
 
 	return {
-		align = nil,
+		align = 5,
 		bold = p.bool("osd-bold"),
 		italic = p.bool("osd-italic"),
 		underline = false,
 		strikeout = false,
 		border = bord_size,
-		border_x = nil,
-		border_y = nil,
+		border_x = bord_size,
+		border_y = bord_size,
 		shadow = shad_size,
-		shadow_x = nil,
-		shadow_y = nil,
+		shadow_x = shad_size,
+		shadow_y = shad_size,
 		blur = p.num("osd-blur"),
 		font_name = p.str("osd-font"),
 		font_size = p.num("osd-font-size"),
@@ -42,7 +42,7 @@ local base_defaults = (function()
 		secondary_color = "808080",
 		border_color = bord_col,
 		shadow_color = shad_col,
-		all_alpha = nil,
+		all_alpha = "FF",
 		primary_alpha = text_alpha,
 		secondary_alpha = "00",
 		border_alpha = bord_alpha,
@@ -80,11 +80,11 @@ local basic_tags = {
 	{id = "underline", tag = "u"},
 	{id = "strikeout", tag = "s"},
 	{id = "border", tag = "bord"},
-	{id = "border_x", tag = "xbord"},
-	{id = "border_y", tag = "ybord"},
+	{id = "border_x", tag = "xbord", explicit = true},
+	{id = "border_y", tag = "ybord", explicit = true},
 	{id = "shadow", tag = "shad"},
-	{id = "shadow_x", tag = "xshad"},
-	{id = "shadow_y", tag = "yshad"},
+	{id = "shadow_x", tag = "xshad", explicit = true},
+	{id = "shadow_y", tag = "yshad", explicit = true},
 	{id = "blur", tag = "blur"},
 	{id = "font_name", tag = "fn"},
 	{id = "font_size", tag = "fs"},
@@ -99,7 +99,7 @@ local color_tags = {
 }
 
 local alpha_tags = {
-	{id = "all_alpha", tag = "alpha"},
+	{id = "all_alpha", tag = "alpha", explicit = true},
 	{id = "primary_alpha", tag = "1a"},
 	{id = "secondary_alpha", tag = "2a"},
 	{id = "border_alpha", tag = "3a"},
@@ -141,7 +141,7 @@ function ssa.generate_style(values, closing, partial, custom_defaults)
 		for _, tag in ipairs(tags) do
 			if values[tag.id] ~= nil then
 				insert_tag(style_str, tag.tag, values[tag.id], hex, closing, defaults[tag.id])
-			elseif not partial and defaults[tag.id] ~= nil then
+			elseif not partial and not tag.explicit and defaults[tag.id] ~= nil then
 				insert_tag(style_str, tag.tag, defaults[tag.id], hex)
 			end
 		end
