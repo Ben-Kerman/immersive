@@ -10,6 +10,22 @@ local config = {
 local mp_opts = require "mp.options"
 mp_opts.read_options(config.values)
 
+function config.load_basic(path)
+	local result = {}
+
+	for line in io.lines(path) do
+		local trimmed = util.string_trim(line, "start")
+		if #trimmed ~= 0 and not util.string_starts(trimmed, "#") then
+			local key, value = trimmed:match("^([^=]+)=(.*)$")
+			if key then result[key] = value
+			else
+				-- TODO handle error
+			end
+		end
+	end
+	return result
+end
+
 function config.load(path)
 	local stat_res = mputil.file_info(path)
 	if not stat_res or not stat_res.is_file then
@@ -65,9 +81,10 @@ function config.load(path)
 	return result
 end
 
-function config.load_subcfg(name)
+function config.load_subcfg(name, basic)
 	local rel_path = string.format("script-opts/%s-%s.conf", mp.get_script_name(), name)
-	return config.load(mp.find_config_file(rel_path))
+	local loader = basic and config.load_basic or config.load
+	return loader(mp.find_config_file(rel_path))
 end
 
 function config.convert_bool(str)
