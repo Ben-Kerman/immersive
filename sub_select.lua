@@ -3,8 +3,9 @@ require "menu"
 require "selection_overlay"
 require "subtitle"
 local util = require "util"
+local target_select = require "target_select"
 
-local pack_data, finish
+local pack_data
 local menu, sel_overlay
 local reset
 local set_scrot, set_start, set_stop
@@ -57,11 +58,14 @@ reset = function()
 	set_stop()
 end
 
-local function finish_word_sel()
-	menu:disable()
-	-- TODO
+local function finish()
+	local data = pack_data()
+	cancel()
+	return data
 end
-
+local function finish_tgt_sel()
+	target_select.begin(finish())
+end
 local function finish_export()
 	export.execute(finish())
 end
@@ -75,7 +79,7 @@ local bindings = {
 	{key = "a", desc = "Select current line", action = select_sub},
 	{key = "A", desc = "Toggle automatic selection", action = toggle_auto_select},
 	{key = "k", desc = "Reset selection", action = reset},
-	{key = "d", desc = "End selection and enter edit mode", action = finish_word_sel},
+	{key = "d", desc = "End selection and enter edit mode", action = finish_tgt_sel},
 	{key = "f", desc = "End selection and export immediately", action = finish_export},
 	{key = "ESC", desc = "Cancel selection", action = cancel},
 }
@@ -114,11 +118,6 @@ pack_data = function()
 			stop = stop.value
 		}
 	}
-end
-
-finish = function()
-	cancel()
-	return pack_data()
 end
 
 menu = Menu:new{infos = infos, bindings = bindings}
