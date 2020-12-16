@@ -2,7 +2,7 @@ local helper = require "helper"
 local ssa = require "ssa"
 
 local function default_sel_renderer(line)
-	return ssa.enclose_text(ssa.get_defaults{"line_select", "selection"}, line, ssa.get_defaults{"line_select", "base"})
+	return ssa.format(ssa.get{"line_select", "selection"}, line, ssa.get{"line_select", "base"})
 end
 
 local function default_renderer(line)
@@ -48,9 +48,11 @@ function LineSelect:finish()
 	return self.lines[self.active]
 end
 
+local unselected_style = ssa.generate({"line_select", "base"}, nil, true)
+local selected_style = ssa.generate({"line_select", "selection"}, {"line_select", "base"}, true)
 function LineSelect:update()
 	if self.update_handler then self.update_handler(self.lines[self.active]) end
-	
+
 	local first, last
 	if not self.limit or self.limit >= #self.lines then
 		first, last = 1, #self.lines
@@ -68,19 +70,26 @@ function LineSelect:update()
 		end
 	end
 
-	local rendered_lines = {ssa.load_style{"line_select", "base"}}
-	if first ~= 1 then table.insert(rendered_lines, "...") end
+	local rendered_text = {unselected_style}
+	if first ~= 1 then table.insert(rendered_text, "...") end
 
 	for i, line in ipairs(self.lines) do
 		if first <= i and i <= last then
-			local renderer = i == self.active and self.sel_renderer or self.renderer
-			table.insert(rendered_lines, renderer(line))
+			local active = i == self.active
+			local renderer = active and self.sel_renderer or self.renderer
+			table.insert(rendered_text, "\\N")
+			if active then table.insert(rendered_text, selected_style) end
+			table.insert(rendered_text, renderer(line))
+			if active then table.insert(rendered_text, unselected_style) end
 		end
 		if i == last then break end
 	end
 
-	if last ~= #self.lines then table.insert(rendered_lines, "...") end
+	if last ~= #self.lines then
+		table.insert(rendered_text, "\\N")
+		table.insert(rendered_text, "...")
+	end
 
-	self._overlay.data = table.concat(rendered_lines, "\\N")
+	self._overlay.data = table.concat(rendered_text)
 	self._overlay:update()
 end

@@ -1,3 +1,4 @@
+local ssa = require "ssa"
 require "line_select"
 require "text_select"
 
@@ -12,9 +13,9 @@ function LineTextSelect:new(lines, sel_converter, renderer, limit)
 			lts.active_line = line
 			if lts._text_select then lts._text_select:finish() end
 			lts._text_select = TextSelect:new(sel_converter(line), function(has_sel, curs_index, segments)
-				lts.sel_ssa = TextSelect.base_update_handler(has_sel, curs_index, segments)
+				lts.sel_ssa = lts._text_select:base_update_handler(has_sel, curs_index, segments)
 				lts._line_select:update()
-			end)
+			end, ssa.get_full({"line_select", "base"}, {"line_select", "selection"}))
 			lts._text_select:start()
 		end
 	end

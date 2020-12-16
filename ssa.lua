@@ -52,22 +52,23 @@ end)()
 
 local config_defaults = (function()
 	local base = {
+		base = util.map_merge(base_defaults),
 		menu_help = {
-			base = util.map_merge(base_defaults, {align = 7}),
+			base = {align = 7},
 			key = {bold = true},
 			help = {italic = true}
 		},
 		menu_info = {
-			base = util.map_merge(base_defaults, {align = 1}),
+			base = {align = 1},
 			key = {bold = true},
 			unset = {italic = true}
 		},
 		line_select = {
-			base = util.map_merge(base_defaults),
+			base = {},
 			selection = {bold = true}
 		},
 		text_select = {
-			base = util.map_merge(base_defaults),
+			base = {},
 			selection = {underline = true}
 		}
 	}
@@ -136,16 +137,37 @@ end
 
 local ssa = {}
 
-function ssa.generate_style(values, closing, partial, custom_defaults)
-	if not values then values = {} end
-	local defaults = util.map_merge(base_defaults, custom_defaults)
+function ssa.get(path)
+	if not path then return config_defaults.base end
+	return cfg.get_nested(config_defaults, path)
+end
+
+function ssa.get_full(...)
+	local paths = {...}
+	local res = ssa.get()
+	for _, path in ipairs(paths) do
+		res = util.map_merge(res, ssa.get(path))
+	end
+	return res
+end
+
+function ssa.generate(values_path, default_values_path, full, closing)
+	local values
+	if values_path[1] then
+		values = ssa.get(values_path)
+	else values = values_path end
+	local partial_defaults
+	if default_values_path and default_values_path[1] then
+		partial_defaults = ssa.get(default_values_path)
+	else partial_defaults = default_values_path end
+	local defaults = util.map_merge(config_defaults.base, partial_defaults)
 
 	local style_str = {"{"}
 	local function insert_tags(tags, hex)
 		for _, tag in ipairs(tags) do
 			if values[tag.id] ~= nil then
 				insert_tag(style_str, tag.tag, values[tag.id], hex, closing, defaults[tag.id])
-			elseif not partial and not tag.explicit and defaults[tag.id] ~= nil then
+			elseif full and not tag.explicit and defaults[tag.id] ~= nil then
 				insert_tag(style_str, tag.tag, defaults[tag.id], hex)
 			end
 		end
@@ -160,19 +182,10 @@ function ssa.generate_style(values, closing, partial, custom_defaults)
 	return table.concat(style_str)
 end
 
-function ssa.enclose_text(text, values, partial, custom_defaults)
-	local before = ssa.generate_style(values, false, partial, custom_defaults)
-	local after = ssa.generate_style(values, true, partial, custom_defaults)
+function ssa.format(text, values_path, default_values_path, full)
+	local before = ssa.generate(values_path, default_values_path, full, false)
+	local after = ssa.generate(values_path, default_values_path, full, true)
 	return string.format("%s%s%s", before, text, after)
-end
-
-function ssa.get_defaults(path)
-	if not path then return base_defaults end
-	return cfg.get_nested(config_defaults, path)
-end
-
-function ssa.load_style(path, closing, custom_defaults)
-	return ssa.generate_style(ssa.get_defaults(path), closing, true, custom_defaults)
 end
 
 return ssa

@@ -14,26 +14,26 @@ end
 TextSelect = {}
 TextSelect.__index = TextSelect
 
-function TextSelect.base_update_handler(has_sel, curs_index, segments)
+function TextSelect:base_update_handler(has_sel, curs_index, segments)
 	if has_sel then
-		table.insert(segments, 2, ssa.load_style{"text_select", "selection"})
-		table.insert(segments, 4, ssa.load_style{"text_select", "base"})
+		table.insert(segments, 2, ssa.generate({"text_select", "selection"}, self.base_style))
+		table.insert(segments, 4, ssa.generate({"text_select", "selection"}, self.base_style, false, true))
 	end
 
 	if curs_index < 0 then
 		curs_index = #segments + curs_index + 1
 	end
-	table.insert(segments, curs_index, TextSelect.default_cursor(mp.get_property_number("osd-font-size")))
+	table.insert(segments, curs_index, TextSelect.cursor(self.base_style))
 
-	table.insert(segments, 1, ssa.load_style{"text_select", "base"})
+	table.insert(segments, 1, ssa.generate(self.base_style, nil, true))
 
-	return table.concat(segments)
+	return table.concat(segments):gsub("\n", "\\N")
 end
 
-function TextSelect.default_cursor(font_size)
-	local curs_size = ssa.get_defaults({"text_select", "base"}).font_size * 8
+function TextSelect.cursor(style_data)
+	local curs_size = style_data.font_size * 8
 	local pbo = curs_size / 6
-	local curs_style = ssa.generate_style{
+	local curs_style = ssa.generate({
 		bold = false,
 		italic = false,
 		underline = false,
@@ -49,8 +49,8 @@ function TextSelect.default_cursor(font_size)
 		primary_alpha = "00",
 		border_alpha = "00",
 		shadow_alpha = "00"
-	}
-	local default_style = ssa.load_style{"text_select", "base"}
+	}, style_data, true)
+	local default_style = ssa.generate(style_data, nil, true)
 	return string.format("%s{\\p4\\pbo%d}m 0 0 l 1 0 l 1 %d l 0 %d{\\p0}%s", curs_style, pbo, curs_size, curs_size, default_style)
 end
 
@@ -171,13 +171,15 @@ function TextSelect:finish(force_sel)
 	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
 end
 
-function TextSelect:new(text, update_handler, init_cursor_pos)
+function TextSelect:new(text, update_handler, base_style, init_cursor_pos)
+	if not base_style then base_style = ssa.get_full{"text_select", "base"} end
 	local ts
 	ts = {
 		cdpts = utf_8.codepoints(text),
 		curs_pos = init_cursor_pos and init_cursor_pos or 1,
 		sel = {from = 0, to = 0},
 		update_handler = update_handler and update_handler or default_update_handler,
+		base_style = base_style,
 		bindings = {
 			{key = "LEFT", action = function() ts:move_curs(-1) end, repeatable = true},
 			{key = "RIGHT", action = function() ts:move_curs(1) end, repeatable = true},

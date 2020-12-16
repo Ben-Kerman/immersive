@@ -42,7 +42,7 @@ local function select_target_def(prefix)
 	if def_sel then
 		local def = def_sel:finish()
 		table.insert(target_words, dicts[lookup_result.dict_index].get_definition(def.id))
-		lookup_result = nil
+		lookup_result, def_sel = nil
 		start_tgt_sel()
 	else
 		local selection = tgt_word_sel:finish(true)

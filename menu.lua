@@ -31,32 +31,36 @@ function Menu:disable()
 	self:redraw()
 end
 
-local function enclose(str, cat, id)
-	return ssa.enclose_text(str, ssa.get_defaults{cat, id}, ssa.get_defaults{cat, "base"})
+local function ssa_format(str, cat, id)
+	return ssa.format(str, ssa.get{cat, id}, ssa.get{cat, "base"})
 end
-local help_hint_off = enclose(string.format("Press %s to show key bindings", enclose("h", "menu_help", "key")), "menu_help", "help")
-local help_hint_on = enclose(string.format("Key Bindings (%s to hide)", enclose("h", "menu_help", "key")), "menu_help", "help")
+local help_hint_off = ssa_format(string.format("Press %s to show key bindings", ssa_format("h", "menu_help", "key")), "menu_help", "help")
+local help_hint_on = ssa_format(string.format("Key Bindings (%s to hide)", ssa_format("h", "menu_help", "key")), "menu_help", "help")
 
 function Menu:redraw()
 	if self.enabled then
 		local ssa_lines = {}
 
 		if self.data.bindings then
-			local binding_lines = {ssa.load_style{"menu_help", "base"}, ""}
+			local binding_lines = {
+				string.format("{\\fs%d}\\N%s",
+				              mp.get_property_number("osd-font-size"),
+				              ssa.generate({"menu_help", "base"}, nil, true))
+			}
 			if self.show_bindings then
 				table.insert(binding_lines, help_hint_on)
 				for _, binding in ipairs(self.data.bindings) do
-					table.insert(binding_lines, string.format([[\h\h\h%s: %s]], enclose(binding.key, "menu_help", "key"), binding.desc))
+					table.insert(binding_lines, string.format([[\h\h\h%s: %s]], ssa_format(binding.key, "menu_help", "key"), binding.desc))
 				end
 			else table.insert(binding_lines, help_hint_off) end
 			table.insert(ssa_lines, table.concat(binding_lines, "\\N"))
 		end
 
-		local info_lines = {ssa.load_style{"menu_info", "base"}}
+		local info_lines = {ssa.generate({"menu_info", "base"}, nil, true)}
 		if self.data.infos then
 			for _, info in ipairs(self.data.infos) do
 				local display = info.display and info.display(info.value) or info.value
-				table.insert(info_lines, string.format([[%s: %s]], enclose(info.name, "menu_info", "key"), display))
+				table.insert(info_lines, string.format([[%s: %s]], ssa_format(info.name, "menu_info", "key"), display))
 			end
 			if not self.show_bindings then table.insert(ssa_lines, table.concat(info_lines, "\\N")) end
 		end
