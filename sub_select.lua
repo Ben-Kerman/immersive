@@ -4,7 +4,7 @@ require "selection_overlay"
 require "subtitle"
 local util = require "util"
 
-local finish
+local pack_data, finish
 local menu, sel_overlay
 local reset
 local set_scrot, set_start, set_stop
@@ -105,17 +105,20 @@ set_scrot = function(value) set_time(scrot, value) end
 set_start = function(value) set_time(start, value) end
 set_stop = function(value) set_time(stop, value) end
 
-finish = function()
-	local selection = selection
-	local times = {
-		scrot = scrot.value < 0 and mp.get_property_number("time-pos") or scrot.value,
-		start = start.value < 0 and selection[1].start or start.value,
-		stop = stop.value < 0 and util.list_max(selection, function(a, b)
-			return a.stop < b.stop
-		end).stop or stop.value
+pack_data = function()
+	return {
+		subtitles = selection,
+		times = {
+			scrot = scrot.value,
+			start = start.value,
+			stop = stop.value
+		}
 	}
+end
+
+finish = function()
 	cancel()
-	return util.list_map(selection, function(sub) return sub.text end), times
+	return pack_data()
 end
 
 menu = Menu:new{infos = infos, bindings = bindings}

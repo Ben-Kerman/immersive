@@ -7,13 +7,13 @@ require "text_select"
 
 local tgt_word_sel
 local lookup_result, def_sel
-local sub_selection, timestamps
+local data
 local target_words = {}
 
 local function sel_converter(sub) return sub.text end
 local function line_renderer(sub) return sub:short() end
 local function start_tgt_sel()
-	tgt_word_sel = LineTextSelect:new(sub_selection, sel_converter, line_renderer, 9)
+	tgt_word_sel = LineTextSelect:new(data.subtitles, sel_converter, line_renderer, 9)
 	tgt_word_sel:start()
 end
 
@@ -42,6 +42,7 @@ local function select_target_def(prefix)
 	if def_sel then
 		local def = def_sel:finish()
 		table.insert(target_words, dicts[lookup_result.dict_index].get_definition(def.id))
+		lookup_result = nil
 		start_tgt_sel()
 	else
 		local selection = tgt_word_sel:finish(true)
@@ -74,9 +75,9 @@ local menu = Menu:new{bindings = bindings}
 
 local target_select = {}
 
-function target_select.begin(sub_sel, times)
+function target_select.begin(prev_data)
 	target_words = {}
-	sub_selection, timestamps = sub_sel, times
+	data = prev_data
 	start_tgt_sel()
 	menu:enable()
 end
