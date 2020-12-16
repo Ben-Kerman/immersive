@@ -104,6 +104,19 @@ function util.map_map(map, mapper)
 	return res
 end
 
+function util.map_merge(target, source)
+	local res = {}
+	for key, val in pairs(target) do
+		res[key] = val
+	end
+	if source then
+		for key, val in pairs(source) do
+			res[key] = val
+		end
+	end
+	return res
+end
+
 function util.string_starts(str, prefix)
 	return str:find(prefix, 1, true) == 1
 end
