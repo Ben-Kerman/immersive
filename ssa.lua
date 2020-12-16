@@ -62,7 +62,7 @@ local config_defaults = (function()
 			base = util.map_merge(base_defaults),
 			selection = {bold = true}
 		},
-		word_select = {
+		text_select = {
 			base = util.map_merge(base_defaults),
 			selection = {underline = true}
 		}
@@ -154,6 +154,15 @@ function ssa.generate_style(values, closing, partial, custom_defaults)
 	table.insert(style_str, "}")
 
 	return table.concat(style_str)
+end
+
+function ssa.get_defaults(path)
+	if not path then return base_defaults end
+	return cfg.get_nested(config_defaults, path)
+end
+
+function ssa.load_style(path, closing, custom_defaults)
+	return ssa.generate_style(ssa.get_defaults(path), closing, true, custom_defaults)
 end
 
 return ssa
