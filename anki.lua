@@ -63,17 +63,7 @@ for _, raw_tgt_cfg in ipairs(raw_tgt_cfgs) do
 		elseif key == "anki/tags" then
 			tgt_cfg.anki.tags = util.string_split(value)
 		else
-			local components = util.string_split(key, "/")
-			local entry = tgt_cfg
-			for i, comp in ipairs(components) do
-				if not entry[comp] then
-					-- TODO handle error
-				elseif i ~= #components then entry = entry[comp] end
-			end
-
-			local old_val = entry[components[#components]]
-			local new_val = type(old_val) == "number" and tonumber(value) or value
-			entry[components[#components]] = new_val
+			cfg.insert_nested(tgt_cfg, util.string_split(key, "/"), value, true)
 		end
 	end
 end

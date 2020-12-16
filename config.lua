@@ -78,4 +78,35 @@ function config.convert_bool(str)
 	else return nil end
 end
 
+function config.convert_type(old_val, new_val)
+	local old_type = type(old_val)
+	if old_type == "number" then
+		return tonumber(new_val)
+	elseif old_type == "boolean" then
+		return config.convert_bool(new_val)
+	else return new_val end
+end
+
+function config.insert_nested(target, path, value, strict)
+	for i, comp in ipairs(path) do
+		if target[comp] == nil then
+			if strict then
+				-- TODO handle error
+			else target[comp] = {} end
+		elseif type(target[comp]) ~= "table" then
+			-- TODO handle error
+		end
+		if i ~= #path then target = target[comp] end
+	end
+	target[path[#path]] = config.convert_type(target[path[#path]], value)
+end
+
+function config.get_nested(target, path)
+	for i, comp in ipairs(path) do
+		if target[comp] == nil then return nil
+		else target = target[comp] end
+	end
+	return target
+end
+
 return config
