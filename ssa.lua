@@ -27,11 +27,11 @@ local base_defaults = (function()
 		underline = false,
 		strikeout = false,
 		border = bord_size,
-		border_x = bord_size,
-		border_y = bord_size,
+		border_x = nil,
+		border_y = nil,
 		shadow = shad_size,
-		shadow_x = shad_size,
-		shadow_y = shad_size,
+		shadow_x = nil,
+		shadow_y = nil,
 		blur = p.num("osd-blur"),
 		font_name = p.str("osd-font"),
 		font_size = p.num("osd-font-size"),
@@ -40,6 +40,7 @@ local base_defaults = (function()
 		secondary_color = "808080",
 		border_color = bord_col,
 		shadow_color = shad_col,
+		all_alpha = nil,
 		primary_alpha = text_alpha,
 		secondary_alpha = "00",
 		border_alpha = bord_alpha,
@@ -80,12 +81,12 @@ local alpha_tags = {
 }
 
 local function insert_tag(list, tag, value, hex, closing, default)
-	table.insert(list, "\\")
-	table.insert(list, tag)
-	if hex then table.insert(list, "&H") end
+	if value == nil then return end
 
 	local base_value
-	if closing then base_value = default
+	if closing then
+		if default == nil then return
+		else base_value = default end
 	else base_value = value end
 
 	local insert_value
@@ -96,6 +97,9 @@ local function insert_tag(list, tag, value, hex, closing, default)
 		insert_value = tostring(base_value)
 	else insert_value = base_value end
 
+	table.insert(list, "\\")
+	table.insert(list, tag)
+	if hex then table.insert(list, "&H") end
 	table.insert(list, insert_value)
 	if hex then table.insert(list, "&") end
 end
