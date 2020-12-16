@@ -39,24 +39,29 @@ local help_hint_on = enclose(string.format("Key Bindings (%s to hide)", enclose(
 
 function Menu:redraw()
 	if self.enabled then
-		local info_lines = {ssa.load_style{"menu_info", "base"}}
-		for _, info in ipairs(self.data.infos) do
-			local display = info.display and info.display(info.value) or info.value
-			table.insert(info_lines, string.format([[%s: %s]], enclose(info.name, "menu_info", "key"), display))
+		local ssa_lines = {}
+
+		if self.data.bindings then
+			local binding_lines = {ssa.load_style{"menu_help", "base"}, ""}
+			if self.show_bindings then
+				table.insert(binding_lines, help_hint_on)
+				for _, binding in ipairs(self.data.bindings) do
+					table.insert(binding_lines, string.format([[\h\h\h%s: %s]], enclose(binding.key, "menu_help", "key"), binding.desc))
+				end
+			else table.insert(binding_lines, help_hint_off) end
+			table.insert(ssa_lines, table.concat(binding_lines, "\\N"))
 		end
 
-		local binding_lines = {ssa.load_style{"menu_help", "base"}, ""}
-		if self.show_bindings then
-			table.insert(binding_lines, help_hint_on)
-			for _, binding in ipairs(self.data.bindings) do
-				table.insert(binding_lines, string.format([[\h\h\h%s: %s]], enclose(binding.key, "menu_help", "key"), binding.desc))
+		local info_lines = {ssa.load_style{"menu_info", "base"}}
+		if self.data.infos then
+			for _, info in ipairs(self.data.infos) do
+				local display = info.display and info.display(info.value) or info.value
+				table.insert(info_lines, string.format([[%s: %s]], enclose(info.name, "menu_info", "key"), display))
 			end
-		else table.insert(binding_lines, help_hint_off) end
+			if not self.show_bindings then table.insert(ssa_lines, table.concat(info_lines, "\\N")) end
+		end
 
-		self._overlay.data = table.concat({
-			table.concat(binding_lines, "\\N"),
-			not self.show_bindings and table.concat(info_lines, "\\N") or nil
-		}, "\n")
+		self._overlay.data = table.concat(ssa_lines, "\n")
 		self._overlay:update()
 	else self._overlay:remove() end
 end
