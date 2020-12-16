@@ -1,7 +1,8 @@
 local helper = require "helper"
+local ssa = require "ssa"
 
 local function default_sel_renderer(line)
-	return "{\\b1}" .. line .. "{\\b0}"
+	return ssa.enclose_text(ssa.get_defaults{"line_select", "selection"}, line, ssa.get_defaults{"line_select", "base"})
 end
 
 local function default_renderer(line)
@@ -67,7 +68,7 @@ function LineSelect:update()
 		end
 	end
 
-	local rendered_lines = {"{\\an5}"}
+	local rendered_lines = {ssa.load_style{"line_select", "base"}}
 	if first ~= 1 then table.insert(rendered_lines, "...") end
 
 	for i, line in ipairs(self.lines) do

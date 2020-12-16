@@ -1,7 +1,8 @@
 local helper = require "helper"
+local mputil = require "mp.utils"
+local ssa = require "ssa"
 local utf_8 = require "utf_8"
 local util = require "util"
-local mputil = require "mp.utils"
 
 local overlay = mp.create_osd_overlay("ass-events")
 
@@ -15,8 +16,8 @@ TextSelect.__index = TextSelect
 
 function TextSelect.base_update_handler(has_sel, curs_index, segments)
 	if has_sel then
-		table.insert(segments, 2, "{\\u1}")
-		table.insert(segments, 4, "{\\u0}")
+		table.insert(segments, 2, ssa.load_style{"text_select", "selection"})
+		table.insert(segments, 4, ssa.load_style{"text_select", "base"})
 	end
 
 	if curs_index < 0 then
@@ -24,17 +25,33 @@ function TextSelect.base_update_handler(has_sel, curs_index, segments)
 	end
 	table.insert(segments, curs_index, TextSelect.default_cursor(mp.get_property_number("osd-font-size")))
 
-	table.insert(segments, 1, "{\\an5}")
+	table.insert(segments, 1, ssa.load_style{"text_select", "base"})
 
 	return table.concat(segments)
 end
 
 function TextSelect.default_cursor(font_size)
-	local curs_size = font_size * 8
+	local curs_size = ssa.get_defaults({"text_select", "base"}).font_size * 8
 	local pbo = curs_size / 6
-	local curs_style =
-		[[\r\1a&H00&\3a&H00&\4a&H00&\1c&Hffffff&\3c&Hffffff&\4c&H000000&\xbord0.75\ybord0\xshad1.5\yshad0]]
-	return string.format("{%s\\p4\\pbo%d}m 0 0 l 1 0 l 1 %d l 0 %d{\\p0\\r}", curs_style, pbo, curs_size, curs_size)
+	local curs_style = ssa.generate_style{
+		bold = false,
+		italic = false,
+		underline = false,
+		strikeout = false,
+		border_x = 0.75,
+		border_y = 0,
+		shadow_x = 1.5,
+		shadow_y = 0,
+		blur = 0,
+		primary_color = "FFFFFF",
+		border_color = "FFFFFF",
+		shadow_color = "000000",
+		primary_alpha = "00",
+		border_alpha = "00",
+		shadow_alpha = "00"
+	}
+	local default_style = ssa.load_style{"text_select", "base"}
+	return string.format("%s{\\p4\\pbo%d}m 0 0 l 1 0 l 1 %d l 0 %d{\\p0}%s", curs_style, pbo, curs_size, curs_size, default_style)
 end
 
 function TextSelect:sel_len()

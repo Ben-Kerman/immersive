@@ -52,11 +52,15 @@ end)()
 
 local config_defaults = (function()
 	local base = {
-		menu = {
-			base = util.map_merge(base_defaults),
+		menu_help = {
+			base = util.map_merge(base_defaults, {align = 7}),
 			key = {bold = true},
-			unset = {italic = true},
 			help = {italic = true}
+		},
+		menu_info = {
+			base = util.map_merge(base_defaults, {align = 1}),
+			key = {bold = true},
+			unset = {italic = true}
 		},
 		line_select = {
 			base = util.map_merge(base_defaults),
@@ -154,6 +158,12 @@ function ssa.generate_style(values, closing, partial, custom_defaults)
 	table.insert(style_str, "}")
 
 	return table.concat(style_str)
+end
+
+function ssa.enclose_text(text, values, partial, custom_defaults)
+	local before = ssa.generate_style(values, false, partial, custom_defaults)
+	local after = ssa.generate_style(values, true, partial, custom_defaults)
+	return string.format("%s%s%s", before, text, after)
 end
 
 function ssa.get_defaults(path)
