@@ -8,18 +8,18 @@ local base_defaults = (function()
 	}
 
 	local function convert_mpv_color(str)
-		local alpha = str:sub(2, 3)
+		local alpha = 0xff - tonumber(str:sub(2, 3), 16)
 		local red = str:sub(4, 5)
 		local green = str:sub(6, 7)
 		local blue = str:sub(8, 9)
-		return string.format("%s%s%s", blue, green, red), alpha
+		return string.format("%s%s%s", blue, green, red), string.format("%02X", alpha)
 	end
 
 	local text_col, text_alpha = convert_mpv_color(p.str("osd-color"))
 	local bord_col, bord_alpha = convert_mpv_color(p.str("osd-border-color"))
 	local shad_col, shad_alpha = convert_mpv_color(p.str("osd-shadow-color"))
 	local bord_size = p.num("osd-border-size")
-	local shad_size = p.num("osd-shadow-size")
+	local shad_size = p.num("osd-shadow-offset")
 
 	return {
 		bold = p.bool("osd-bold"),
