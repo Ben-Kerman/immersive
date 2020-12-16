@@ -1,4 +1,5 @@
-local util = require("util")
+local cfg = require "config"
+local util = require "util"
 
 local base_defaults = (function()
 	local p = {
@@ -47,6 +48,29 @@ local base_defaults = (function()
 		border_alpha = bord_alpha,
 		shadow_alpha = shad_alpha
 	}
+end)()
+
+local config_defaults = (function()
+	local base = {
+		menu = {
+			base = util.map_merge(base_defaults),
+			key = {bold = true},
+			unset = {italic = true},
+			help = {italic = true}
+		},
+		line_select = {
+			base = util.map_merge(base_defaults),
+			selection = {bold = true}
+		},
+		word_select = {
+			base = util.map_merge(base_defaults),
+			selection = {underline = true}
+		}
+	}
+	for key, value in pairs(cfg.load_subcfg("style", true)) do
+		cfg.insert_nested(base, util.string_split(key, "/"), value)
+	end
+	return base
 end)()
 
 local basic_tags = {
