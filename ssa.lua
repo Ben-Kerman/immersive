@@ -22,6 +22,7 @@ local base_defaults = (function()
 	local shad_size = p.num("osd-shadow-offset")
 
 	return {
+		align = nil,
 		bold = p.bool("osd-bold"),
 		italic = p.bool("osd-italic"),
 		underline = false,
@@ -44,11 +45,12 @@ local base_defaults = (function()
 		primary_alpha = text_alpha,
 		secondary_alpha = "00",
 		border_alpha = bord_alpha,
-		shadow_alpha = shad_alpha,
+		shadow_alpha = shad_alpha
 	}
 end)()
 
 local basic_tags = {
+	{id = "align", tag = "an"},
 	{id = "bold", tag = "b"},
 	{id = "italic", tag = "i"},
 	{id = "underline", tag = "u"},
@@ -62,7 +64,7 @@ local basic_tags = {
 	{id = "blur", tag = "blur"},
 	{id = "font_name", tag = "fn"},
 	{id = "font_size", tag = "fs"},
-	{id = "letter_spacing", tag = "fsp"},
+	{id = "letter_spacing", tag = "fsp"}
 }
 
 local color_tags = {
@@ -106,7 +108,7 @@ end
 
 local ssa = {}
 
-function ssa.generate_style(values, closing, custom_defaults)
+function ssa.generate_style(values, closing, partial, custom_defaults)
 	if not values then values = {} end
 	local defaults = util.map_merge(base_defaults, custom_defaults)
 
@@ -115,7 +117,7 @@ function ssa.generate_style(values, closing, custom_defaults)
 		for _, tag in ipairs(tags) do
 			if values[tag.id] ~= nil then
 				insert_tag(style_str, tag.tag, values[tag.id], hex, closing, defaults[tag.id])
-			elseif defaults[tag.id] ~= nil then
+			elseif not partial and defaults[tag.id] ~= nil then
 				insert_tag(style_str, tag.tag, defaults[tag.id], hex)
 			end
 		end
