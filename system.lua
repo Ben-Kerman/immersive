@@ -64,4 +64,57 @@ function system.create_dir(path)
 	end
 end
 
+local ps_clip_write = [[
+Add-Type -AssemblyName System.IO
+Add-Type -AssemblyName System.Windows.Forms
+$bytes = [System.IO.File]::ReadAllBytes("%s")
+$utf16_str = [System.Text.Encoding]::UTF8.GetString($bytes)
+[System.Windows.Forms.Clipboard]::SetText($utf16_str)]]
+
+local ps_clip_read = [[
+Add-Type -AssemblyName System.Windows.Forms
+$clip = [System.Windows.Forms.Clipboard]::GetText()
+$utf8 = [Text.Encoding]::UTF8.GetBytes($clip)
+[Console]::OpenStandardOutput().Write($utf8, 0, $utf8.length)]]
+
+function system.clipboard_read()
+	local args
+	if system.platform == "lnx" then
+		args = {"xclip", "-out", "-selection", "clipboard"}
+	elseif system.platform == "win" then
+		args = {"powershell", "-NoProfile", "-Command", ps_clip_read}
+	elseif system.platform == "mac" then
+		args = {}-- TODO
+	end
+
+	local status, clip, err_str = system.subprocess(args)
+	if status == 0 then return clip
+	else return nil, err_str end
+end
+
+function system.clipboard_write(str)
+	local args
+	if system.platform == "lnx" or system.platform == "mac" then
+		local cmd
+		if system.platform == "lnx" then
+			cmd = "xclip -in -selection clipboard"
+		elseif system.platform == "mac" then
+			cmd = "" -- TODO
+		end
+
+		local pipe = io.popen(cmd, "w")
+		pipe:write(str)
+		pipe:close()
+	elseif system.platform == "win" then
+		local tmp_file = system.tmp_file_name()
+		local fd = io.open(tmp_file, "w")
+		fd:write(str)
+		fd:close()
+
+		local ps_script = string.format(ps_clip_write, tmp_file)
+		system.subprocess{"powershell", "-NoProfile", "-Command", ps_script}
+		os.remove(tmp_file)
+	end
+end
+
 return system
