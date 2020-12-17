@@ -45,7 +45,7 @@ end
 function LineSelect:finish()
 	helper.remove_bindings(self.bindings, "_ankisubs-line_select_binding-")
 	self._overlay:remove()
-	return self.lines[self.active]
+	return self.lines[self.active], self.active
 end
 
 local unselected_style = ssa.generate({"line_select", "base"}, nil, true)

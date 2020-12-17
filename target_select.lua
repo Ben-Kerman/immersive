@@ -65,10 +65,24 @@ local function select_target_def(prefix)
 	end
 end
 
+local function delete_line()
+	if def_sel then
+		mp.osd_message("Not available in definition mode")
+		return nil
+	end
+
+	local _, index = tgt_word_sel._line_select:finish()
+	tgt_word_sel:finish()
+	table.remove(data.subtitles, index)
+	start_tgt_sel()
+end
+
 local bindings = {
 	{key = "ENTER", desc = "Look up selected word / Select definition", action = select_target_def},
 	{key = "Shift+ENTER", desc = "Look up words starting with selection", action = function() select_target_def(true) end},
-	{key = "f", desc = "Export with selected target words", action = function() end}
+	{key = "DEL", desc = "Delete selected line", action = delete_line},
+	{key = "f", desc = "Export with selected target words", action = function() end},
+	{key = "ESC", desc = "Cancel card creation"}
 }
 
 local menu = Menu:new{bindings = bindings}
