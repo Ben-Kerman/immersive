@@ -5,10 +5,12 @@ require "line_select"
 require "line_text_select"
 require "text_select"
 
+-- forward declarations
+local menu
+
 local tgt_word_sel
 local lookup_result, def_sel
 local data
-local target_words = {}
 
 local function sel_converter(sub) return sub.text end
 local function line_renderer(sub) return sub:short() end
@@ -41,7 +43,7 @@ end
 local function select_target_def(prefix)
 	if def_sel then
 		local def = def_sel:finish()
-		table.insert(target_words, dicts[lookup_result.dict_index].get_definition(def.id))
+		table.insert(data.definitions, dicts[lookup_result.dict_index].get_definition(def.id))
 		lookup_result, def_sel = nil
 		start_tgt_sel()
 	else
@@ -77,21 +79,49 @@ local function delete_line()
 	start_tgt_sel()
 end
 
+local function finish()
+	local export_data = data
+	export.execute(data)
+end
+
+local function cancel()
+	menu:disable()
+	if tgt_word_sel then
+		tgt_word_sel:finish()
+		tgt_word_sel = nil
+	end
+	if def_sel then
+		def_sel:finish()
+		def_sel = nil
+	end
+	lookup_result = nil
+	data = nil
+end
+
+local function handle_cancel()
+	if def_sel then
+		def_sel:finish()
+		def_sel = nil
+		start_tgt_sel()
+	else cancel() end
+end
+
 local bindings = {
 	{key = "ENTER", desc = "Look up selected word / Select definition", action = select_target_def},
 	{key = "Shift+ENTER", desc = "Look up words starting with selection", action = function() select_target_def(true) end},
 	{key = "DEL", desc = "Delete selected line", action = delete_line},
 	{key = "f", desc = "Export with selected target words", action = function() end},
-	{key = "ESC", desc = "Cancel card creation"}
+	{key = "ESC", desc = "Cancel definition selection or the card creation process", action = handle_cancel}
 }
 
-local menu = Menu:new{bindings = bindings}
+menu = Menu:new{bindings = bindings}
 
 local target_select = {}
 
 function target_select.begin(prev_data)
 	target_words = {}
 	data = prev_data
+	data.definitions = {}
 	start_tgt_sel()
 	menu:enable()
 end

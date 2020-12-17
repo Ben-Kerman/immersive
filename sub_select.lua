@@ -5,6 +5,7 @@ require "subtitle"
 local util = require "util"
 local target_select = require "target_select"
 
+-- forward declarations
 local pack_data
 local menu, sel_overlay
 local reset
