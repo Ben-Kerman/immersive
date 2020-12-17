@@ -1,4 +1,5 @@
 local cfg = require "config"
+local mputil = require "mp.utils"
 local sys = require "system"
 local util = require "util"
 
@@ -74,7 +75,8 @@ end
 
 function anki.media_dir()
 	local profile = anki.active_target().profile
-	return string.format("%s/%s/collection.media", sys.anki_base_dir, profile)
+	local profile_dir = mputil.join_path(sys.anki_base_dir, profile)
+	return mputil.join_path(profile_dir, "collection.media")
 end
 
 function anki.generate_filename(series_id, extension)
