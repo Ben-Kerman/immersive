@@ -20,7 +20,7 @@ local mp_opts = require "mp.options"
 mp_opts.read_options(config.values)
 
 function config.load_basic(path)
-	if not check_file() then
+	if not check_file(path) then
 		return {}
 	end
 
@@ -39,7 +39,7 @@ function config.load_basic(path)
 end
 
 function config.load(path)
-	if not check_file() then
+	if not check_file(path) then
 		return {}
 	end
 
