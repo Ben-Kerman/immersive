@@ -1,4 +1,5 @@
 local dicts = require "dict.dicts"
+local export = require "export"
 local helper = require "helper"
 require "menu"
 require "line_select"
@@ -79,11 +80,6 @@ local function delete_line()
 	start_tgt_sel()
 end
 
-local function finish()
-	local export_data = data
-	export.execute(data)
-end
-
 local function cancel()
 	menu:disable()
 	if tgt_word_sel then
@@ -98,6 +94,12 @@ local function cancel()
 	data = nil
 end
 
+local function finish()
+	local export_data = data
+	cancel()
+	export.execute(export_data)
+end
+
 local function handle_cancel()
 	if def_sel then
 		def_sel:finish()
@@ -110,7 +112,7 @@ local bindings = {
 	{key = "ENTER", desc = "Look up selected word / Select definition", action = select_target_def},
 	{key = "Shift+ENTER", desc = "Look up words starting with selection", action = function() select_target_def(true) end},
 	{key = "DEL", desc = "Delete selected line", action = delete_line},
-	{key = "f", desc = "Export with selected target words", action = function() end},
+	{key = "f", desc = "Export with selected target words", action = finish},
 	{key = "ESC", desc = "Cancel definition selection or the card creation process", action = handle_cancel}
 }
 
