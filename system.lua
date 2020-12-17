@@ -68,13 +68,13 @@ end
 local ps_clip_write = [[
 Add-Type -AssemblyName System.IO
 Add-Type -AssemblyName System.Windows.Forms
-$bytes = [System.IO.File]::ReadAllBytes("%s")
-$utf16_str = [System.Text.Encoding]::UTF8.GetString($bytes)
-[System.Windows.Forms.Clipboard]::SetText($utf16_str)]]
+$bytes = [IO.File]::ReadAllBytes("%s")
+$utf16_str = [Text.Encoding]::UTF8.GetString($bytes)
+[Windows.Forms.Clipboard]::SetText($utf16_str)]]
 
 local ps_clip_read = [[
 Add-Type -AssemblyName System.Windows.Forms
-$clip = [System.Windows.Forms.Clipboard]::GetText()
+$clip = [Windows.Forms.Clipboard]::GetText()
 $utf8 = [Text.Encoding]::UTF8.GetBytes($clip)
 [Console]::OpenStandardOutput().Write($utf8, 0, $utf8.length)]]
 
