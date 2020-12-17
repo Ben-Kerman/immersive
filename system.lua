@@ -57,11 +57,12 @@ function system.list_files(dir)
 end
 
 function system.create_dir(path)
+	local args = {"mkdir"}
 	if system.platform == "lnx" or system.platform == "mac" then
-		os.execute(string.format("mkdir -p '%s'", path))
-	elseif system.platform == "win" then
-		-- TODO
+		table.insert(args, "-p")
 	end
+	table.insert(args, path)
+	system.subprocess(args)
 end
 
 local ps_clip_write = [[
