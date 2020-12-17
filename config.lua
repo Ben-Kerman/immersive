@@ -1,6 +1,15 @@
 local mputil = require "mp.utils"
 local util = require "util"
 
+local function check_file(path)
+	if not path then return false end
+	local stat_res = mputil.file_info(path)
+	if not stat_res or not stat_res.is_file then
+		return false
+	end
+	return true
+end
+
 local config = {
 	values = {
 		anki_targets=""
@@ -11,8 +20,11 @@ local mp_opts = require "mp.options"
 mp_opts.read_options(config.values)
 
 function config.load_basic(path)
-	local result = {}
+	if not check_file() then
+		return {}
+	end
 
+	local result = {}
 	for line in io.lines(path) do
 		local trimmed = util.string_trim(line, "start")
 		if #trimmed ~= 0 and not util.string_starts(trimmed, "#") then
@@ -27,9 +39,8 @@ function config.load_basic(path)
 end
 
 function config.load(path)
-	local stat_res = mputil.file_info(path)
-	if not stat_res or not stat_res.is_file then
-		-- TODO handle error
+	if not check_file() then
+		return {}
 	end
 
 	local result = {}
