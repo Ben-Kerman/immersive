@@ -1,4 +1,5 @@
 local kbds = require "key_bindings"
+local lookup_active = require "lookup_active"
 local series_id = require "series_id"
 local sub_select = require "sub_select"
 local sys = require "system"
@@ -77,7 +78,7 @@ local bindings = {
 		id = "lookup_word",
 		default = "k",
 		desc = "Select and look up word from active subtitle",
-		action = nil,
+		action = lookup_active.begin,
 		global = true
 	},
 	{

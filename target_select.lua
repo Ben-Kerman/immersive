@@ -79,7 +79,7 @@ end
 
 local bindings = {
 	{
-		id = "target_select-lookup",
+		id = "target_select-lookup_exact",
 		default = "ENTER",
 		desc = "Look up selected word / Select definition",
 		action = select_target_def
