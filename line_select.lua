@@ -30,20 +30,20 @@ function LineSelect:new(lines, sel_renderer, renderer, update_handler, limit)
 		limit = limit,
 		active = 1,
 		bindings = {
-			{key = "UP", action = function() ls:move_sel(-1) end, repeatable = true},
-			{key = "DOWN", action = function() ls:move_sel(1) end, repeatable = true},
+			{id = "line_select-prev", default = "UP", action = function() ls:move_sel(-1) end, repeatable = true},
+			{id = "line_select-next", default = "DOWN", action = function() ls:move_sel(1) end, repeatable = true},
 		}
 	}
 	return setmetatable(ls, LineSelect)
 end
 
 function LineSelect:start()
-	kbds.add_bindings(self.bindings, "_ankisubs-line_select_binding-")
+	kbds.add_bindings(self.bindings)
 	self:update()
 end
 
 function LineSelect:finish()
-	kbds.remove_bindings(self.bindings, "_ankisubs-line_select_binding-")
+	kbds.remove_bindings(self.bindings)
 	self._overlay:remove()
 	return self.lines[self.active], self.active
 end

@@ -19,14 +19,14 @@ function Menu:enable()
 		self.show_bindings = not self.show_bindings
 		self:redraw()
 	end)
-	kbds.add_bindings(self.data.bindings, "_ankisubs-menu_binding-")
+	kbds.add_bindings(self.data.bindings)
 	self.enabled = true
 	self:redraw()
 end
 
 function Menu:disable()
 	mp.remove_key_binding("_ankisubs-menu_show-bindings")
-	kbds.remove_bindings(self.data.bindings, "_ankisubs-menu_binding-")
+	kbds.remove_bindings(self.data.bindings)
 	self.enabled = false
 	self:redraw()
 end
@@ -43,17 +43,18 @@ function Menu:redraw()
 
 		if self.data.bindings then
 			local binding_lines = {
-				string.format("{\\fs%d}\\N%s",
+				string.format([[{\fs%d}\h\N%s]],
 				              mp.get_property_number("osd-font-size"),
 				              ssa.generate({"menu_help", "base"}, nil, true))
 			}
 			if self.show_bindings then
 				table.insert(binding_lines, help_hint_on)
 				for _, binding in ipairs(self.data.bindings) do
-					table.insert(binding_lines, string.format([[\h\h\h%s: %s]], ssa_format(binding.key, "menu_help", "key"), binding.desc))
+					table.insert(binding_lines, string.format([[\N\h\h\h%s: %s]], ssa_format(binding.default, "menu_help", "key"), binding.desc))
+					if binding.global then table.insert(binding_lines, " (global)") end
 				end
 			else table.insert(binding_lines, help_hint_off) end
-			table.insert(ssa_lines, table.concat(binding_lines, "\\N"))
+			table.insert(ssa_lines, table.concat(binding_lines))
 		end
 
 		local info_lines = {ssa.generate({"menu_info", "base"}, nil, true)}

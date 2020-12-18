@@ -72,17 +72,72 @@ local function finish_export()
 end
 
 local bindings = {
-	{key = "q", desc = "Force start to start of active line", action = function() set_start("sub-start") end},
-	{key = "e", desc = "Force end to end of active line", action = function() set_stop("sub-end") end},
-	{key = "Q", desc = "Force start to current time", action = function() set_start("time-pos") end},
-	{key = "E", desc = "Force end to current time", action = function() set_stop("time-pos") end},
-	{key = "s", desc = "Take screenshot at current time", action = function() set_scrot("time-pos") end},
-	{key = "a", desc = "Select current line", action = select_sub},
-	{key = "A", desc = "Toggle automatic selection", action = toggle_auto_select},
-	{key = "k", desc = "Reset selection", action = reset},
-	{key = "d", desc = "End selection and enter edit mode", action = finish_tgt_sel},
-	{key = "f", desc = "End selection and export immediately", action = finish_export},
-	{key = "ESC", desc = "Cancel selection", action = cancel},
+	{
+		id = "sub_select-set_start_sub",
+		default = "q",
+		desc = "Force start to start of active line",
+		action = function() set_start("sub-start") end
+	},
+	{
+		id = "sub_select-set_end_sub",
+		default = "e",
+		desc = "Force end to end of active line",
+		action = function() set_stop("sub-end") end
+	},
+	{
+		id = "sub_select-set_start_time_pos",
+		default = "Q",
+		desc = "Force start to current time",
+		action = function() set_start("time-pos") end
+	},
+	{
+		id = "sub_select-set_end_time_pos",
+		default = "E",
+		desc = "Force end to current time",
+		action = function() set_stop("time-pos") end
+	},
+	{
+		id = "sub_select-set_scrot",
+		default = "s",
+		desc = "Take screenshot at current time",
+		action = function() set_scrot("time-pos") end
+	},
+	{
+		id = "sub_select-select_line",
+		default = "a",
+		desc = "Select current line",
+		action = select_sub
+	},
+	{
+		id = "sub_select-toggle_auto_select",
+		default = "A",
+		desc = "Toggle automatic selection",
+		action = toggle_auto_select
+	},
+	{
+		id = "sub_select-reset",
+		default = "k",
+		desc = "Reset selection",
+		action = reset
+	},
+	{
+		id = "sub_select-start_target_select",
+		default = "d",
+		desc = "End line selection and enter target selection",
+		action = finish_tgt_sel
+	},
+	{
+		id = "sub_select-instant_export",
+		default = "f",
+		desc = "End line selection and export immediately",
+		action = finish_export
+	},
+	{
+		id = "sub_select-cancel",
+		default = "ESC",
+		desc = "Cancel selection",
+		action = cancel
+	}
 }
 
 local function display_time(value)

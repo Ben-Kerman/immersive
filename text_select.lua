@@ -157,7 +157,7 @@ function TextSelect:move_curs_word(dir, change_sel)
 end
 
 function TextSelect:start()
-	kbds.add_bindings(self.bindings, "_ankisubs-text_select_binding-")
+	kbds.add_bindings(self.bindings)
 	self:update()
 end
 
@@ -181,18 +181,78 @@ function TextSelect:new(text, update_handler, base_style, init_cursor_pos)
 		update_handler = update_handler and update_handler or default_update_handler,
 		base_style = base_style,
 		bindings = {
-			{key = "LEFT", action = function() ts:move_curs(-1) end, repeatable = true},
-			{key = "RIGHT", action = function() ts:move_curs(1) end, repeatable = true},
-			{key = "Ctrl+LEFT", action = function() ts:move_curs_word(-1) end, repeatable = true},
-			{key = "Ctrl+RIGHT", action = function() ts:move_curs_word(1) end, repeatable = true},
-			{key = "HOME", action = function() ts:move_curs(-ts.curs_pos + 1) end, repeatable = true},
-			{key = "END", action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1) end, repeatable = true},
-			{key = "Shift+LEFT", action = function() ts:move_curs(-1, true) end, repeatable = true},
-			{key = "Shift+RIGHT", action = function() ts:move_curs(1, true) end, repeatable = true},
-			{key = "Ctrl+Shift+LEFT", action = function() ts:move_curs_word(-1, true) end, repeatable = true},
-			{key = "Ctrl+Shift+RIGHT", action = function() ts:move_curs_word(1, true) end, repeatable = true},
-			{key = "Shift+HOME", action = function() ts:move_curs(-ts.curs_pos + 1, true) end, repeatable = true},
-			{key = "Shift+END", action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1, true) end, repeatable = true}
+			{
+				id = "text_select-prev_char",
+				default = "LEFT",
+				action = function() ts:move_curs(-1) end,
+				repeatable = true
+			},
+			{
+				id = "text_select-next_char",
+				default = "RIGHT",
+				action = function() ts:move_curs(1) end,
+				repeatable = true
+			},
+			{
+				id = "text_select-prev_word",
+				default = "Ctrl+LEFT",
+				action = function() ts:move_curs_word(-1) end,
+				repeatable = true
+			},
+			{
+				id = "text_select-next_word",
+				default = "Ctrl+RIGHT",
+				action = function() ts:move_curs_word(1) end,
+				repeatable = true
+			},
+			{
+				id = "text_select-home",
+				default = "HOME",
+				action = function() ts:move_curs(-ts.curs_pos + 1) end,
+				repeatable = true
+			},
+			{
+				id = "text_select-end",
+				default = "END",
+				action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1) end,
+				repeatable = true
+			},
+			{
+				id = "text_select-prev_char_sel",
+				default = "Shift+LEFT",
+				action = function() ts:move_curs(-1, true) end,
+				repeatable = true
+			},
+			{
+				id = "text_select-next_char_sel",
+				default = "Shift+RIGHT",
+				action = function() ts:move_curs(1, true) end,
+				repeatable = true
+			},
+			{
+				id = "text_select-prev_word_sel",
+				default = "Ctrl+Shift+LEFT",
+				action = function() ts:move_curs_word(-1, true) end,
+				repeatable = true
+			},
+			{
+				id = "text_select-next_word_sel",
+				default = "Ctrl+Shift+RIGHT",
+				action = function() ts:move_curs_word(1, true) end,
+				repeatable = true
+			},
+			{
+				id = "text_select-home_sel",
+				default = "Shift+HOME",
+				action = function() ts:move_curs(-ts.curs_pos + 1, true) end,
+				repeatable = true
+			},
+			{
+				id = "text_select-end_sel",
+				default = "Shift+END",
+				action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1, true) end,
+				repeatable = true
+			}
 		}
 	}
 	return setmetatable(ts, TextSelect)

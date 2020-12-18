@@ -108,11 +108,36 @@ local function handle_cancel()
 end
 
 local bindings = {
-	{key = "ENTER", desc = "Look up selected word / Select definition", action = select_target_def},
-	{key = "Shift+ENTER", desc = "Look up words starting with selection", action = function() select_target_def(true) end},
-	{key = "DEL", desc = "Delete selected line", action = delete_line},
-	{key = "f", desc = "Export with selected target words", action = finish},
-	{key = "ESC", desc = "Cancel definition selection or the card creation process", action = handle_cancel}
+	{
+		id = "target_select-lookup",
+		default = "ENTER",
+		desc = "Look up selected word / Select definition",
+		action = select_target_def
+	},
+	{
+		id = "target_select-lookup_partial",
+		default = "Shift+ENTER",
+		desc = "Look up words starting with selection",
+		action = function() select_target_def(true) end
+	},
+	{
+		id = "target_select-delete_line",
+		default = "DEL",
+		desc = "Delete selected line",
+		action = delete_line
+	},
+	{
+		id = "target_select-export",
+		default = "f",
+		desc = "Export with selected target words",
+		action = finish
+	},
+	{
+		id = "target_select-cancel",
+		default = "ESC",
+		desc = "Cancel definition selection or the card creation process",
+		action = handle_cancel
+	}
 }
 
 menu = Menu:new{bindings = bindings}
