@@ -119,7 +119,7 @@ return function(entry, config, tag_map)
 		}
 	})
 
-	if #definitions == 1 and cfg.collapse_single then
+	if #definitions == 1 and cfg.use_single_template then
 		return templater.render(cfg.single_template, {
 			header = {data = header},
 			keywords = definitions[1].keywords

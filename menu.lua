@@ -8,7 +8,7 @@ function Menu:new(data, enabled)
 	local m = {
 		_overlay = mp.create_osd_overlay("ass-events"),
 		data = data,
-		enabled = enabled and true,
+		enabled = enabled or false,
 		show_bindings = false
 	}
 	return setmetatable(m, Menu)
