@@ -1,4 +1,4 @@
-local bit_op = require "bit_compat"
+local bit_op = require("bit_compat")[1]
 
 local function is_ascii(byte)
 	-- byte & 0b1000'0000 == 0
