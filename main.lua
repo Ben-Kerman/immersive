@@ -6,6 +6,23 @@ require "menu"
 -- forward declarations
 local menu
 
+local function copy_active_line()
+	local sub_text = mp.get_property("sub-text")
+	if sub_text and sub_text ~= "" then
+		sys.clipboard_write(sub_text)
+	end
+end
+
+local autocopy = false
+local function toggle_autocopy()
+	if autocopy then
+		mp.unobserve_property(copy_active_line)
+	else
+		mp.observe_property("sub-text", "none", copy_active_line)
+	end
+	autocopy = not autocopy
+end
+
 local bindings = {
 	{
 		id = "begin_sub_select",
@@ -19,6 +36,20 @@ local bindings = {
 		default = "Ctrl+a",
 		desc = "Open the global menu",
 		action = function() menu:enable() end,
+		global = true
+	},
+	{
+		id = "copy_active_line",
+		default = "c",
+		desc = "Copy current subtitle to clipboard",
+		action = copy_active_line,
+		global = true
+	},
+	{
+		id = "toggle_autocopy",
+		default = "C",
+		desc = "Toggle subtitle auto-copy",
+		action = toggle_autocopy,
 		global = true
 	},
 	{
