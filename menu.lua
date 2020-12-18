@@ -1,4 +1,4 @@
-local helper = require "helper"
+local kbds = require "key_bindings"
 local ssa = require "ssa"
 
 Menu = {}
@@ -19,14 +19,14 @@ function Menu:enable()
 		self.show_bindings = not self.show_bindings
 		self:redraw()
 	end)
-	helper.add_bindings(self.data.bindings, "_ankisubs-menu_binding-")
+	kbds.add_bindings(self.data.bindings, "_ankisubs-menu_binding-")
 	self.enabled = true
 	self:redraw()
 end
 
 function Menu:disable()
 	mp.remove_key_binding("_ankisubs-menu_show-bindings")
-	helper.remove_bindings(self.data.bindings, "_ankisubs-menu_binding-")
+	kbds.remove_bindings(self.data.bindings, "_ankisubs-menu_binding-")
 	self.enabled = false
 	self:redraw()
 end

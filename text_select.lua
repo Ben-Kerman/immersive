@@ -1,4 +1,4 @@
-local helper = require "helper"
+local kbds = require "key_bindings"
 local mputil = require "mp.utils"
 local ssa = require "ssa"
 local utf_8 = require "utf_8"
@@ -157,7 +157,7 @@ function TextSelect:move_curs_word(dir, change_sel)
 end
 
 function TextSelect:start()
-	helper.add_bindings(self.bindings, "_ankisubs-text_select_binding-")
+	kbds.add_bindings(self.bindings, "_ankisubs-text_select_binding-")
 	self:update()
 end
 
@@ -166,7 +166,7 @@ function TextSelect:finish(force_sel)
 		mp.osd_message("Please select some text")
 		return nil
 	end
-	helper.remove_bindings(self.bindings, "_ankisubs-text_select_binding-")
+	kbds.remove_bindings(self.bindings, "_ankisubs-text_select_binding-")
 	overlay:remove()
 	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
 end

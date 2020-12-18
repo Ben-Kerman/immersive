@@ -1,4 +1,4 @@
-local helper = require "helper"
+local kbds = require "key_bindings"
 local ssa = require "ssa"
 
 local function default_sel_renderer(line)
@@ -38,12 +38,12 @@ function LineSelect:new(lines, sel_renderer, renderer, update_handler, limit)
 end
 
 function LineSelect:start()
-	helper.add_bindings(self.bindings, "_ankisubs-line_select_binding-")
+	kbds.add_bindings(self.bindings, "_ankisubs-line_select_binding-")
 	self:update()
 end
 
 function LineSelect:finish()
-	helper.remove_bindings(self.bindings, "_ankisubs-line_select_binding-")
+	kbds.remove_bindings(self.bindings, "_ankisubs-line_select_binding-")
 	self._overlay:remove()
 	return self.lines[self.active], self.active
 end

@@ -1,6 +1,5 @@
 local dicts = require "dict.dicts"
 local export = require "export"
-local helper = require "helper"
 require "menu"
 require "line_select"
 require "line_text_select"
