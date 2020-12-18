@@ -1,10 +1,20 @@
 local kbds = require "key_bindings"
+local series_id = require "series_id"
 local sub_select = require "sub_select"
 local sys = require "system"
 require "menu"
 
 -- forward declarations
 local menu
+
+local infos = {
+	{name = "Series ID", value = "{\\i1}no file loaded{\\i0}"}
+}
+
+mp.register_event("file-loaded", function()
+	infos[1].value = series_id.get_id()
+	menu:redraw()
+end)
 
 local function copy_active_line()
 	local sub_text = mp.get_property("sub-text")
@@ -81,6 +91,6 @@ local bindings = {
 	}
 }
 
-menu = Menu:new{bindings = bindings}
+menu = Menu:new{infos = infos,bindings = bindings}
 
 kbds.add_global_bindings(bindings)
