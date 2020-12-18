@@ -31,6 +31,9 @@ local function replace_field_vars(field_def, data, audio_file, image_file)
 end
 
 local function resolve_times(data)
+	if not data.times then
+		data.times = {scrot = -1, start = -1, stop = -1}
+	end
 	local ts = data.times
 	ts.scrot = ts.scrot < 0 and mp.get_property_number("time-pos") or ts.scrot
 	ts.start = ts.start < 0 and data.subtitles[1].start or ts.start

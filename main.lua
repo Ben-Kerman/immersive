@@ -1,9 +1,13 @@
+local export = require "export"
+local helper = require "helper"
 local kbds = require "key_bindings"
 local lookup_active = require "lookup_active"
 local series_id = require "series_id"
 local sub_select = require "sub_select"
 local sys = require "system"
+local target_select = require "target_select"
 require "menu"
+require "subtitle"
 
 -- forward declarations
 local menu
@@ -43,6 +47,20 @@ local function toggle_autocopy()
 	autocopy = not autocopy
 	infos[2].value = autocopy
 	menu:redraw()
+end
+
+local function export_active_line(skip_target_select)
+	local sub_text = helper.check_active_sub()
+	if sub_text then
+		local fn = skip_target_select and export.execute or target_select.begin
+		fn{
+			subtitles = {
+				Subtitle:new(sub_text,
+				             mp.get_property_number("sub-start"),
+				             mp.get_property_number("sub-end"))
+			}
+		}
+	end
 end
 
 local bindings = {
@@ -85,14 +103,14 @@ local bindings = {
 		id = "export_active_line",
 		default = "K",
 		desc = "Create card from active subtitle, skip line selection",
-		action = nil,
+		action = export_active_line,
 		global = true
 	},
 	{
 		id = "export_active_line_instant",
 		default = "Ctrl+k",
 		desc = "Create card from active subtitle, export immediately",
-		action = nil,
+		action = function() export_active_line(true) end,
 		global = true
 	},
 	{
