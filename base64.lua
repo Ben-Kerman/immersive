@@ -1,11 +1,16 @@
 local bit_conv = require("bit_compat")[2]
 local util = require "util"
 
-local characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+local b64_digits = {
+	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
+	"Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f",
+	"g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
+	"w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "/"
+}
 
 local function insert_digit(list, bits)
 	local pos = bit_conv.to_num(util.list_reverse(bits))
-	table.insert(list, string.sub(characters, pos + 1, pos + 1))
+	table.insert(list, b64_digits[pos + 1])
 end
 
 local base64 = {}
