@@ -27,7 +27,10 @@ local function select_target_def(prefix)
 		start_tgt_sel()
 	else
 		local selection = tgt_word_sel:finish(true)
-		if not selection then return end
+		if not selection then
+			mp.osd_message("No word selected")
+			return nil
+		end
 
 		tgt_word_sel = nil
 		def_sel = DefinitionSelect:new(selection, prefix)

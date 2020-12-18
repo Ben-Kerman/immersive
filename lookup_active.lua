@@ -1,3 +1,4 @@
+local helper = require "helper"
 require "menu"
 require "text_select"
 
@@ -64,16 +65,14 @@ menu = Menu:new{bindings = bindings}
 local lookup_active = {}
 
 function lookup_active.begin()
-	local sub_text = mp.get_property("sub-text")
-	if sub_text and sub_text ~= "" then
+	local sub_text = helper.check_active_sub()
+	if sub_text then
 		word_sel = TextSelect:new(sub_text, function(has_sel, curs_index, segments)
 			overlay.data = word_sel:base_update_handler(has_sel, curs_index, segments)
 			overlay:update()
 		end)
 		word_sel:start()
 		menu:enable()
-	else
-		mp.osd_message("No active subtitle line")
 	end
 end
 
