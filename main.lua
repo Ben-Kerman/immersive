@@ -7,8 +7,16 @@ require "menu"
 -- forward declarations
 local menu
 
+local autocopy = false
+
+local function display_bool(val)
+	if val then return "enabled"
+	else return "disabled" end
+end
+
 local infos = {
-	{name = "Series ID", value = "{\\i1}no file loaded{\\i0}"}
+	{name = "Series ID", value = "{\\i1}no file loaded{\\i0}"},
+	{name = "Sub auto-copy", value = autocopy, display = display_bool}
 }
 
 mp.register_event("file-loaded", function()
@@ -23,14 +31,17 @@ local function copy_active_line()
 	end
 end
 
-local autocopy = false
 local function toggle_autocopy()
 	if autocopy then
+		mp.osd_message("Subtitle auto-copy disabled")
 		mp.unobserve_property(copy_active_line)
 	else
+		mp.osd_message("Subtitle auto-copy enabled")
 		mp.observe_property("sub-text", "none", copy_active_line)
 	end
 	autocopy = not autocopy
+	infos[2].value = autocopy
+	menu:redraw()
 end
 
 local bindings = {
