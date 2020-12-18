@@ -21,7 +21,8 @@ function util.list_slice(list, start, length)
 end
 
 function util.list_range(list, from, to)
-	if to < 0 then to = #list + to + 1 end
+	if not to then to = #list
+	elseif to < 0 then to = #list + to + 1 end
 	return util.list_slice(list, from, to - from)
 end
 
@@ -66,6 +67,14 @@ function util.list_map(list, mapper)
 	local res = {}
 	for i, val in ipairs(list) do
 		table.insert(res, mapper(val, i))
+	end
+	return res
+end
+
+function util.list_reverse(list)
+	local res = {}
+	for i = #list, 1, -1 do
+		table.insert(res, list[i])
 	end
 	return res
 end
