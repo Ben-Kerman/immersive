@@ -11,12 +11,12 @@ local function replace_field_vars(field_def, data, audio_file, image_file)
 		audio = {data = string.format("[sound:%s]", audio_file)},
 		image = {data = string.format([[<img src="%s">]], image_file)}
 	}
-	if data.subtitles then
+	if data.subtitles and #data.subtitles ~= 0 then
 		template_data.sentences = {
 			data = util.list_map(data.subtitles, function(sub) return sub.text end),
 			sep = "<br>"
 		}
-	else template_data.sentences = {data = ""} end
+	else template_data.sentences = {data = "<i>placeholder</i>"} end
 	if data.definitions and #data.definitions ~= 0 then
 		template_data.word = data.definitions[1].word
 		template_data.definitions = {
