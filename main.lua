@@ -53,6 +53,27 @@ local bindings = {
 		global = true
 	},
 	{
+		id = "lookup_word",
+		default = "k",
+		desc = "Select and look up word from active subtitle",
+		action = nil,
+		global = true
+	},
+	{
+		id = "export_active_line",
+		default = "K",
+		desc = "Create card from active subtitle, skip line selection",
+		action = nil,
+		global = true
+	},
+	{
+		id = "export_active_line_instant",
+		default = "Ctrl+k",
+		desc = "Create card from active subtitle, export immediately",
+		action = nil,
+		global = true
+	},
+	{
 		id = "close_global_menu",
 		default = "ESC",
 		desc = "Close the menu",
