@@ -13,7 +13,13 @@ end
 local config = {
 	values = {
 		anki_targets="",
-		forvo_lang = "ja"
+		forvo_language = "ja",
+		forvo_prefer_format = "ogg",
+		forvo_reencode = true,
+		forvo_extension = "mka",
+		forvo_format = "matroska",
+		forvo_codec = "libopus",
+		forvo_bitrate = "64ki"
 	}
 }
 

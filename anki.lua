@@ -11,7 +11,7 @@ local function default_tgt_cfg()
 			extension = "mka",
 			format = "matroska",
 			codec = "libopus",
-			bitrate = "64k",
+			bitrate = "64ki",
 			pad_start = 0.1,
 			pad_end = 0.1
 		},

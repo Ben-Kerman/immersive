@@ -86,7 +86,7 @@ local function extract_pronunciations(word)
 	local word_url = "https://forvo.com/word/" .. url.encode(word) .. "/"
 	local html = html_request(word_url)
 
-	local start_pat = [[pronunciation in%s*<a href="https://forvo%.com/languages/]] .. cfg.values.forvo_lang .. [[/">]]
+	local start_pat = [[pronunciation in%s*<a href="https://forvo%.com/languages/]] .. cfg.values.forvo_language .. [[/">]]
 	local end_pat = [[<div class="more_actions">]]
 	local audio_pat = [[onclick="Play%((%d+),'([^']*)','([^']*)',([^,]*),'([^']*)','([^']*)','(.)'%);return false;"]]
 	local user_prefix_pat = "Pronunciation by%s+"
