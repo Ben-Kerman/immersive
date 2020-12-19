@@ -2,6 +2,7 @@ local b64 = require "base64"
 local cfg = require "config"
 local http = require "http"
 local url = require "url"
+local sys = require "system"
 require "menu"
 require "line_select"
 
@@ -50,11 +51,12 @@ end)()
 local function audio_request(url, target_path)
 	local headers = request_headers()
 	table.insert(headers, audio_accept)
-	http.get{
+	if http.get{
 		url = url,
 		headers = headers,
 		target_path = target_path
-	}
+	} then return target_path
+	else return nil end
 end
 
 local function html_request(url)
@@ -85,6 +87,23 @@ function Pronunciation:new(id, user, mp3_l, ogg_l, mp3_h, ogg_h)
 		}
 	end
 	return setmetatable(pr, Pronunciation)
+end
+
+function Pronunciation:load_audio()
+	if not self.audio_file then
+		local src = self.audio_h and self.audio_h or self.audio_l
+		local audio_url = cfg.forvo_prefer_mp3 and src.mp3 or src.ogg
+		self.audio_file = audio_request(audio_url, sys.tmp_file_name())
+	end
+end
+
+function Pronunciation:play()
+	self:load_audio()
+	if self.audio_file then
+		sys.subprocess{"mpv", self.audio_file}
+	else
+		mp.osd_message("Failed to download audio file")
+	end
 end
 
 local function extract_pronunciations(word)
@@ -130,12 +149,19 @@ end
 local prns
 local prn_sel
 
+local function play_highlighted()
+	if prn_sel then
+		local prn = prn_sel:active_line()
+		prn:play()
+	end
+end
+
 local bindings = {
 	{
 		id = "forvo-play",
 		default = "SPACE",
 		desc = "Play currently highlighted audio if available",
-		action = nil
+		action = play_highlighted
 	},
 	{
 		id = "forvo-select",
