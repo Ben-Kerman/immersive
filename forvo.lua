@@ -2,6 +2,11 @@ local b64 = require "base64"
 local cfg = require "config"
 local http = require "http"
 local url = require "url"
+require "menu"
+require "line_select"
+
+-- forward declarations
+local menu
 
 local function request_headers()
 	return {
@@ -114,10 +119,47 @@ local function extract_pronunciations(word)
 	return prns
 end
 
+local function line_renderer(prn)
+	return prn.user
+end
+
+local function sel_renderer(prn)
+	return "{\\b1}" .. line_renderer(prn) .. "{\\b0}"
+end
+
+local prns
+local prn_sel
+
+local bindings = {
+	{
+		id = "forvo-play",
+		default = "SPACE",
+		desc = "Play currently highlighted audio if available",
+		action = nil
+	},
+	{
+		id = "forvo-select",
+		default = "ENTER",
+		desc = "Confirm selection",
+		action = nil
+	},
+	{
+		id = "forvo-cancel",
+		default = "ESC",
+		desc = "Cancel audio selection",
+		action = nil
+	}
+}
+
+menu = Menu:new{bindings = bindings}
+
 local forvo = {}
 
 function forvo.begin(word)
-	local prns = extract_pronunciations(word)
+	prns = extract_pronunciations(word)
+	prn_sel = LineSelect:new(prns, sel_renderer, line_renderer)
+	prn_sel:start()
+	menu:enable()
 end
 
 return forvo
