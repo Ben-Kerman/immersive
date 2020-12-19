@@ -12,7 +12,8 @@ end
 
 local config = {
 	values = {
-		anki_targets=""
+		anki_targets="",
+		forvo_lang = "ja"
 	}
 }
 

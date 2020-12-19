@@ -1,3 +1,4 @@
+local b64 = require "base64"
 local http = require "http"
 local url = require "url"
 
@@ -57,6 +58,27 @@ local function html_request(url)
 		url = url,
 		headers = headers
 	}
+end
+
+local Pronunciation = {}
+Pronunciation.__index = Pronunciation
+
+function Pronunciation:new(id, user, mp3_l, ogg_l, mp3_h, ogg_h)
+	local pr = {
+		id = tonumber(id),
+		user = user,
+		audio_l = {
+			mp3 = "https://audio00.forvo.com/mp3/" .. b64.decode(mp3_l),
+			ogg = "https://audio00.forvo.com/ogg/" .. b64.decode(ogg_l)
+		}
+	}
+	if mp3_h ~= "" and ogg_h ~= "" then
+		pr.audio_h = {
+			mp3 = "https://audio00.forvo.com/audios/mp3/" .. b64.decode(mp3_h),
+			ogg = "https://audio00.forvo.com/audios/ogg/" .. b64.decode(ogg_h)
+		}
+	end
+	return setmetatable(pr, Pronunciation)
 end
 
 local forvo = {}
