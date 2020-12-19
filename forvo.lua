@@ -1,4 +1,5 @@
 local b64 = require "base64"
+local cfg = require "config"
 local http = require "http"
 local url = require "url"
 
@@ -81,11 +82,42 @@ function Pronunciation:new(id, user, mp3_l, ogg_l, mp3_h, ogg_h)
 	return setmetatable(pr, Pronunciation)
 end
 
+local function extract_pronunciations(word)
+	local word_url = "https://forvo.com/word/" .. url.encode(word) .. "/"
+	local html = html_request(word_url)
+
+	local start_pat = [[pronunciation in%s*<a href="https://forvo%.com/languages/]] .. cfg.values.forvo_lang .. [[/">]]
+	local end_pat = [[<div class="more_actions">]]
+	local audio_pat = [[onclick="Play%((%d+),'([^']*)','([^']*)',([^,]*),'([^']*)','([^']*)','(.)'%);return false;"]]
+	local user_prefix_pat = "Pronunciation by%s+"
+	local user_pat = [[^<span class="ofLink" data%-p1="[^"]+" data%-p2="([^"]+)" >]]
+	local user_pat_no_link = "^(%S+)"
+
+	local _, audio_from = html:find(start_pat)
+	local audio_to = html:find(end_pat, audio_from)
+
+	local prns = {}
+	local next_start = audio_from
+	while true do
+		local a_start, a_end, a_id, a_mp3_l, a_ogg_l, a_bool, a_mp3_h, a_ogg_h, a_char = html:find(audio_pat, next_start)
+		if not a_start or a_start > audio_to then break end
+
+		local _, user_from = html:find(user_prefix_pat, a_end + 1)
+		local _, u_end, user = html:find(user_pat, user_from + 1)
+		if not user then
+			_, u_end, user = html:find(user_pat_no_link, user_from + 1)
+		end
+
+		table.insert(prns, Pronunciation:new(a_id, user, a_mp3_l, a_ogg_l, a_mp3_h, a_ogg_h))
+		next_start = u_end + 1
+	end
+	return prns
+end
+
 local forvo = {}
 
 function forvo.begin(word)
-	local word_url = "https://forvo.com/word/" .. url.encode(word) .. "/"
-	local html = html_request(word_url)
+	local prns = extract_pronunciations(word)
 end
 
 return forvo
