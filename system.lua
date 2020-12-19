@@ -52,6 +52,14 @@ function system.subprocess(args)
 	return res.status, res.stdout, res.error_string
 end
 
+function system.background_process(args, callback)
+	return mp.command_native_async({
+		name = "subprocess",
+		playback_only = false,
+		args = args
+	}, callback)
+end
+
 function system.list_files(dir)
 	return mputil.readdir(dir, "files")
 end

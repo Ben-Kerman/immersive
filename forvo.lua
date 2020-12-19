@@ -1,6 +1,7 @@
 local b64 = require "base64"
 local cfg = require "config"
 local http = require "http"
+local player = require "player"
 local url = require "url"
 local sys = require "system"
 require "menu"
@@ -100,7 +101,7 @@ end
 function Pronunciation:play()
 	self:load_audio()
 	if self.audio_file then
-		sys.subprocess{"mpv", self.audio_file}
+		player.play(self.audio_file)
 	else
 		mp.osd_message("Failed to download audio file")
 	end
