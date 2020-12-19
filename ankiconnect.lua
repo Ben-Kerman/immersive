@@ -5,12 +5,14 @@ local mputil = require "mp.utils"
 local ankiconnect = {}
 
 function ankiconnect.request(action, params)
-	local data = {
-		action = action,
-		params = params,
-		version = 6
+	return http.post_json{
+		url = "localhost:8765",
+		data = mputil.format_json{
+			action = action,
+			params = params,
+			version = 6
+		}
 	}
-	return http.post("localhost:8765", mputil.format_json(data))
 end
 
 function ankiconnect.add_note(fields)

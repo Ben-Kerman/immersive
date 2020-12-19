@@ -4,25 +4,56 @@ local http = {}
 
 local data_path = sys.tmp_file_name()
 
-function http.request(method, url, data)
-	local data_file = io.open(data_path, "w")
-	data_file:write(data)
-	data_file:close()
-	local status, stdout = sys.subprocess {
-			"curl","-s",
-			url,
-			"-X", method,
-			"-H", "Content-Type: application/json; charset=UTF-8",
-			"--data-binary", "@" .. data_path
-		}
+function http.request(params)
+	local args = {
+		"curl","-s",
+		params.url,
+		"-X", params.method
+	}
+
+	if params.data then
+		table.insert(args, "--data-binary")
+		table.insert(args, "@" .. data_path)
+		table.insert(args, "-H")
+		table.insert(args, "Content-Type: " .. params.data_type)
+
+		local data_file = io.open(data_path, "w")
+		data_file:write(params.data)
+		data_file:close()
+	end
+
+	if params.headers then
+		for _, header in ipairs(params.headers) do
+			table.insert(args, "-H")
+			table.insert(args, string.format("%s: %s", header.name, header.value))
+		end
+	end
+
+	if params.target_path then
+		table.insert(args, "-o")
+		table.insert(args, params.target_path)
+	end
+
+	local status, stdout = sys.subprocess(args)
 	if status ~= 0 then
-		mp.msg.error("HTTP " .. method .. " request for URL '" .. url .. "' failed.")
+		mp.msg.error("HTTP " .. params.method .. " request for URL '" .. params.url .. "' failed.")
 		return nil
 	else return stdout end
 end
 
-function http.post(url, data)
-	return http.request("POST", url, data)
+function http.post(params)
+	params.method = "POST"
+	return http.request(params)
+end
+
+function http.post_json(params)
+	params.data_type = "application/json; charset=UTF-8"
+	return http.request(params)
+end
+
+function http.get(params)
+	params.method = "GET"
+	return http.request(params)
 end
 
 return http
