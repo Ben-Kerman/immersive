@@ -37,6 +37,10 @@ function LineSelect:new(lines, sel_renderer, renderer, update_handler, limit)
 	return setmetatable(ls, LineSelect)
 end
 
+function LineSelect:active_line()
+	return self.lines[self.active], self.active
+end
+
 function LineSelect:start()
 	kbds.add_bindings(self.bindings)
 	self:update()
