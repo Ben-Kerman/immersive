@@ -9,24 +9,36 @@ end
 
 local encoder = {}
 
-function encoder.audio(path, start, stop)
-	local tgt_cfg = anki.active_target().config.audio
-	local real_start = start - tgt_cfg.pad_start
-	local real_stop = stop + tgt_cfg.pad_end
-
-	sys.subprocess{
+function encoder.any_audio(params)
+	local args = {
 		"mpv",
-		mp.get_property("path"),
-		"--o=" .. path,
+		params.src_path,
+		"--o=" .. params.tgt_path,
 		"--no-ocopy-metadata",
 		"--vid=no",
-		"--aid=" .. mp.get_property("aid"),
+		"--aid=" .. params.track or "1",
 		"--sid=no",
-		"--start=" .. real_start,
-		"--end=" .. real_stop,
-		"--of=" .. tgt_cfg.format,
-		"--oac=" .. tgt_cfg.codec,
-		"--oacopts=b=" .. tgt_cfg.bitrate
+		"--of=" ..params. format,
+		"--oac=" .. params.codec,
+		"--oacopts=b=" .. params.bitrate
+	}
+	if params.start then table.insert(args, "--start=" .. params.start) end
+	if params.stop then table.insert(args, "--end=" .. params.stop) end
+
+	sys.subprocess(args)
+end
+
+function encoder.audio(path, start, stop)
+	local tgt_cfg = anki.active_target().config.audio
+	encoder.any_audio{
+		src_path = mp.get_property("path"),
+		tgt_path = path,
+		track = mp.get_property("aid"),
+		format = tgt_cfg.format,
+		codec = tgt_cfg.codec,
+		bitrate = tgt_cfg.bitrate,
+		start = start - tgt_cfg.pad_start,
+		stop = stop + tgt_cfg.pad_end
 	}
 end
 
