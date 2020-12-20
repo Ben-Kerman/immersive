@@ -6,10 +6,18 @@ local series_id = require "series_id"
 local templater = require "templater"
 local util = require "util"
 
+local function anki_sound_tag(filename)
+	return string.format("[sound:%s]", filename)
+end
+
+local function anki_image_tag(filename)
+	return string.format([[<img src="%s">]], filename)
+end
+
 local function replace_field_vars(field_def, data, audio_file, image_file)
 	local template_data = {
-		audio = {data = string.format("[sound:%s]", audio_file)},
-		image = {data = string.format([[<img src="%s">]], image_file)}
+		audio = {data = anki_sound_tag(audio_file)},
+		image = {data = anki_image_tag(image_file)}
 	}
 	if data.subtitles and #data.subtitles ~= 0 then
 		template_data.sentences = {
