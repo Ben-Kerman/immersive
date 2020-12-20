@@ -1,4 +1,5 @@
 local mpu = require "mp.utils"
+local msg = require "message"
 local util = require "util"
 
 local function check_file(path)
@@ -49,6 +50,7 @@ end
 
 function config.load(path)
 	if not check_file(path) then
+		msg.verbose("config file '" .. "' could not be loaded")
 		return {}
 	end
 
@@ -63,6 +65,7 @@ function config.load(path)
 		})
 	end
 
+	local count = 1
 	for line in io.lines(path) do
 		if block_token then
 			if util.string_trim(line) == block_token then
@@ -75,7 +78,7 @@ function config.load(path)
 				if util.string_starts(trimmed, "[") then
 					local new_section_name = line:match("%[([^%]]+)%]")
 					if not new_section_name then
-						-- TODO handle error
+						msg.warn("Invalid section header: " .. path .. ":" .. count))
 					else
 						if section_name then insert_section() end
 						section_name, section_entries = new_section_name, {}
@@ -89,13 +92,12 @@ function config.load(path)
 							block_key, block_value = key, {}
 						else section_entries[key] = value end
 					else
-						-- TODO handle error
+						msg.warn("Invalid line: " .. path .. ":" .. count))
 					end
-				else
-					-- TODO handle error
 				end
 			end
 		end
+		count = count + 1
 	end
 	if section_name then insert_section() end
 	return result
