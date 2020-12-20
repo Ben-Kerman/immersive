@@ -11,6 +11,7 @@ require "line_select"
 local menu
 local prns, prn_sel
 local forvo_cb
+local tgt_word
 
 local was_paused = false
 
@@ -114,6 +115,7 @@ function Pronunciation:load_audio(async)
 			audio_request(audio_url, sys.tmp_file_name(), true, function(res)
 				if prn_sel then
 					self.audio_file = {
+						word = tgt_word,
 						extension = extension,
 						path = res
 					}
@@ -122,6 +124,7 @@ function Pronunciation:load_audio(async)
 			end)
 		else
 			self.audio_file = {
+				word = tgt_word,
 				extension = extension,
 				path = audio_request(audio_url, sys.tmp_file_name())
 			}
@@ -192,6 +195,7 @@ local function cancel()
 	prn_sel:finish()
 	prns, prn_sel = nil
 	forvo_cb = nil
+	tgt_word = nil
 	mp.set_property_bool("pause", was_paused)
 end
 
@@ -230,6 +234,7 @@ local forvo = {}
 function forvo.begin(word, callback)
 	was_paused = mp.get_property_bool("pause")
 	mp.set_property_bool("pause", true)
+	tgt_word = word
 	forvo_cb = callback
 
 	prns = extract_pronunciations(word)
