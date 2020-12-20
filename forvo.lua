@@ -12,6 +12,8 @@ local menu
 local prns, prn_sel
 local forvo_cb
 
+local was_paused = false
+
 local function request_headers()
 	return {
 		{name = "Accept-Language", value = "en-US"},
@@ -183,6 +185,7 @@ local function cancel()
 	prn_sel:finish()
 	prns, prn_sel = nil
 	forvo_cb = nil
+	mp.set_property_bool("pause", was_paused)
 end
 
 local function finish()
@@ -218,6 +221,8 @@ menu = Menu:new{bindings = bindings}
 local forvo = {}
 
 function forvo.begin(word, callback)
+	was_paused = mp.get_property_bool("pause")
+	mp.set_property_bool("pause", true)
 	forvo_cb = callback
 
 	prns = extract_pronunciations(word)
