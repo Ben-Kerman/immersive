@@ -92,7 +92,7 @@ function system.move_file(src_path, tgt_path)
 	elseif system.platform == "win" then
 		cmd = "move"
 	end
-	system.subprocess{cmd, src_path, target_path}
+	system.subprocess{cmd, src_path, tgt_path}
 end
 
 local ps_clip_write = [[
