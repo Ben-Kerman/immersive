@@ -10,6 +10,7 @@ require "line_select"
 -- forward declarations
 local menu
 local prns, prn_sel
+local forvo_cb
 
 local function request_headers()
 	return {
@@ -108,8 +109,10 @@ function Pronunciation:load_audio(async)
 		local audio_url = cfg.values.forvo_prefer_mp3 and src.mp3 or src.ogg
 		if async then
 			audio_request(audio_url, sys.tmp_file_name(), true, function(res)
-				self.audio_file = res
-				prn_sel:update()
+				if prn_sel then
+					self.audio_file = res
+					prn_sel:update()
+				end
 			end)
 		else
 			self.audio_file = audio_request(audio_url, sys.tmp_file_name())
@@ -175,6 +178,20 @@ local function play_highlighted()
 	end
 end
 
+local function cancel()
+	menu:disable()
+	prn_sel:finish()
+	prns, prn_sel = nil
+	forvo_cb = nil
+end
+
+local function finish()
+	local cb = forvo_cb
+	local sel = prn_sel:active_line()
+	cancel()
+	cb(sel)
+end
+
 local bindings = {
 	{
 		id = "forvo-play",
@@ -186,13 +203,13 @@ local bindings = {
 		id = "forvo-select",
 		default = "ENTER",
 		desc = "Confirm selection",
-		action = nil
+		action = finish
 	},
 	{
 		id = "forvo-cancel",
 		default = "ESC",
 		desc = "Cancel audio selection",
-		action = nil
+		action = cancel
 	}
 }
 
@@ -200,11 +217,14 @@ menu = Menu:new{bindings = bindings}
 
 local forvo = {}
 
-function forvo.begin(word)
+function forvo.begin(word, callback)
+	forvo_cb = callback
+
 	prns = extract_pronunciations(word)
 	prn_sel = LineSelect:new(prns, sel_renderer, line_renderer)
 	prn_sel:start()
 	menu:enable()
+
 	if cfg.values.forvo_preload_audio then
 		for _, prn in ipairs(prns) do
 			prn:load_audio(true)
