@@ -105,7 +105,7 @@ end
 function Pronunciation:load_audio(async)
 	if not self.audio_file then
 		local src = self.audio_h and self.audio_h or self.audio_l
-		local audio_url = cfg.forvo_prefer_mp3 and src.mp3 or src.ogg
+		local audio_url = cfg.values.forvo_prefer_mp3 and src.mp3 or src.ogg
 		if async then
 			audio_request(audio_url, sys.tmp_file_name(), true, function(res)
 				self.audio_file = res
@@ -205,6 +205,11 @@ function forvo.begin(word)
 	prn_sel = LineSelect:new(prns, sel_renderer, line_renderer)
 	prn_sel:start()
 	menu:enable()
+	if cfg.values.forvo_preload_audio then
+		for _, prn in ipairs(prns) do
+			prn:load_audio(true)
+		end
+	end
 end
 
 return forvo
