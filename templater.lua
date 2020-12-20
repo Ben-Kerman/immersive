@@ -70,7 +70,10 @@ function templater.render(template, values)
 			table.insert(strings, segment)
 		else
 			local value = values[segment.ident]
-			if not value then return nil end --TODO error msg
+			if not value then
+				mp.msg.error("substitution", segment.ident, "missing")
+				return nil
+			end
 
 			local data_type = type(value.data)
 			local is_map = data_type == "table"
