@@ -42,22 +42,34 @@ function system.tmp_file_name()
 	return path
 end
 
+local function handle_process_result(success, res, err)
+	if not res then
+		mp.msg.error("Failed to run subprocess: '" .. err .. "'; arguments: " .. mputil.format_json(args))
+		return
+	end
+	return res.status, res.stdout, res.error_string
+end
+
 function system.subprocess(args)
-	local res = mp.command_native{
+	local res, err = mp.command_native{
 		name = "subprocess",
 		playback_only = false,
 		capture_stdout = true,
 		args = args
 	}
-	return res.status, res.stdout, res.error_string
+	return handle_process_result(res, res, err)
 end
 
 function system.background_process(args, callback)
 	return mp.command_native_async({
 		name = "subprocess",
 		playback_only = false,
+		capture_stdout = true,
 		args = args
-	}, callback)
+	}, function(success, res, err)
+		local status, stdout, error_string = handle_process_result(success, res, err)
+		callback(status, stdout, error_string)
+	end)
 end
 
 function system.list_files(dir)

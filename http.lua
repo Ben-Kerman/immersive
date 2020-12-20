@@ -1,10 +1,8 @@
 local sys = require "system"
 
-local http = {}
-
 local data_path = sys.tmp_file_name()
 
-function http.request(params)
+local function request(params, async, callback)
 	local args = {
 		"curl","-s",
 		params.url,
@@ -34,11 +32,27 @@ function http.request(params)
 		table.insert(args, params.target_path)
 	end
 
-	local status, stdout = sys.subprocess(args)
-	if status ~= 0 then
-		mp.msg.error("HTTP " .. params.method .. " request for URL '" .. params.url .. "' failed.")
-		return nil
-	else return stdout end
+	local function handle_result(status, stdout)
+		if status ~= 0 then
+			mp.msg.error("HTTP " .. params.method .. " request for URL '" .. params.url .. "' failed.")
+		else return stdout end
+	end
+
+	if async then
+		local internal_callback = callback and function(status, stdout, error_string)
+			callback(handle_result(status, stdout))
+		end
+		sys.background_process(args, internal_callback)
+	else
+		local status, stdout = sys.subprocess(args)
+		return handle_result(status, stdout)
+	end
+end
+
+local http = {}
+
+function http.request(params)
+	return request(params)
 end
 
 function http.post(params)
@@ -54,6 +68,15 @@ end
 function http.get(params)
 	params.method = "GET"
 	return http.request(params)
+end
+
+function http.request_async(params, callback)
+	return request(params, true, callback)
+end
+
+function http.get_async(params, callback)
+	params.method = "GET"
+	return http.request_async(params, callback)
 end
 
 return http
