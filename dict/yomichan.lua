@@ -1,5 +1,5 @@
 local dict_util = require "dict.dict_util"
-local mputil = require "mp.utils"
+local mpu = require "mp.utils"
 local sys = require "system"
 local utf_8 = require "utf_8"
 local util = require "util"
@@ -52,7 +52,7 @@ local function create_index(term_list)
 end
 
 local function verify(dir)
-	local stat_res = mputil.file_info(dir)
+	local stat_res = mpu.file_info(dir)
 	if not stat_res or not stat_res.is_dir then
 		return nil, "path doesn't exist of is not a directory"
 	end
@@ -62,7 +62,7 @@ local function verify(dir)
 		return nil, "no index found"
 	end
 
-	local index = dict_util.parse_json_file(mputil.join_path(dir, "index.json"))
+	local index = dict_util.parse_json_file(mpu.join_path(dir, "index.json"))
 
 	local format = index.format and index.format or index.version
 	if format ~= 3 then
@@ -87,7 +87,7 @@ local function import(id, dir)
 		for _, tag_bank in ipairs(util.list_filter(files_or_error, function(filename)
 			return util.string_starts(filename, prefix)
 		end)) do
-			local bank_data = dict_util.parse_json_file(mputil.join_path(dir, tag_bank))
+			local bank_data = dict_util.parse_json_file(mpu.join_path(dir, tag_bank))
 			for _, entry in ipairs(bank_data) do
 				action(entry)
 			end
@@ -264,7 +264,7 @@ local yomichan = {}
 function yomichan.load(dict_id, config)
 	local terms, tag_map = (function()
 		local cache_path = dict_util.cache_path(dict_id)
-		if mputil.file_info(cache_path) then
+		if mpu.file_info(cache_path) then
 			local data = dict_util.parse_json_file(cache_path)
 			return data.terms, data.tags
 		else return import(dict_id, config.location) end

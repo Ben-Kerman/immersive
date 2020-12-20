@@ -1,4 +1,4 @@
-local mputil = require "mp.utils"
+local mpu = require "mp.utils"
 local msg = require "message"
 
 local system = {}
@@ -45,7 +45,7 @@ end
 
 local function handle_process_result(success, res, err)
 	if not res then
-		msg.error("Failed to run subprocess: '" .. err .. "'; arguments: " .. mputil.format_json(args))
+		msg.error("Failed to run subprocess: '" .. err .. "'; arguments: " .. mpu.format_json(args))
 		return
 	end
 	return res.status, res.stdout, res.error_string
@@ -74,7 +74,7 @@ function system.background_process(args, callback)
 end
 
 function system.list_files(dir)
-	return mputil.readdir(dir, "files")
+	return mpu.readdir(dir, "files")
 end
 
 function system.create_dir(path)

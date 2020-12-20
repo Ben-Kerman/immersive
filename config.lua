@@ -1,9 +1,9 @@
-local mputil = require "mp.utils"
+local mpu = require "mp.utils"
 local util = require "util"
 
 local function check_file(path)
 	if not path then return false end
-	local stat_res = mputil.file_info(path)
+	local stat_res = mpu.file_info(path)
 	if not stat_res or not stat_res.is_file then
 		return false
 	end

@@ -2,7 +2,7 @@ local anki = require "anki"
 local ankicon = require "ankiconnect"
 local cfg = require "config"
 local encoder = require "encoder"
-local mputil = require "mp.utils"
+local mpu = require "mp.utils"
 local series_id = require "series_id"
 local sys = require "system"
 local templater = require "templater"
@@ -52,8 +52,8 @@ local function export_word_audio(data)
 
 		local function check_file(extension, action)
 			local full_fn = base_fn .. extension
-			local tgt_path = mputil.join_path(anki.media_dir(), full_fn)
-			if not mputil.file_info(tgt_path) then
+			local tgt_path = mpu.join_path(anki.media_dir(), full_fn)
+			if not mpu.file_info(tgt_path) then
 				action(tgt_path)
 			else mp.osd_message("Word audio file " .. full_fn .. " already exists") end
 			return full_fn
@@ -97,8 +97,8 @@ function export.execute(data)
 
 	local audio_filename = anki.generate_filename(series_id.get_id(), tgt_cfg.audio.extension)
 	local image_filename = anki.generate_filename(series_id.get_id(), tgt_cfg.image.extension)
-	encoder.audio(mputil.join_path(anki.media_dir(), audio_filename), data.times.start, data.times.stop)
-	encoder.image(mputil.join_path(anki.media_dir(), image_filename), data.times.scrot)
+	encoder.audio(mpu.join_path(anki.media_dir(), audio_filename), data.times.start, data.times.stop)
+	encoder.image(mpu.join_path(anki.media_dir(), image_filename), data.times.scrot)
 	local word_audio_filename = export_word_audio(data)
 
 	local fields = {}

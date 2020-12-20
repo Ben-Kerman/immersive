@@ -1,5 +1,4 @@
 local kbds = require "key_bindings"
-local mputil = require "mp.utils"
 local ssa = require "ssa"
 local utf_8 = require "utf_8"
 local util = require "util"

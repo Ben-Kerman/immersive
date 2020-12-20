@@ -1,13 +1,13 @@
 local anki = require "anki"
 local http = require "http"
-local mputil = require "mp.utils"
+local mpu = require "mp.utils"
 
 local ankiconnect = {}
 
 function ankiconnect.request(action, params)
 	return http.post_json{
 		url = "localhost:8765",
-		data = mputil.format_json{
+		data = mpu.format_json{
 			action = action,
 			params = params,
 			version = 6
