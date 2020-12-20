@@ -9,6 +9,7 @@ require "line_select"
 
 -- forward declarations
 local menu
+local prns, prn_sel
 
 local function request_headers()
 	return {
@@ -49,15 +50,26 @@ local html_headers = (function()
 	return headers
 end)()
 
-local function audio_request(url, target_path)
+local function audio_request(url, target_path, async, callback)
 	local headers = request_headers()
 	table.insert(headers, audio_accept)
-	if http.get{
+	local http_params = {
 		url = url,
 		headers = headers,
 		target_path = target_path
-	} then return target_path
-	else return nil end
+	}
+	local function handle_http_res(res)
+		if res then return target_path
+		else mp.osd_message("Failed to load Forvo audio") end
+	end
+	if async then
+		http.get_async(http_params, function(res)
+			callback(handle_http_res(res))
+		end)
+	else
+		local res = http.get(http_params)
+		return handle_http_res(res)
+	end
 end
 
 local function html_request(url)
@@ -90,11 +102,19 @@ function Pronunciation:new(id, user, mp3_l, ogg_l, mp3_h, ogg_h)
 	return setmetatable(pr, Pronunciation)
 end
 
-function Pronunciation:load_audio()
+function Pronunciation:load_audio(async)
 	if not self.audio_file then
 		local src = self.audio_h and self.audio_h or self.audio_l
 		local audio_url = cfg.forvo_prefer_mp3 and src.mp3 or src.ogg
-		self.audio_file = audio_request(audio_url, sys.tmp_file_name())
+		if async then
+			audio_request(audio_url, sys.tmp_file_name(), true, function(res)
+				self.audio_file = res
+				prn_sel:update()
+			end)
+		else
+			self.audio_file = audio_request(audio_url, sys.tmp_file_name())
+			prn_sel:update()
+		end
 	end
 end
 
@@ -140,15 +160,13 @@ local function extract_pronunciations(word)
 end
 
 local function line_renderer(prn)
-	return prn.user
+	local color = prn.audio_file and [[{\1c&HFFFFFF&}]] or [[{\1c&H808080&}]]
+	return color .. prn.user
 end
 
 local function sel_renderer(prn)
 	return "{\\b1}" .. line_renderer(prn) .. "{\\b0}"
 end
-
-local prns
-local prn_sel
 
 local function play_highlighted()
 	if prn_sel then
