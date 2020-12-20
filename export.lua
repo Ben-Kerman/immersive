@@ -46,13 +46,6 @@ local function replace_field_vars(field_def, data, audio_file, image_file, word_
 end
 
 local function export_word_audio(data)
-	local function check_file(extension, action)
-		local tgt_path = mputil.join_path(anki.media_dir(), full_fn)
-		if not mputil.file_info(tgt_path) then
-			action(tgt_path)
-		else mp.osd_message("Word audio file " .. filename .. " already exists") end
-	end
-
 	if data.word_audio_file then
 		local src_path = data.word_audio_file.path
 		local base_fn = string.format("%s-%s.", cfg.values.forvo_prefix, data.word_audio_file.word)
@@ -62,7 +55,7 @@ local function export_word_audio(data)
 			local tgt_path = mputil.join_path(anki.media_dir(), full_fn)
 			if not mputil.file_info(tgt_path) then
 				action(tgt_path)
-			else mp.osd_message("Word audio file " .. filename .. " already exists") end
+			else mp.osd_message("Word audio file " .. full_fn .. " already exists") end
 			return full_fn
 		end
 
