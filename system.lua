@@ -85,6 +85,16 @@ function system.create_dir(path)
 	system.subprocess(args)
 end
 
+function system.move_file(src_path, tgt_path)
+	local cmd
+	if system.platform == "lnx" or system.platform == "mac" then
+		cmd = "mv"
+	elseif system.platform == "win" then
+		cmd = "move"
+	end
+	system.subprocess{cmd, src_path, target_path}
+end
+
 local ps_clip_write = [[
 Add-Type -AssemblyName System.IO
 Add-Type -AssemblyName System.Windows.Forms
