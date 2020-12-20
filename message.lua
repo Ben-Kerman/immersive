@@ -23,7 +23,7 @@ local function add_msg(level, text, timeout)
 	}
 	table.insert(messages, msg)
 
-	if not timeout then timeout = 15 end
+	if not timeout then timeout = 10 end
 	if timeout ~= 0 then
 		mp.add_timeout(timeout, function()
 			local _, pos = util.list_find(messages, msg)

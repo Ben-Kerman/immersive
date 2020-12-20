@@ -1,4 +1,5 @@
 local mputil = require "mp.utils"
+local msg = require "message"
 
 local system = {}
 
@@ -44,7 +45,7 @@ end
 
 local function handle_process_result(success, res, err)
 	if not res then
-		mp.msg.error("Failed to run subprocess: '" .. err .. "'; arguments: " .. mputil.format_json(args))
+		msg.error("Failed to run subprocess: '" .. err .. "'; arguments: " .. mputil.format_json(args))
 		return
 	end
 	return res.status, res.stdout, res.error_string

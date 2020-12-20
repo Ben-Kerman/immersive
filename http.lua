@@ -1,3 +1,4 @@
+local msg = require "message"
 local sys = require "system"
 
 local data_path = sys.tmp_file_name()
@@ -34,7 +35,7 @@ local function request(params, async, callback)
 
 	local function handle_result(status, stdout)
 		if status ~= 0 then
-			mp.msg.error("HTTP " .. params.method .. " request for URL '" .. params.url .. "' failed.")
+			msg.error("HTTP " .. params.method .. " request for URL '" .. params.url .. "' failed.")
 		else return stdout end
 	end
 

@@ -1,3 +1,4 @@
+local msg = require "message"
 local util = require "util"
 
 local function parse_substitution(subs_str)
@@ -71,7 +72,7 @@ function templater.render(template, values)
 		else
 			local value = values[segment.ident]
 			if not value then
-				mp.msg.error("substitution", segment.ident, "missing")
+				msg.error("substitution", segment.ident, "missing")
 				return nil
 			end
 
