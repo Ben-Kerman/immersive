@@ -1,5 +1,6 @@
 local dicts = require "dict.dicts"
 local export = require "export"
+local forvo = require "forvo"
 require "menu"
 require "definition_select"
 require "line_select"
@@ -53,6 +54,23 @@ local function delete_line()
 	start_tgt_sel()
 end
 
+local function add_word_audio()
+	if #data.definitions ~= 0 then
+		menu:disable()
+		if tgt_word_sel then tgt_word_sel:finish() end
+		if def_sel then def_sel:finish() end
+		tgt_word_sel, def_sel = nil
+		forvo.begin(data.definitions[#data.definitions].word, function(prn)
+			data.word_audio_file = prn.audio_file
+			menu:enable()
+			start_tgt_sel()
+		end)
+	else
+		mp.osd_message("No target word selected")
+	end
+
+end
+
 local function cancel()
 	menu:disable()
 	if tgt_word_sel then
@@ -92,6 +110,12 @@ local bindings = {
 		default = "Shift+ENTER",
 		desc = "Look up words starting with selection",
 		action = function() select_target_def(true) end
+	},
+	{
+		id = "target_select-add_word_audio",
+		default = "a",
+		desc = "Add Forvo audio for target word",
+		action = add_word_audio
 	},
 	{
 		id = "target_select-delete_line",
