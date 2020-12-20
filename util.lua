@@ -1,14 +1,12 @@
 local util = {}
 
 function util.list_find(list, predicate)
-	if type(predicate) == "function" then
-		for _, val in ipairs(list) do
-			if predicate(val) then return val end
-		end
-	else
-		for _, val in ipairs(list) do
-			if val == predicate then return val end
-		end
+	local test = predicate
+	if type(predicate) ~= "function" then
+		test = function(val) return val == predicate end
+	end
+	for i, val in ipairs(list) do
+		if test(val) then return val, i end
 	end
 end
 
