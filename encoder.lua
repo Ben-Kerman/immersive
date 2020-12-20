@@ -16,7 +16,7 @@ function encoder.any_audio(params)
 		"--o=" .. params.tgt_path,
 		"--no-ocopy-metadata",
 		"--vid=no",
-		"--aid=" .. params.track or "1",
+		"--aid=" .. (params.track or "1"),
 		"--sid=no",
 		"--of=" ..params. format,
 		"--oac=" .. params.codec,

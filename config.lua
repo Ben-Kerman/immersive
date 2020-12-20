@@ -16,6 +16,7 @@ local config = {
 		forvo_language = "ja",
 		forvo_preload_audio = true,
 		forvo_prefer_mp3 = false,
+		forvo_prefix = "word_audio",
 		forvo_reencode = true,
 		forvo_extension = "mka",
 		forvo_format = "matroska",
