@@ -62,7 +62,7 @@ end
 
 function http.post_json(params)
 	params.data_type = "application/json; charset=UTF-8"
-	return http.request(params)
+	return http.post(params)
 end
 
 function http.get(params)

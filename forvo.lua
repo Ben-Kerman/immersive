@@ -107,17 +107,24 @@ end
 
 function Pronunciation:load_audio(async)
 	if not self.audio_file then
+		local extension = cfg.values.forvo_prefer_mp3 and "mp3" or "ogg"
 		local src = self.audio_h and self.audio_h or self.audio_l
-		local audio_url = cfg.values.forvo_prefer_mp3 and src.mp3 or src.ogg
+		local audio_url = src[extension]
 		if async then
 			audio_request(audio_url, sys.tmp_file_name(), true, function(res)
 				if prn_sel then
-					self.audio_file = res
+					self.audio_file = {
+						extension = extension,
+						path = res
+					}
 					prn_sel:update()
 				end
 			end)
 		else
-			self.audio_file = audio_request(audio_url, sys.tmp_file_name())
+			self.audio_file = {
+				extension = extension,
+				path = audio_request(audio_url, sys.tmp_file_name())
+			}
 			prn_sel:update()
 		end
 	end
@@ -126,7 +133,7 @@ end
 function Pronunciation:play()
 	self:load_audio()
 	if self.audio_file then
-		player.play(self.audio_file)
+		player.play(self.audio_file.path)
 	else
 		mp.osd_message("Failed to download audio file")
 	end
