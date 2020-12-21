@@ -5,66 +5,81 @@ local util = require "util"
 local basic_tags = {
 	{
 		id = "align",
+		type = "number",
 		tag = "an"
 	},
 	{
 		id = "bold",
+		type = "boolean",
 		tag = "b"
 	},
 	{
 		id = "italic",
+		type = "boolean",
 		tag = "i"
 	},
 	{
 		id = "underline",
+		type = "boolean",
 		tag = "u"
 	},
 	{
 		id = "strikeout",
+		type = "boolean",
 		tag = "s"
 	},
 	{
 		id = "border",
+		type = "number",
 		tag = "bord"
 	},
 	{
 		id = "border_x",
+		type = "number",
 		tag = "xbord",
 		explicit = true
 	},
 	{
 		id = "border_y",
+		type = "number",
 		tag = "ybord",
 		explicit = true
 	},
 	{
 		id = "shadow",
+		type = "number",
 		tag = "shad"
 	},
 	{
 		id = "shadow_x",
+		type = "number",
 		tag = "xshad",
 		explicit = true
 	},
 	{
 		id = "shadow_y",
+		type = "number",
 		tag = "yshad",
 		explicit = true
 	},
 	{
 		id = "blur",
+		type = "number",
 		tag = "blur"
 	},
 	{
 		id = "font_name",
+		type = "string",
 		tag = "fn"
 	},
 	{
 		id = "font_size",
+		type = "number",
 		tag = "fs"
 	},
 	{
 		id = "letter_spacing",
+		type = "number",
 		tag = "fsp"
 	}
 }
@@ -72,18 +87,22 @@ local basic_tags = {
 local color_tags = {
 	{
 		id = "primary_color",
+		type = "string",
 		tag = "1c"
 	},
 	{
 		id = "secondary_color",
+		type = "string",
 		tag = "2c"
 	},
 	{
 		id = "border_color",
+		type = "string",
 		tag = "3c"
 	},
 	{
 		id = "shadow_color",
+		type = "string",
 		tag = "4c"
 	}
 }
@@ -91,23 +110,28 @@ local color_tags = {
 local alpha_tags = {
 	{
 		id = "all_alpha",
+		type = "string",
 		tag = "alpha",
 		explicit = true
 	},
 	{
 		id = "primary_alpha",
+		type = "string",
 		tag = "1a"
 	},
 	{
 		id = "secondary_alpha",
+		type = "string",
 		tag = "2a"
 	},
 	{
 		id = "border_alpha",
+		type = "string",
 		tag = "3a"
 	},
 	{
 		id = "shadow_alpha",
+		type = "string",
 		tag = "4a"
 	}
 }
