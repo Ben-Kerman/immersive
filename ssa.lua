@@ -79,17 +79,10 @@ local function get_defaults()
 	}
 end
 
-local function find_tag(str)
-	for _, tags in pairs(tags) do
-		local find_res = util.list_find(tags, function(tag_def)
-			return tag_def.id == str
-		end)
-		if find_res then return find_res end
-	end
-end
-
 local function verify_convert_value(key, value)
-	local tag = find_tag(key)
+	local tag = util.list_find(tags, function(tag)
+		return tag.id == key
+	end)
 	if tag then
 		local res
 		local is_color = tag.type == "color"
