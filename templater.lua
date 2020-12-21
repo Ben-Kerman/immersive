@@ -63,7 +63,7 @@ local function parse_affixes(str, init_pos, subst)
 			insert()
 		elseif char(str, pos) == "}" and char(str, pos + 1) == "}" then
 			insert()
-			return true, pos
+			return true, pos + 1
 		else
 			if char(str, pos) == "\\" then pos = pos + 1 end
 			table.insert(affix_tbl, char(str, pos))
@@ -113,7 +113,7 @@ local function parse_substitution(str, init_pos)
 		subst.to = -1
 	end
 
-	return subst, pos + 1
+	return subst, pos
 end
 
 local function segment_str(str)
@@ -188,15 +188,15 @@ function templater.render(template, values)
 							list = util.list_map(list, value.transform)
 						end
 						local sep = segment.sep and segment.sep or value.sep
-						insert_string = table.concat(list, sep)
+						insert_str = table.concat(list, sep)
 					end
 				end
 
-				if insert_string then
+				if insert_str then
 					if segment.prefix then
 						table.insert(strings, segment.prefix)
 					end
-					table.insert(strings, insert_string)
+					table.insert(strings, insert_str)
 					if segment.suffix then
 						table.insert(strings, segment.suffix)
 					end
