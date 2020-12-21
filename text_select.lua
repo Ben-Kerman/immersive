@@ -14,36 +14,35 @@ TextSelect = {}
 TextSelect.__index = TextSelect
 
 function TextSelect:default_generator(has_sel, curs_pos, segments)
-	local cursor = TextSelect.cursor(self.font_size)
-
-	local ssa_definition = {
-		base_style = "text_select",
-		segments[1]
-	}
-	if self.override_style then
-		ssa_definition.base_override = self.override_style
-	end
+	local cursor = self:cursor()
+	local ssa_definition
 	if has_sel then
-		if curs_pos < 0 then
-			table.insert(ssa_definition, cursor)
-		end
-		table.insert(ssa_definition, {
-			style = "selection",
-			text = segments[2]
-		})
-		if curs_pos > 0 then
-			table.insert(ssa_definition, cursor)
-		end
-		table.insert(ssa_definition, segments[3])
+		ssa_definition = {
+			segments[1],
+			curs_pos < 0 and cursor or "",
+			{
+				style = {"text_select", "selection"},
+				segments[2]
+			},
+			curs_pos > 0 and cursor or "",
+			segments[3],
+		}
 	else
-		table.insert(ssa_definition, cursor)
-		table.insert(ssa_definition, segments[2])
+		ssa_definition = {
+			segments[1],
+			cursor,
+			segments[2]
+		}
 	end
-	return ssa.generate(ssa_definition)
+	return ssa.generate{
+		style = "text_select",
+		full_style = self.style_reset,
+		ssa_definition
+	}
 end
 
-function TextSelect.cursor(font_size)
-	local curs_size = font_size * 8
+function TextSelect:cursor()
+	local curs_size = self.font_size * 8
 	local pbo = curs_size / 6
 	return {
 		style = {
@@ -58,7 +57,7 @@ function TextSelect.cursor(font_size)
 			border_alpha = "00",
 			shadow_alpha = "00"
 		},
-		text = string.format("{\\p4\\pbo%d}m 0 0 l 1 0 l 1 %d l 0 %d{\\p0}", pbo, curs_size, curs_size)
+		string.format("{\\p4\\pbo%d}m 0 0 l 1 0 l 1 %d l 0 %d{\\p0}", pbo, curs_size, curs_size)
 	}
 end
 
@@ -179,7 +178,7 @@ function TextSelect:finish(force_sel)
 	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
 end
 
-function TextSelect:new(text, font_size, update_handler, override_style, init_cursor_pos)
+function TextSelect:new(text, font_size, update_handler, no_style_reset, init_cursor_pos)
 	local ts
 	ts = {
 		cdpts = utf_8.codepoints(text),
@@ -187,7 +186,7 @@ function TextSelect:new(text, font_size, update_handler, override_style, init_cu
 		sel = {from = 0, to = 0},
 		update_handler = update_handler and update_handler or default_update_handler,
 		font_size = font_size,
-		override_style = override_style,
+		style_reset = not no_style_reset,
 		bindings = {
 			{
 				id = "text_select-prev_char",

@@ -148,8 +148,6 @@ local function escape(str)
 	return (str:gsub("\n", "\\N"))
 end
 
-local err_str = [[{\i1}SSA error{\i0}]]
-
 local ssa = {}
 
 function ssa.custom(data)
@@ -173,56 +171,50 @@ function ssa.query(path)
 	return value
 end
 
-local function generate_rec(string_parts, str_def, base_data, definition)
-	if type(str_def) == "string" then
-		table.insert(string_parts, escape(str_def))
-	elseif type(str_def) == "table" then
-		local sub_data
-		if str_def.style then
-			if type(str_def.style) == "table" then
-				sub_data = str_def.style
-			else
-				sub_data = config[definition.base_style][str_def.style]
-				if not sub_data then
-					msg.fatal("unknown sub style: " .. str_def.style)
-				end
-			end
+local function find_style(style_def)
+	if style_def then
+		if type(style_def) == "string" then
+			return config[style_def].base
+		elseif type(style_def) == "table" then
+			if #style_def ~= 0 then
+				return cfg.get_nested(config, style_def)
+			else return style_def end
+		else msg.fatal("invalid style type: " .. type(style_def)) end
+	end
+end
+
+local function generate_rec(string_parts, definition, base_data)
+	if type(definition) == "string" then
+		table.insert(string_parts, escape(definition))
+	elseif type(definition) == "table" then
+		local style_data = find_style(definition.style)
+		if not base_data then
+			base_data = util.map_merge(config.base, style_data)
+		end
+		local next_base_data = util.map_merge(base_data, style_data)
+		local inj_data = definition.full_style and next_base_data or style_data
+
+		if inj_data then
+			inject_tag(string_parts, inj_data)
 		end
 
-		if sub_data then
-			inject_tag(string_parts, sub_data)
-		end
-		table.insert(string_parts, escape(str_def.text))
-		if str_def.reset_after then
-			inject_tag(string_parts, base_data)
-		elseif sub_data then
-			inject_tag(string_parts, sub_data, true, base_data)
+		for _, sub_def in ipairs(definition) do
+			generate_rec(string_parts, sub_def, next_base_data)
 		end
 
-		if str_def.newline and i ~= #definition then
+		if inj_data then
+			inject_tag(string_parts, inj_data, true, base_data)
+		end
+
+		if definition.newline then
 			table.insert(string_parts, "\\N")
 		end
-	else msg.fatal("invalid type in SSA format table: " .. type(str_def)) end
+	else msg.fatal("invalid type in SSA format table: " .. type(definition)) end
 end
 
 function ssa.generate(definition)
-	local secondary_style = definition.base_override
-	                        and definition.base_override
-	                        or definition.base_style
-
-	if not config[secondary_style] then
-		msg.fatal("unknown secondary base style: " .. secondary_style)
-		return err_str
-	end
-	local base_data = util.map_merge(config.base, config[secondary_style].base)
-
 	local string_parts = {}
-	if not definition.base_override then
-		inject_tag(string_parts, base_data)
-	end
-	for i, str_def in ipairs(definition) do
-		generate_rec(string_parts, str_def, base_data, definition)
-	end
+	generate_rec(string_parts, definition)
 	return table.concat(string_parts)
 end
 

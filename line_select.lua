@@ -70,11 +70,14 @@ function LineSelect:update()
 		end
 	end
 
-	local ssa_definition = {base_style = "line_select"}
+	local ssa_definition = {
+		style = "line_select",
+		full_style = true
+	}
 	if first ~= 1 then
 		table.insert(ssa_definition, {
-			text = "...",
-			newline = true
+			newline = true,
+			"..."
 		})
 	end
 
@@ -82,11 +85,14 @@ function LineSelect:update()
 		local line = self.lines[i]
 		local active = i == self.active
 		local conv = active and self.sel_conv or self.line_conv
+
 		local ssa_str_def = {
-			text = conv(line),
-			newline = true
+			newline = true,
+			conv(line)
 		}
-		if active then ssa_str_def.style = "selection" end
+		if active then
+			ssa_str_def.style = {"line_select", "selection"}
+		end
 
 		table.insert(ssa_definition, ssa_str_def)
 	end

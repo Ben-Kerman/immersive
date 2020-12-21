@@ -31,23 +31,22 @@ function Menu:disable()
 	self:redraw()
 end
 
-local help_hint_off = ssa.generate{
-	base_style = "menu_help",
-	base_override = "menu_help",
+local help_hint_off = {
+	style = {"menu_help", "hint"},
 	"Press ",
 	{
-		style = "key",
-		text = "h"
+		style = {"menu_help", "key"},
+		"h"
 	},
 	" to show key bindings"
 }
-local help_hint_on = ssa.generate{
-	base_style = "menu_help",
-	base_override = "menu_help",
+local help_hint_on = {
+	style = {"menu_help", "hint"},
+	newline = true,
 	"Key Bindings (",
 	{
-		style = "key",
-		text = "h"
+		style = {"menu_help", "key"},
+		"h"
 	},
 	" to hide)"
 }
@@ -58,52 +57,51 @@ function Menu:redraw()
 
 		if self.data.bindings then
 			local ssa_definition = {
-				base_style = "menu_help"
+				style = "menu_help",
+				full_style = true
 			}
+
 			if self.show_bindings then
-				table.insert(ssa_definition, {
-					style = "hint",
-					text = help_hint_on,
-					newline = true
-				})
+				table.insert(ssa_definition, help_hint_on)
+
 				for _, binding in ipairs(self.data.bindings) do
-					table.insert(ssa_definition, [[\h\h\h]])
-					table.insert(ssa_definition, {
-						style = "key",
-						text = binding.default
-					})
-					table.insert(ssa_definition, ": ")
-					table.insert(ssa_definition, binding.desc)
-					if binding.global then table.insert(ssa_definition, " (global)") end
-					table.insert(ssa_definition, {
-						text = "",
-						newline = true
-					})
+					local binding_ssa_def = {
+						newline = true,
+						"\\h\\h\\h",
+						{
+							style = {"menu_help", "key"},
+							binding.default
+						},
+						": ",
+						binding.desc
+					}
+					if binding.global then
+						table.insert(binding_ssa_def, " (global)")
+					end
+					table.insert(ssa_definition, binding_ssa_def)
 				end
-			else
-				table.insert(ssa_definition, {
-					style = "hint",
-					text = help_hint_off
-				})
-			end
+			else table.insert(ssa_definition, help_hint_off) end
+
 			local osd_spacer = string.format([[{\fs%d}\h\N]], mp.get_property_number("osd-font-size"))
 			table.insert(ssa_lines, osd_spacer .. ssa.generate(ssa_definition))
 		end
 
 		if self.data.infos and not self.show_bindings then
 			local ssa_definition = {
-				base_style = "menu_info"
+				style = "menu_info",
+				full_style = true
 			}
+
 			for _, info in ipairs(self.data.infos) do
 				local display = info.display and info.display(info.value) or info.value
 				table.insert(ssa_definition, {
-					style = "key",
-					text = info.name
-				})
-				table.insert(ssa_definition, ": ")
-				table.insert(ssa_definition, {
-					text = display,
-					newline = true
+					newline = true,
+					{
+						style = {"menu_info", "key"},
+						info.name
+					},
+					": ",
+					display
 				})
 			end
 			table.insert(ssa_lines, ssa.generate(ssa_definition))

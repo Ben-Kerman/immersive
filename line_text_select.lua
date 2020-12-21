@@ -17,7 +17,7 @@ function LineTextSelect:new(lines, line_conv, sel_conv, limit)
 			lts._text_select = TextSelect:new(sel_conv(line), fs, function(self, has_sel, curs_pos, segments)
 				lts.sel_ssa = self:default_generator(has_sel, curs_pos, segments)
 				lts._line_select:update()
-			end, "line_select")
+			end, true)
 			lts._text_select:start()
 		end
 	end
