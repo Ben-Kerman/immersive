@@ -158,6 +158,23 @@ function ssa.custom(data)
 	return table.concat(tag_parts)
 end
 
+function ssa.query(path)
+	local tag_id = path[#path]
+	local value = config.base[tag_id]
+
+	if #path > 1 then
+		local secondary_value = config[path[1]].base[tag_id]
+		if secondary_value then value = secondary_value end
+	end
+	print("value", value)
+	if #path > 2 then
+		local tertiary_value = config[path[1]][path[2]][tag_id]
+		if tertiary_value then value = tertiary_value end
+	end
+	print("value", value)
+	return value
+end
+
 function ssa.generate(definition)
 	local secondary_style = definition.base_override
 	                        and definition.base_override
