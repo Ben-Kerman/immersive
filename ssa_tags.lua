@@ -83,50 +83,50 @@ return {
 	color = {
 		{
 			id = "primary_color",
-			type = "string",
+			type = "color",
 			tag = "1c"
 		},
 		{
 			id = "secondary_color",
-			type = "string",
+			type = "color",
 			tag = "2c"
 		},
 		{
 			id = "border_color",
-			type = "string",
+			type = "color",
 			tag = "3c"
 		},
 		{
 			id = "shadow_color",
-			type = "string",
+			type = "color",
 			tag = "4c"
 		}
 	},
 	alpha = {
 		{
 			id = "all_alpha",
-			type = "string",
+			type = "alpha",
 			tag = "alpha",
 			explicit = true
 		},
 		{
 			id = "primary_alpha",
-			type = "string",
+			type = "alpha",
 			tag = "1a"
 		},
 		{
 			id = "secondary_alpha",
-			type = "string",
+			type = "alpha",
 			tag = "2a"
 		},
 		{
 			id = "border_alpha",
-			type = "string",
+			type = "alpha",
 			tag = "3a"
 		},
 		{
 			id = "shadow_alpha",
-			type = "string",
+			type = "alpha",
 			tag = "4a"
 		}
 	}

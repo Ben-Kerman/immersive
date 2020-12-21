@@ -111,7 +111,7 @@ function config.convert_bool(str)
 		return true
 	elseif str == "no" or str == "false" then
 		return false
-	else return nil end
+	else msg.warn("Boolean config values must be yes, true, no or false") end
 end
 
 function config.force_type(val, type_name)

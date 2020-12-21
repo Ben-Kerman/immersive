@@ -88,18 +88,33 @@ local function find_tag(str)
 	end
 end
 
+local function verify_convert_value(key, value)
+	local tag = find_tag(key)
+	if tag then
+		local res
+		local is_color = tag.type == "color"
+		if is_color or tag.type == "alpha" then
+			local len = is_color and 6 or 2
+			local conv = is_color and convert_color or convert_alpha
+
+			if #value == len and value:match("^%x+$") then
+				res = conv(value)
+			end
+		else res = cfg.force_type(value, tag.type) end
+
+		if res then return res
+		else msg.warn("Ignoring invalid style value: " .. key .. "=" .. value) end
+	else msg.warn("Ignoring unknown style property: " .. key) end
+end
+
 local config = (function()
 	local config = get_defaults()
 	local cfg_data = cfg.load_subcfg("style")
 
 	local function insert_values(tbl, entries)
 		for key, value in pairs(entries) do
-			local tag = find_tag(key)
-			if tag then
-				local success, res = pcall(cfg.force_type, value, tag.type)
-				if success then tbl[key] = res
-				else msg.warn("Ignoring invalid style value: " .. value) end
-			else msg.warn("Ignoring unknown style property: " .. key) end
+			local conv_res = verify_convert_value(key, value)
+			if conv_res then tbl[key] = conv_res end
 		end
 	end
 
