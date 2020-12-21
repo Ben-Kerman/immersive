@@ -1,56 +1,137 @@
 local msg = require "message"
 local util = require "util"
 
-local function parse_substitution(subs_str)
-	local _, ident_start, prefix, suffix = subs_str:find("^([^:]*):([^:]*):")
-	if not ident_start then ident_start = 0 end
-	local ident = subs_str:match("^([^%[]+)", ident_start + 1)
-	local index = subs_str:match("%[(%d+)%]$")
-	local from, to, sep = subs_str:match("%[(%d*):(%d*)%]:?(.*)$")
+local function char(str, pos)
+	return str:sub(pos, pos)
+end
 
-	if sep == "" then sep = nil end
+local msg_fmt = "template error: %s; position: %d; template: %s"
+local function err_msg(msg, pos, str)
+	local msg_str = string.format(msg_fmt, msg, pos, str)
+	msg.error(msg_str)
+end
 
-	if from then
-		if from == "" then from = 1
-		else from = tonumber(from) end
-		if to == "" then to = -1
-		else to = tonumber(to) end
+local function number_conv(str)
+	local res = tonumber(str)
+	if not res then
+		msg.error("Ignoring invalid number in template: " .. str)
+	end
+	return res
+end
+
+local function parse_indexing(str, init_pos, subst)
+	local _, end_pos, index_str = str:find("^%[([^%]]*)%]", init_pos)
+	if index_str then
+		local from_str, to_str = index_str:match("^([^:]*):([^%]]*)$")
+		if from_str then
+			if from_str then
+				if from_str == "" then subst.from = 1
+				else subst.from = number_conv(from_str) end
+
+				if to_str == "" then subst.to = -1
+				else subst.to = number_conv(to_str) end
+			end
+		else
+			local index = number_conv(index_str)
+			subst.from = index
+			subst.to = index
+		end
+		return end_pos
+	else
+		msg.error("invalid template at char " .. init_pos .. ": " .. str)
+		return nil
+	end
+end
+
+local function parse_affixes(str, init_pos, subst)
+	local affix_num = 1
+	local affix_names = {"prefix", "suffix", "sep"}
+
+	local affix_tbl = {}
+	local function insert()
+		subst[affix_names[affix_num]] = table.concat(affix_tbl)
+		affix_tbl = {}
+		affix_num = affix_num + 1
 	end
 
-	if index then
-		local index_num = tonumber(index)
-		from, to = index_num, index_num
+	local pos = init_pos
+	while pos <= #str do
+		if char(str, pos) == ":" then
+			insert()
+		elseif char(str, pos) == "}" and char(str, pos + 1) == "}" then
+			insert()
+			return true, pos
+		else
+			if char(str, pos) == "\\" then pos = pos + 1 end
+			table.insert(affix_tbl, char(str, pos))
+		end
+		pos = pos + 1
+	end
+	return false, pos
+end
+
+local function parse_substitution(str, init_pos)
+	local subst = {}
+	local id_tbl = {}
+
+	local affix_mode, end_reached = false, false
+	local pos = init_pos
+	while pos <= #str and not (affix_mode or end_reached) do
+		if char(str, pos) == "[" then
+			local new_pos = parse_indexing(str, pos, subst)
+			if new_pos then pos = new_pos
+			else return nil end
+			affix_mode = true
+		elseif char(str, pos) == ":" then
+			affix_mode = true
+		elseif char(str, pos) == "}" and char(str, pos + 1) == "}" then
+			end_reached = true
+		else
+			if char(str, pos) == "\\" then pos = pos + 1 end
+			table.insert(id_tbl, char(str, pos))
+		end
+		pos = pos + 1
+	end
+	subst.id = table.concat(id_tbl)
+
+	if not end_reached and affix_mode then
+		end_reached, pos = parse_affixes(str, pos, subst)
 	end
 
-	return {
-		ident = ident,
-		prefix = prefix,
-		suffix = suffix,
-		from = from and from or 1,
-		to = to and to or -1, sep
-	}
+	if not end_reached then
+		msg.error("invalid template at char " .. pos .. ": " .. str)
+	end
+	return subst, pos + 1
 end
 
 local function segment_str(str)
 	local segments = {}
-
-	local next_from = 1
-	while true do
-		local from, to, val = str:find("%{%{([^%}]+)%}%}", next_from)
-		if not from then break end
-
-		if from > next_from then
-			table.insert(segments, str:sub(next_from, from - 1))
+	local current_segment = {}
+	local function insert_segment()
+		if #current_segment ~= 0 then
+			table.insert(segments, table.concat(current_segment))
+			current_segment = {}
 		end
-		table.insert(segments, parse_substitution(val))
-
-		next_from = to + 1
-		if next_from >= #str then break end
 	end
 
-	if next_from <= #str then
-		table.insert(segments, str:sub(next_from))
+	local pos = 1
+	while pos <= #str do
+		if char(str, pos) == "{" and char(str, pos + 1) == "{" then
+			insert_segment()
+			local subst, err
+			subst, pos = parse_substitution(str, pos + 2)
+
+			if subst then table.insert(segments, subst)
+			else
+				table.insert(segments, "template error")
+			end
+		else
+			if char(str, pos) == "\\" then pos = pos + 1 end
+			table.insert(current_segment, char(str, pos))
+		end
+		pos = pos + 1
 	end
+	insert_segment()
 
 	return segments
 end
@@ -70,9 +151,9 @@ function templater.render(template, values)
 		if seg_type == "string" then
 			table.insert(strings, segment)
 		else
-			local value = values[segment.ident]
+			local value = values[segment.id]
 			if not value then
-				msg.error("substitution", segment.ident, "missing")
+				msg.error("substitution", segment.id, "missing")
 				return nil
 			end
 
