@@ -173,6 +173,38 @@ function ssa.query(path)
 	return value
 end
 
+local function generate_rec(string_parts, str_def, base_data, definition)
+	if type(str_def) == "string" then
+		table.insert(string_parts, (escape(str_def)))
+	elseif type(str_def) == "table" then
+		local sub_data
+		if str_def.style then
+			if type(str_def.style) == "table" then
+				sub_data = str_def.style
+			else
+				sub_data = config[definition.base_style][str_def.style]
+				if not sub_data then
+					msg.fatal("unknown sub style: " .. str_def.style)
+				end
+			end
+		end
+
+		if sub_data then
+			inject_tag(string_parts, sub_data)
+		end
+		table.insert(string_parts, (escape(str_def.text)))
+		if str_def.reset_after then
+			inject_tag(string_parts, base_data)
+		elseif sub_data then
+			inject_tag(string_parts, sub_data, true, base_data)
+		end
+
+		if str_def.newline and i ~= #definition then
+			table.insert(string_parts, "\\N")
+		end
+	else msg.fatal("invalid type in SSA format table: " .. type(str_def)) end
+end
+
 function ssa.generate(definition)
 	local secondary_style = definition.base_override
 	                        and definition.base_override
@@ -189,35 +221,7 @@ function ssa.generate(definition)
 		inject_tag(string_parts, base_data)
 	end
 	for i, str_def in ipairs(definition) do
-		if type(str_def) == "string" then
-			table.insert(string_parts, (escape(str_def)))
-		elseif type(str_def) == "table" then
-			local sub_data
-			if str_def.style then
-				if type(str_def.style) == "table" then
-					sub_data = str_def.style
-				else
-					sub_data = config[definition.base_style][str_def.style]
-					if not sub_data then
-						msg.fatal("unknown sub style: " .. str_def.style)
-					end
-				end
-			end
-
-			if sub_data then
-				inject_tag(string_parts, sub_data)
-			end
-			table.insert(string_parts, (escape(str_def.text)))
-			if str_def.reset_after then
-				inject_tag(string_parts, base_data)
-			elseif sub_data then
-				inject_tag(string_parts, sub_data, true, base_data)
-			end
-
-			if str_def.newline and i ~= #definition then
-				table.insert(string_parts, "\\N")
-			end
-		else msg.fatal("invalid type in SSA format table: " .. type(str_def)) end
+		generate_rec(string_parts, str_def, base_data, definition)
 	end
 	return table.concat(string_parts)
 end
