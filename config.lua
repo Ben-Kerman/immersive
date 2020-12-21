@@ -29,25 +29,6 @@ local config = {
 local mp_opts = require "mp.options"
 mp_opts.read_options(config.values)
 
-function config.load_basic(path)
-	if not check_file(path) then
-		return {}
-	end
-
-	local result = {}
-	for line in io.lines(path) do
-		local trimmed = util.string_trim(line, "start")
-		if #trimmed ~= 0 and not util.string_starts(trimmed, "#") then
-			local key, value = trimmed:match("^([^=]+)=(.*)$")
-			if key then result[key] = value
-			else
-				-- TODO handle error
-			end
-		end
-	end
-	return result
-end
-
 function config.load(path)
 	if not check_file(path) then
 		msg.verbose("config file '" .. "' could not be loaded")
@@ -55,8 +36,15 @@ function config.load(path)
 	end
 
 	local result = {}
+	local global_entries
 	local section_name, section_entries
 	local block_token, block_key, block_value
+
+	local function insert_global()
+		if global_entries then
+			result.global = global_entries
+		end
+	end
 
 	local function insert_section()
 		table.insert(result, {
@@ -77,36 +65,45 @@ function config.load(path)
 			if #trimmed ~= 0 and not util.string_starts(trimmed, "#") then
 				if util.string_starts(trimmed, "[") then
 					local new_section_name = line:match("%[([^%]]+)%]")
-					if not new_section_name then
-						msg.warn("Invalid section header: " .. path .. ":" .. count))
-					else
-						if section_name then insert_section() end
+					if new_section_name then
+						if section_name then insert_section()
+						elseif global_entries then insert_global() end
+
 						section_name, section_entries = new_section_name, {}
+					else
+						msg.warn("Ignoring invalid section header: " .. path .. ":" .. count)
 					end
-				elseif section_name then
+				else
+					local entries
+					if section_name then entries = section_entries
+					else
+						if not global_entries then global_entries = {} end
+						entries = global_entries
+					end
+
 					local key, value = trimmed:match("^([^=]+)=(.*)$")
 					if key then
 						local block_token_match = value:match("%[([^%[]*)%[")
 						if block_token_match then
 							block_token = "]" .. block_token_match .. "]"
 							block_key, block_value = key, {}
-						else section_entries[key] = value end
+						else entries[key] = value end
 					else
-						msg.warn("Invalid line: " .. path .. ":" .. count))
+						msg.warn("Ignoring invalid line: " .. path .. ":" .. count)
 					end
 				end
 			end
 		end
 		count = count + 1
 	end
-	if section_name then insert_section() end
+	if section_name then insert_section()
+	else insert_global() end
 	return result
 end
 
 function config.load_subcfg(name, basic)
 	local rel_path = string.format("script-opts/%s-%s.conf", mp.get_script_name(), name)
-	local loader = basic and config.load_basic or config.load
-	return loader(mp.find_config_file(rel_path))
+	return config.load(mp.find_config_file(rel_path))
 end
 
 function config.convert_bool(str)

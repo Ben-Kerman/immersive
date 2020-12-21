@@ -72,7 +72,7 @@ local config_defaults = (function()
 			selection = {underline = true}
 		}
 	}
-	for key, value in pairs(cfg.load_subcfg("style", true)) do
+	for key, value in pairs(cfg.load_subcfg("style").global) do
 		cfg.insert_nested(base, util.string_split(key, "/"), value)
 	end
 	return base
