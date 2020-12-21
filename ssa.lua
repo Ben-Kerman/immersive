@@ -187,6 +187,10 @@ function ssa.generate(definition)
 				inject_tag(string_parts, sub_data, true, base_data)
 			end
 
+			if str_def.reset_after then
+				inject_tag(string_parts, base_data)
+			end
+
 			if str_def.newline and i ~= #definition then
 				table.insert(string_parts, "\\N")
 			end
