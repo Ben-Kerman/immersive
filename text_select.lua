@@ -6,7 +6,7 @@ local util = require "util"
 local overlay = mp.create_osd_overlay("ass-events")
 
 local function default_update_handler(self, has_sel, curs_pos, segments)
-	overlay.data = self:default_generator(has_sel, curs_pos, segments)
+	overlay.data = ssa.generate(self:default_generator(has_sel, curs_pos, segments))
 	overlay:update()
 end
 
@@ -34,7 +34,7 @@ function TextSelect:default_generator(has_sel, curs_pos, segments)
 			segments[2]
 		}
 	end
-	return ssa.generate{
+	return {
 		style = "text_select",
 		full_style = self.style_reset,
 		ssa_definition

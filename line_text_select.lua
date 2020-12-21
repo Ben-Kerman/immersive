@@ -7,7 +7,7 @@ LineTextSelect.__index = LineTextSelect
 
 function LineTextSelect:new(lines, line_conv, sel_conv, limit)
 	local lts
-	local function _sel_conv() return lts.sel_ssa end
+	local function _sel_conv() return lts.sel_ssa_def end
 	local function update_handler(line)
 		if line ~= lts.active_line then
 			lts.active_line = line
@@ -15,7 +15,7 @@ function LineTextSelect:new(lines, line_conv, sel_conv, limit)
 
 			local fs = ssa.query{"line_select", "selection", "font_size"}
 			lts._text_select = TextSelect:new(sel_conv(line), fs, function(self, has_sel, curs_pos, segments)
-				lts.sel_ssa = self:default_generator(has_sel, curs_pos, segments)
+				lts.sel_ssa_def = self:default_generator(has_sel, curs_pos, segments)
 				lts._line_select:update()
 			end, true)
 			lts._text_select:start()
@@ -25,7 +25,7 @@ function LineTextSelect:new(lines, line_conv, sel_conv, limit)
 		lines = lines,
 		converter = converter,
 		limit = limit,
-		sel_ssa = ""
+		sel_ssa_def = {}
 	}
 	lts._line_select = LineSelect:new(lines, line_conv, _sel_conv, update_handler, limit)
 	return setmetatable(lts, LineTextSelect)
