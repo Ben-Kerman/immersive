@@ -210,12 +210,10 @@ function ssa.generate(definition)
 				inject_tag(string_parts, sub_data)
 			end
 			table.insert(string_parts, (escape(str_def.text)))
-			if sub_data then
-				inject_tag(string_parts, sub_data, true, base_data)
-			end
-
 			if str_def.reset_after then
 				inject_tag(string_parts, base_data)
+			elseif sub_data then
+				inject_tag(string_parts, sub_data, true, base_data)
 			end
 
 			if str_def.newline and i ~= #definition then
