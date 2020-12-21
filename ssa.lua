@@ -3,20 +3,27 @@ local msg = require "message"
 local tags = require "ssa_tags"
 local util = require "util"
 
+local function convert_alpha(str)
+	return string.format("%02X", 0xff - tonumber(str, 16))
+end
+
+local function convert_color(str)
+	local red = str:sub(1, 2)
+	local green = str:sub(3, 4)
+	local blue = str:sub(5, 6)
+	return string.format("%s%s%s", blue, green, red):upper()
+end
+
+local function convert_mpv_color(str)
+	return convert_color(str:sub(4, 9)), convert_alpha(str:sub(2, 3))
+end
+
 local function get_defaults()
 	local p = {
 		str = mp.get_property,
 		bool = mp.get_property_bool,
 		num = mp.get_property_number
 	}
-
-	local function convert_mpv_color(str)
-		local alpha = 0xff - tonumber(str:sub(2, 3), 16)
-		local red = str:sub(4, 5)
-		local green = str:sub(6, 7)
-		local blue = str:sub(8, 9)
-		return string.format("%s%s%s", blue, green, red), string.format("%02X", alpha)
-	end
 
 	local text_col, text_alpha = convert_mpv_color(p.str("osd-color"))
 	local bord_col, bord_alpha = convert_mpv_color(p.str("osd-border-color"))
