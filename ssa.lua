@@ -144,6 +144,10 @@ local function inject_tag(list, data, closing, base)
 	table.insert(list, "}")
 end
 
+local function escape(str)
+	return str:gsub("\n", "\\N")
+end
+
 local err_str = [[{\i1}SSA error{\i0}]]
 
 local ssa = {}
@@ -160,19 +164,20 @@ function ssa.generate(definition)
 	inject_tag(string_parts, base_data)
 	for i, str_def in ipairs(definition) do
 		if type(str_def) == "string" then
-			table.insert(string_parts, str_def)
+			table.insert(string_parts, (escape(str_def)))
 		elseif type(str_def) == "table" then
 			local sub_data
 			if str_def.style then
 				sub_data = config[secondary_style][str_def.style]
-			else
-				msg.fatal("unknown sub style: " .. str_def.style)
+				if not sub_data then
+					msg.fatal("unknown sub style: " .. str_def.style)
+				end
 			end
 
 			if sub_data then
 				inject_tag(string_parts, sub_data)
 			end
-			table.insert(string_parts, str_def.text)
+			table.insert(string_parts, (escape(str_def.text)))
 			if sub_data then
 				inject_tag(string_parts, sub_data, true, base_data)
 			end
