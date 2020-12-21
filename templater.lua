@@ -52,8 +52,12 @@ local function parse_affixes(str, init_pos, subst)
 
 	local affix_tbl = {}
 	local function insert()
-		subst[affix_names[affix_num]] = table.concat(affix_tbl)
-		affix_tbl = {}
+		if affix_num > #affix_names then
+			err_msg("too many affix definitions (" .. affix_num .. ")", init_pos, str)
+		elseif #affix_tbl ~= 0 then
+			subst[affix_names[affix_num]] = table.concat(affix_tbl)
+			affix_tbl = {}
+		end
 		affix_num = affix_num + 1
 	end
 
