@@ -6,21 +6,24 @@ local function char(str, pos)
 end
 
 local msg_fmt = "template error: %s; position: %d; template: %s"
-local function err_msg(msg, pos, str)
-	local msg_str = string.format(msg_fmt, msg, pos, str)
+local function err_msg(msg_txt, pos, str)
+	local msg_str
+	if pos then
+		msg_str = string.format(msg_fmt, msg_txt, pos, str)
+	else msg_str = "template error: " .. msg_txt end
 	msg.error(msg_str)
 end
 
 local function number_conv(str)
 	local res = tonumber(str)
 	if not res then
-		msg.error("Ignoring invalid number in template: " .. str)
+		err_msg("invalid number ('" .. str .. "'')")
 	end
 	return res
 end
 
 local function parse_indexing(str, init_pos, subst)
-	local _, end_pos, index_str = str:find("^%[([^%]]*)%]", init_pos)
+	local _, end_pos, index_str = str:find("^%[([^%]%}]*)%]", init_pos)
 	if index_str then
 		local from_str, to_str = index_str:match("^([^:]*):([^%]]*)$")
 		if from_str then
@@ -38,7 +41,7 @@ local function parse_indexing(str, init_pos, subst)
 		end
 		return end_pos
 	else
-		msg.error("invalid template at char " .. init_pos .. ": " .. str)
+		err_msg("error parsing index", init_pos, str)
 		return nil
 	end
 end
@@ -80,7 +83,7 @@ local function parse_substitution(str, init_pos)
 		if char(str, pos) == "[" then
 			local new_pos = parse_indexing(str, pos, subst)
 			if new_pos then pos = new_pos
-			else return nil end
+			else return nil, pos end
 			affix_mode = true
 		elseif char(str, pos) == ":" then
 			affix_mode = true
@@ -99,7 +102,8 @@ local function parse_substitution(str, init_pos)
 	end
 
 	if not end_reached then
-		msg.error("invalid template at char " .. pos .. ": " .. str)
+		err_msg("unexpected characters", pos, str)
+		return nil, pos
 	end
 	return subst, pos + 1
 end
@@ -123,7 +127,7 @@ local function segment_str(str)
 
 			if subst then table.insert(segments, subst)
 			else
-				table.insert(segments, "template error")
+				table.insert(segments, "|template error|")
 			end
 		else
 			if char(str, pos) == "\\" then pos = pos + 1 end
@@ -153,7 +157,7 @@ function templater.render(template, values)
 		else
 			local value = values[segment.id]
 			if not value then
-				msg.error("substitution", segment.id, "missing")
+				err_msg("substitution '" .. segment.id .. "' missing")
 				return nil
 			end
 
