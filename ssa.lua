@@ -1,140 +1,7 @@
 local cfg = require "config"
 local msg = require "message"
+local tags = require "ssa_tags"
 local util = require "util"
-
-local basic_tags = {
-	{
-		id = "align",
-		type = "number",
-		tag = "an"
-	},
-	{
-		id = "bold",
-		type = "boolean",
-		tag = "b"
-	},
-	{
-		id = "italic",
-		type = "boolean",
-		tag = "i"
-	},
-	{
-		id = "underline",
-		type = "boolean",
-		tag = "u"
-	},
-	{
-		id = "strikeout",
-		type = "boolean",
-		tag = "s"
-	},
-	{
-		id = "border",
-		type = "number",
-		tag = "bord"
-	},
-	{
-		id = "border_x",
-		type = "number",
-		tag = "xbord",
-		explicit = true
-	},
-	{
-		id = "border_y",
-		type = "number",
-		tag = "ybord",
-		explicit = true
-	},
-	{
-		id = "shadow",
-		type = "number",
-		tag = "shad"
-	},
-	{
-		id = "shadow_x",
-		type = "number",
-		tag = "xshad",
-		explicit = true
-	},
-	{
-		id = "shadow_y",
-		type = "number",
-		tag = "yshad",
-		explicit = true
-	},
-	{
-		id = "blur",
-		type = "number",
-		tag = "blur"
-	},
-	{
-		id = "font_name",
-		type = "string",
-		tag = "fn"
-	},
-	{
-		id = "font_size",
-		type = "number",
-		tag = "fs"
-	},
-	{
-		id = "letter_spacing",
-		type = "number",
-		tag = "fsp"
-	}
-}
-
-local color_tags = {
-	{
-		id = "primary_color",
-		type = "string",
-		tag = "1c"
-	},
-	{
-		id = "secondary_color",
-		type = "string",
-		tag = "2c"
-	},
-	{
-		id = "border_color",
-		type = "string",
-		tag = "3c"
-	},
-	{
-		id = "shadow_color",
-		type = "string",
-		tag = "4c"
-	}
-}
-
-local alpha_tags = {
-	{
-		id = "all_alpha",
-		type = "string",
-		tag = "alpha",
-		explicit = true
-	},
-	{
-		id = "primary_alpha",
-		type = "string",
-		tag = "1a"
-	},
-	{
-		id = "secondary_alpha",
-		type = "string",
-		tag = "2a"
-	},
-	{
-		id = "border_alpha",
-		type = "string",
-		tag = "3a"
-	},
-	{
-		id = "shadow_alpha",
-		type = "string",
-		tag = "4a"
-	}
-}
 
 local function get_defaults()
 	local p = {
@@ -206,7 +73,7 @@ local function get_defaults()
 end
 
 local function find_tag(str)
-	for _, tags in ipairs({basic_tags, color_tags, alpha_tags}) do
+	for _, tags in pairs(tags) do
 		local find_res = util.list_find(tags, function(tag_def)
 			return tag_def.id == str
 		end)
@@ -304,9 +171,9 @@ function ssa.generate(values_path, default_values_path, full, closing)
 		end
 	end
 
-	insert_tags(basic_tags, false)
-	insert_tags(color_tags, true)
-	insert_tags(alpha_tags, true)
+	insert_tags(tags.basic, false)
+	insert_tags(tags.color, true)
+	insert_tags(tags.alpha, true)
 
 	table.insert(style_str, "}")
 
