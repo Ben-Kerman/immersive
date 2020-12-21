@@ -14,10 +14,10 @@ local tgt_word_sel
 local def_sel
 local data
 
-local function sel_converter(sub) return sub.text end
-local function line_renderer(sub) return sub:short() end
+local function sel_conv(sub) return sub.text end
+local function line_conv(sub) return sub:short() end
 local function start_tgt_sel()
-	tgt_word_sel = LineTextSelect:new(data.subtitles, sel_converter, line_renderer, 9)
+	tgt_word_sel = LineTextSelect:new(data.subtitles, line_conv, sel_conv, 9)
 	tgt_word_sel:start()
 end
 

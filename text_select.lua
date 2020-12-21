@@ -5,52 +5,61 @@ local util = require "util"
 
 local overlay = mp.create_osd_overlay("ass-events")
 
-local function default_update_handler(has_sel, curs_index, segments)
-	overlay.data = TextSelect.base_update_handler(has_sel, curs_index, segments)
+local function default_update_handler(self, has_sel, curs_pos, segments)
+	overlay.data = self:default_generator(has_sel, curs_pos, segments)
 	overlay:update()
 end
 
 TextSelect = {}
 TextSelect.__index = TextSelect
 
-function TextSelect:base_update_handler(has_sel, curs_index, segments)
+function TextSelect:default_generator(has_sel, curs_pos, segments)
+	local cursor = TextSelect.cursor(self.font_size)
+
+	local ssa_definition = {
+		base_style = "text_select",
+		segments[1]
+	}
+	if self.override_style then
+		ssa_definition.base_override = self.override_style
+	end
 	if has_sel then
-		table.insert(segments, 2, ssa.generate({"text_select", "selection"}, self.base_style))
-		table.insert(segments, 4, ssa.generate({"text_select", "selection"}, self.base_style, false, true))
+		if curs_pos < 0 then
+			table.insert(ssa_definition, cursor)
+		end
+		table.insert(ssa_definition, {
+			style = "selection",
+			text = segments[2]
+		})
+		if curs_pos > 0 then
+			table.insert(ssa_definition, cursor)
+		end
+		table.insert(ssa_definition, segments[3])
+	else
+		table.insert(ssa_definition, cursor)
+		table.insert(ssa_definition, segments[2])
 	end
-
-	if curs_index < 0 then
-		curs_index = #segments + curs_index + 1
-	end
-	table.insert(segments, curs_index, TextSelect.cursor(self.base_style))
-
-	table.insert(segments, 1, ssa.generate(self.base_style, nil, true))
-
-	return table.concat(segments):gsub("\n", "\\N")
+	return ssa.generate(ssa_definition)
 end
 
-function TextSelect.cursor(style_data)
-	local curs_size = style_data.font_size * 8
+function TextSelect.cursor(font_size)
+	local curs_size = font_size * 8
 	local pbo = curs_size / 6
-	local curs_style = ssa.generate({
-		bold = false,
-		italic = false,
-		underline = false,
-		strikeout = false,
-		border_x = 0.75,
-		border_y = 0,
-		shadow_x = 1.5,
-		shadow_y = 0,
-		blur = 0,
-		primary_color = "FFFFFF",
-		border_color = "FFFFFF",
-		shadow_color = "000000",
-		primary_alpha = "00",
-		border_alpha = "00",
-		shadow_alpha = "00"
-	}, style_data, true)
-	local default_style = ssa.generate(style_data, nil, true)
-	return string.format("%s{\\p4\\pbo%d}m 0 0 l 1 0 l 1 %d l 0 %d{\\p0}%s", curs_style, pbo, curs_size, curs_size, default_style)
+	return {
+		style = {
+			border_x = 0.75,
+			border_y = 0,
+			shadow_x = 1.5,
+			shadow_y = 0,
+			primary_color = "FFFFFF",
+			border_color = "FFFFFF",
+			shadow_color = "000000",
+			primary_alpha = "00",
+			border_alpha = "00",
+			shadow_alpha = "00"
+		},
+		text = string.format("{\\p4\\pbo%d}m 0 0 l 1 0 l 1 %d l 0 %d{\\p0}", pbo, curs_size, curs_size)
+	}
 end
 
 function TextSelect:sel_len()
@@ -170,15 +179,15 @@ function TextSelect:finish(force_sel)
 	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
 end
 
-function TextSelect:new(text, update_handler, base_style, init_cursor_pos)
-	if not base_style then base_style = ssa.get_full{"text_select", "base"} end
+function TextSelect:new(text, font_size, update_handler, override_style, init_cursor_pos)
 	local ts
 	ts = {
 		cdpts = utf_8.codepoints(text),
 		curs_pos = init_cursor_pos and init_cursor_pos or 1,
 		sel = {from = 0, to = 0},
 		update_handler = update_handler and update_handler or default_update_handler,
-		base_style = base_style,
+		font_size = font_size,
+		override_style = override_style,
 		bindings = {
 			{
 				id = "text_select-prev_char",
@@ -259,17 +268,17 @@ end
 
 function TextSelect:update()
 	local segments = {}
-	local curs_index
+	local curs_pos
 	local has_sel = self:sel_len() ~= 0
 	if has_sel then
 		table.insert(segments, utf_8.string(util.list_range(self.cdpts, 1, self.sel.from - 1)))
 		table.insert(segments, utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1)))
 		table.insert(segments, utf_8.string(util.list_range(self.cdpts, self.sel.to, #self.cdpts)))
-		curs_index = self.curs_pos == self.sel.from and 2 or -1
+		curs_pos = self.curs_pos == self.sel.from and -1 or 1
 	else
 		table.insert(segments, utf_8.string(util.list_range(self.cdpts, 1, self.curs_pos - 1)))
 		table.insert(segments, utf_8.string(util.list_range(self.cdpts, self.curs_pos, #self.cdpts)))
-		curs_index = 2
+		curs_pos = 0
 	end
-	self.update_handler(has_sel, curs_index, segments)
+	self:update_handler(has_sel, curs_pos, segments)
 end

@@ -31,39 +31,82 @@ function Menu:disable()
 	self:redraw()
 end
 
-local function ssa_format(str, cat, id)
-	return ssa.format(str, ssa.get{cat, id}, ssa.get{cat, "base"})
-end
-local help_hint_off = ssa_format(string.format("Press %s to show key bindings", ssa_format("h", "menu_help", "key")), "menu_help", "help")
-local help_hint_on = ssa_format(string.format("Key Bindings (%s to hide)", ssa_format("h", "menu_help", "key")), "menu_help", "help")
+local help_hint_off = ssa.generate{
+	base_style = "menu_help",
+	base_override = "menu_help",
+	"Press ",
+	{
+		style = "key",
+		text = "h"
+	},
+	" to show key bindings"
+}
+local help_hint_on = ssa.generate{
+	base_style = "menu_help",
+	base_override = "menu_help",
+	"Key Bindings (",
+	{
+		style = "key",
+		text = "h"
+	},
+	" to hide)"
+}
 
 function Menu:redraw()
 	if self.enabled then
 		local ssa_lines = {}
 
 		if self.data.bindings then
-			local binding_lines = {
-				string.format([[{\fs%d}\h\N%s]],
-				              mp.get_property_number("osd-font-size"),
-				              ssa.generate({"menu_help", "base"}, nil, true))
+			local ssa_definition = {
+				base_style = "menu_help"
 			}
 			if self.show_bindings then
-				table.insert(binding_lines, help_hint_on)
+				table.insert(ssa_definition, {
+					style = "hint",
+					text = help_hint_on,
+					newline = true
+				})
 				for _, binding in ipairs(self.data.bindings) do
-					table.insert(binding_lines, string.format([[\N\h\h\h%s: %s]], ssa_format(binding.default, "menu_help", "key"), binding.desc))
-					if binding.global then table.insert(binding_lines, " (global)") end
+					table.insert(ssa_definition, [[\h\h\h]])
+					table.insert(ssa_definition, {
+						style = "key",
+						text = binding.default
+					})
+					table.insert(ssa_definition, ": ")
+					table.insert(ssa_definition, binding.desc)
+					if binding.global then table.insert(ssa_definition, " (global)") end
+					table.insert(ssa_definition, {
+						text = "",
+						newline = true
+					})
 				end
-			else table.insert(binding_lines, help_hint_off) end
-			table.insert(ssa_lines, table.concat(binding_lines))
+			else
+				table.insert(ssa_definition, {
+					style = "hint",
+					text = help_hint_off
+				})
+			end
+			local osd_spacer = string.format([[{\fs%d}\h\N]], mp.get_property_number("osd-font-size"))
+			table.insert(ssa_lines, osd_spacer .. ssa.generate(ssa_definition))
 		end
 
-		local info_lines = {ssa.generate({"menu_info", "base"}, nil, true)}
-		if self.data.infos then
+		if self.data.infos and not self.show_bindings then
+			local ssa_definition = {
+				base_style = "menu_info"
+			}
 			for _, info in ipairs(self.data.infos) do
 				local display = info.display and info.display(info.value) or info.value
-				table.insert(info_lines, string.format([[%s: %s]], ssa_format(info.name, "menu_info", "key"), display))
+				table.insert(ssa_definition, {
+					style = "key",
+					text = info.name
+				})
+				table.insert(ssa_definition, ": ")
+				table.insert(ssa_definition, {
+					text = display,
+					newline = true
+				})
 			end
-			if not self.show_bindings then table.insert(ssa_lines, table.concat(info_lines, "\\N")) end
+			table.insert(ssa_lines, ssa.generate(ssa_definition))
 		end
 
 		self._overlay.data = table.concat(ssa_lines, "\n")

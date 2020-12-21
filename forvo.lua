@@ -174,13 +174,10 @@ local function extract_pronunciations(word)
 	return prns
 end
 
-local function line_renderer(prn)
+local function line_conv(prn)
+	-- TODO add support for custom styles
 	local color = prn.audio_file and [[{\1c&HFFFFFF&}]] or [[{\1c&H808080&}]]
 	return color .. prn.user
-end
-
-local function sel_renderer(prn)
-	return "{\\b1}" .. line_renderer(prn) .. "{\\b0}"
 end
 
 local function play_highlighted()
@@ -238,7 +235,7 @@ function forvo.begin(word, callback)
 	forvo_cb = callback
 
 	prns = extract_pronunciations(word)
-	prn_sel = LineSelect:new(prns, sel_renderer, line_renderer)
+	prn_sel = LineSelect:new(prns, line_conv)
 	prn_sel:start()
 	menu:enable()
 

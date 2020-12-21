@@ -1,11 +1,7 @@
 local kbds = require "key_bindings"
 local ssa = require "ssa"
 
-local function default_sel_renderer(line)
-	return ssa.format(ssa.get{"line_select", "selection"}, line, ssa.get{"line_select", "base"})
-end
-
-local function default_renderer(line)
+local function default_line_conv(line)
 	return line
 end
 
@@ -19,14 +15,16 @@ function LineSelect:move_sel(dir)
 	self:update()
 end
 
-function LineSelect:new(lines, sel_renderer, renderer, update_handler, limit)
+function LineSelect:new(lines, line_conv, sel_conv, update_handler, limit)
+	if not line_conv then line_conv = default_line_conv end
+	if not sel_conv then sel_conv = line_conv end
 	local ls
 	ls = {
 		_overlay = mp.create_osd_overlay("ass-events"),
 		lines = lines,
-		renderer = renderer and renderer or default_renderer,
+		line_conv = line_conv,
+		sel_conv = sel_conv,
 		update_handler = update_handler,
-		sel_renderer = sel_renderer and sel_renderer or default_sel_renderer,
 		limit = limit,
 		active = 1,
 		bindings = {
@@ -52,10 +50,8 @@ function LineSelect:finish()
 	return self.lines[self.active], self.active
 end
 
-local unselected_style = ssa.generate({"line_select", "base"}, nil, true)
-local selected_style = ssa.generate({"line_select", "selection"}, {"line_select", "base"}, true)
 function LineSelect:update()
-	if self.update_handler then self.update_handler(self.lines[self.active]) end
+	if self.update_handler then self.update_handler(self.lines[self.active], self.active) end
 
 	local first, last
 	if not self.limit or self.limit >= #self.lines then
@@ -74,26 +70,31 @@ function LineSelect:update()
 		end
 	end
 
-	local rendered_text = {unselected_style}
-	if first ~= 1 then table.insert(rendered_text, "...") end
+	local ssa_definition = {base_style = "line_select"}
+	if first ~= 1 then
+		table.insert(ssa_definition, {
+			text = "...",
+			newline = true
+		})
+	end
 
-	for i, line in ipairs(self.lines) do
-		if first <= i and i <= last then
-			local active = i == self.active
-			local renderer = active and self.sel_renderer or self.renderer
-			table.insert(rendered_text, "\\N")
-			if active then table.insert(rendered_text, selected_style) end
-			table.insert(rendered_text, renderer(line))
-			if active then table.insert(rendered_text, unselected_style) end
-		end
-		if i == last then break end
+	for i = first, last do
+		local line = self.lines[i]
+		local active = i == self.active
+		local conv = active and self.sel_conv or self.line_conv
+		local ssa_str_def = {
+			text = conv(line),
+			newline = true
+		}
+		if active then ssa_str_def.style = "selection" end
+
+		table.insert(ssa_definition, ssa_str_def)
 	end
 
 	if last ~= #self.lines then
-		table.insert(rendered_text, "\\N")
-		table.insert(rendered_text, "...")
+		table.insert(ssa_definition, "...")
 	end
 
-	self._overlay.data = table.concat(rendered_text)
+	self._overlay.data = ssa.generate(ssa_definition)
 	self._overlay:update()
 end

@@ -67,8 +67,8 @@ local lookup_active = {}
 function lookup_active.begin()
 	local sub_text = helper.check_active_sub()
 	if sub_text then
-		word_sel = TextSelect:new(sub_text, function(has_sel, curs_index, segments)
-			overlay.data = word_sel:base_update_handler(has_sel, curs_index, segments)
+		word_sel = TextSelect:new(sub_text, function(has_sel, curs_pos, segments)
+			overlay.data = word_sel:default_generator(has_sel, curs_pos, segments)
 			overlay:update()
 		end)
 		word_sel:start()

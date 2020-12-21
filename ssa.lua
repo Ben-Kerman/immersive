@@ -61,7 +61,7 @@ local function get_defaults()
 		menu_help = {
 			base = {align = 7},
 			key = {bold = true},
-			help = {italic = true}
+			hint = {italic = true}
 		},
 		menu_info = {
 			base = {align = 1},
@@ -166,12 +166,10 @@ function ssa.query(path)
 		local secondary_value = config[path[1]].base[tag_id]
 		if secondary_value then value = secondary_value end
 	end
-	print("value", value)
 	if #path > 2 then
 		local tertiary_value = config[path[1]][path[2]][tag_id]
 		if tertiary_value then value = tertiary_value end
 	end
-	print("value", value)
 	return value
 end
 

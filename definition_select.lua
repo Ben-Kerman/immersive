@@ -1,6 +1,6 @@
 local dicts = require "dict.dicts"
 
-local function format_def(def)
+local function def_conv(def)
 	local readings = table.concat(def.readings, "・")
 	local variants
 	if def.variants then
@@ -8,14 +8,6 @@ local function format_def(def)
 	else variants = "" end
 	local defs = table.concat(def.defs, "; ")
 	return string.format("%s%s: %s", readings, variants, defs)
-end
-
-local function def_renderer(def)
-	return format_def(def)
-end
-
-local function sel_def_renderer(def)
-	return "{\\b1}" .. format_def(def) .. "{\\b0}"
 end
 
 DefinitionSelect = {}
@@ -27,7 +19,7 @@ function DefinitionSelect:new(word, prefix)
 		local result = lookup_fn(word)
 		if result then
 			local def_sel = {
-				_line_select = LineSelect:new(result, sel_def_renderer, def_renderer, nil, 5),
+				_line_select = LineSelect:new(result, def_conv, nil, nil, 5),
 				lookup_result = {dict_index = i, defs = result}
 			}
 			def_sel._line_select:start()
