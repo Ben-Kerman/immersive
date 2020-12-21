@@ -105,6 +105,14 @@ local function parse_substitution(str, init_pos)
 		err_msg("unexpected characters", pos, str)
 		return nil, pos
 	end
+
+	if not subst.from and subst.to then
+		subst.from = 1
+	end
+	if subst.from and not subst.to then
+		subst.to = -1
+	end
+
 	return subst, pos + 1
 end
 
@@ -152,9 +160,10 @@ function templater.render(template, values)
 	local strings = {}
 	for _, segment in ipairs(segments) do
 		local seg_type = type(segment)
+
 		if seg_type == "string" then
 			table.insert(strings, segment)
-		else
+		elseif seg_type == "table" then
 			local value = values[segment.id]
 			if not value then
 				err_msg("substitution '" .. segment.id .. "' missing")
@@ -166,36 +175,34 @@ function templater.render(template, values)
 			               and value.data[1] == nil
 			               and next(value.data) ~= nil
 
+			local insert_str
 			if data_type ~= "table" or is_map then
-				table.insert(strings, transform_data(value.data, value.transform))
+				insert_str = transform_data(value.data, value.transform)
 			elseif data_type == "table" then
-				local include = true
-
 				local list = value.data
 				if segment.from then
 					list = util.list_range(list, segment.from, segment.to)
 				end
 
-				if #list == 0 then
-					include = false
-				elseif value.transform then
-					list = util.list_map(list, value.transform)
-				end
-
-				if include then
-					if segment.prefix then
-						table.insert(strings, segment.prefix)
+				if #list ~= 0 then
+					if value.transform then
+						list = util.list_map(list, value.transform)
 					end
-
 					local sep = segment.sep and segment.sep or value.sep
-					table.insert(strings, table.concat(list, sep))
-
-					if segment.suffix then
-						table.insert(strings, segment.suffix)
-					end
+					insert_string = table.concat(list, sep)
 				end
 			end
-		end
+
+			if insert_string then
+				if segment.prefix then
+					table.insert(strings, segment.prefix)
+				end
+				table.insert(strings, insert_string)
+				if segment.suffix then
+					table.insert(strings, segment.suffix)
+				end
+			end
+		else msg.fatal("invalid segment type: " .. seg_type) end
 	end
 	return table.concat(strings)
 end
