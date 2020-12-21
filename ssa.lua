@@ -145,7 +145,7 @@ local function inject_tag(list, data, closing, base)
 end
 
 local function escape(str)
-	return str:gsub("\n", "\\N")
+	return (str:gsub("\n", "\\N"))
 end
 
 local err_str = [[{\i1}SSA error{\i0}]]
@@ -175,7 +175,7 @@ end
 
 local function generate_rec(string_parts, str_def, base_data, definition)
 	if type(str_def) == "string" then
-		table.insert(string_parts, (escape(str_def)))
+		table.insert(string_parts, escape(str_def))
 	elseif type(str_def) == "table" then
 		local sub_data
 		if str_def.style then
@@ -192,7 +192,7 @@ local function generate_rec(string_parts, str_def, base_data, definition)
 		if sub_data then
 			inject_tag(string_parts, sub_data)
 		end
-		table.insert(string_parts, (escape(str_def.text)))
+		table.insert(string_parts, escape(str_def.text))
 		if str_def.reset_after then
 			inject_tag(string_parts, base_data)
 		elseif sub_data then
