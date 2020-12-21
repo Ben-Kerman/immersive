@@ -1,6 +1,39 @@
 local cfg = require "config"
 local util = require "util"
 
+local basic_tags = {
+	{id = "align", tag = "an"},
+	{id = "bold", tag = "b"},
+	{id = "italic", tag = "i"},
+	{id = "underline", tag = "u"},
+	{id = "strikeout", tag = "s"},
+	{id = "border", tag = "bord"},
+	{id = "border_x", tag = "xbord", explicit = true},
+	{id = "border_y", tag = "ybord", explicit = true},
+	{id = "shadow", tag = "shad"},
+	{id = "shadow_x", tag = "xshad", explicit = true},
+	{id = "shadow_y", tag = "yshad", explicit = true},
+	{id = "blur", tag = "blur"},
+	{id = "font_name", tag = "fn"},
+	{id = "font_size", tag = "fs"},
+	{id = "letter_spacing", tag = "fsp"}
+}
+
+local color_tags = {
+	{id = "primary_color", tag = "1c"},
+	{id = "secondary_color", tag = "2c"},
+	{id = "border_color", tag = "3c"},
+	{id = "shadow_color", tag = "4c"}
+}
+
+local alpha_tags = {
+	{id = "all_alpha", tag = "alpha", explicit = true},
+	{id = "primary_alpha", tag = "1a"},
+	{id = "secondary_alpha", tag = "2a"},
+	{id = "border_alpha", tag = "3a"},
+	{id = "shadow_alpha", tag = "4a"}
+}
+
 local base_defaults = (function()
 	local p = {
 		str = mp.get_property,
@@ -77,39 +110,6 @@ local config_defaults = (function()
 	end
 	return base
 end)()
-
-local basic_tags = {
-	{id = "align", tag = "an"},
-	{id = "bold", tag = "b"},
-	{id = "italic", tag = "i"},
-	{id = "underline", tag = "u"},
-	{id = "strikeout", tag = "s"},
-	{id = "border", tag = "bord"},
-	{id = "border_x", tag = "xbord", explicit = true},
-	{id = "border_y", tag = "ybord", explicit = true},
-	{id = "shadow", tag = "shad"},
-	{id = "shadow_x", tag = "xshad", explicit = true},
-	{id = "shadow_y", tag = "yshad", explicit = true},
-	{id = "blur", tag = "blur"},
-	{id = "font_name", tag = "fn"},
-	{id = "font_size", tag = "fs"},
-	{id = "letter_spacing", tag = "fsp"}
-}
-
-local color_tags = {
-	{id = "primary_color", tag = "1c"},
-	{id = "secondary_color", tag = "2c"},
-	{id = "border_color", tag = "3c"},
-	{id = "shadow_color", tag = "4c"}
-}
-
-local alpha_tags = {
-	{id = "all_alpha", tag = "alpha", explicit = true},
-	{id = "primary_alpha", tag = "1a"},
-	{id = "secondary_alpha", tag = "2a"},
-	{id = "border_alpha", tag = "3a"},
-	{id = "shadow_alpha", tag = "4a"}
-}
 
 local function insert_tag(list, tag, value, hex, closing, default)
 	if value == nil then return end
