@@ -167,39 +167,39 @@ function templater.render(template, values)
 			local value = values[segment.id]
 			if not value then
 				err_msg("substitution '" .. segment.id .. "' missing")
-				return nil
-			end
+				table.insert(strings, "|missing substitution|")
+			else
+				local data_type = type(value.data)
+				local is_map = data_type == "table"
+				               and value.data[1] == nil
+				               and next(value.data) ~= nil
 
-			local data_type = type(value.data)
-			local is_map = data_type == "table"
-			               and value.data[1] == nil
-			               and next(value.data) ~= nil
-
-			local insert_str
-			if data_type ~= "table" or is_map then
-				insert_str = transform_data(value.data, value.transform)
-			elseif data_type == "table" then
-				local list = value.data
-				if segment.from then
-					list = util.list_range(list, segment.from, segment.to)
-				end
-
-				if #list ~= 0 then
-					if value.transform then
-						list = util.list_map(list, value.transform)
+				local insert_str
+				if data_type ~= "table" or is_map then
+					insert_str = transform_data(value.data, value.transform)
+				elseif data_type == "table" then
+					local list = value.data
+					if segment.from then
+						list = util.list_range(list, segment.from, segment.to)
 					end
-					local sep = segment.sep and segment.sep or value.sep
-					insert_string = table.concat(list, sep)
-				end
-			end
 
-			if insert_string then
-				if segment.prefix then
-					table.insert(strings, segment.prefix)
+					if #list ~= 0 then
+						if value.transform then
+							list = util.list_map(list, value.transform)
+						end
+						local sep = segment.sep and segment.sep or value.sep
+						insert_string = table.concat(list, sep)
+					end
 				end
-				table.insert(strings, insert_string)
-				if segment.suffix then
-					table.insert(strings, segment.suffix)
+
+				if insert_string then
+					if segment.prefix then
+						table.insert(strings, segment.prefix)
+					end
+					table.insert(strings, insert_string)
+					if segment.suffix then
+						table.insert(strings, segment.suffix)
+					end
 				end
 			end
 		else msg.fatal("invalid segment type: " .. seg_type) end
