@@ -153,7 +153,10 @@ local err_str = [[{\i1}SSA error{\i0}]]
 local ssa = {}
 
 function ssa.generate(definition)
-	local secondary_style = definition.base_style
+	local secondary_style = definition.base_override
+	                        and definition.base_override
+	                        or definition.base_style
+
 	if not config[secondary_style] then
 		msg.fatal("unknown secondary base style: " .. secondary_style)
 		return err_str
@@ -161,14 +164,16 @@ function ssa.generate(definition)
 	local base_data = util.map_merge(config.base, config[secondary_style].base)
 
 	local string_parts = {}
-	inject_tag(string_parts, base_data)
+	if not definition.base_override then
+		inject_tag(string_parts, base_data)
+	end
 	for i, str_def in ipairs(definition) do
 		if type(str_def) == "string" then
 			table.insert(string_parts, (escape(str_def)))
 		elseif type(str_def) == "table" then
 			local sub_data
 			if str_def.style then
-				sub_data = config[secondary_style][str_def.style]
+				sub_data = config[definition.base_style][str_def.style]
 				if not sub_data then
 					msg.fatal("unknown sub style: " .. str_def.style)
 				end
