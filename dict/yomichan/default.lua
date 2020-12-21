@@ -6,13 +6,13 @@ local utf_8 = require "utf_8"
 local function get_conf(config)
 	local default = {
 		digits = nil,
-		reading_template = "{{reading}}{{variants:【:】}}",
-		header_template = "{{readings[1]}}:{{readings[2:]: (:)}}",
-		tag_template = "<span style=\"font-size: 0.8em\">{{tags}}</span><br>\n",
-		def_template = "{{tag_list}}{{num}}. {{keywords}}",
-		template = "{{header}}<br>\n{{definitions}}",
+		reading_template = "{{reading}}{{variants:【:】:・}}",
+		header_template = "{{readings[1]::　}}:{{readings[2:] (:):　}}",
+		tag_template = "<span style=\"font-size: 0.8em\">{{tags:::, }}</span><br>\n",
+		def_template = "{{tag_list}}{{num}}. {{keywords:::; }}",
+		template = "{{header}}<br>\n{{definitions:::<br>\n}}",
 		use_single_template = true,
-		single_template = "{{header}} {{keywords}}"
+		single_template = "{{header}} {{keywords:::; }}"
 	}
 
 	local filtered = util.map_filter_keys(config, function(key)
@@ -72,10 +72,7 @@ return function(entry, config, tag_map)
 		local vars = reading.vars and reading.vars or {}
 		return templater.render(cfg.reading_template, {
 			reading = {data = reading.rdng},
-			variants = {
-				data = vars,
-				sep = "・"
-			}
+			variants = {data = vars}
 		})
 	end)
 
@@ -92,8 +89,7 @@ return function(entry, config, tag_map)
 					transform = function(tag_id)
 						local tag_data = tag_map[tag_id]
 						return tag_data and tag_data.desc or "UNKNOWN TAG"
-					end,
-					sep = ", "
+					end
 				}
 			})
 			last_tags = sub_entry.dtgs
@@ -105,18 +101,12 @@ return function(entry, config, tag_map)
 				data = i,
 				transform = function(num) return format_number(num, cfg.digits) end
 			},
-			keywords = {
-				data = sub_entry.defs,
-				sep = "; "
-			}
+			keywords = {data = sub_entry.defs}
 		}
 	end)
 
 	local header = templater.render(cfg.header_template, {
-		readings = {
-			data = reading_strs,
-			sep = "　"
-		}
+		readings = {data = reading_strs}
 	})
 
 	if #definitions == 1 and cfg.use_single_template then
@@ -131,8 +121,7 @@ return function(entry, config, tag_map)
 				data = definitions,
 				transform = function(def_data)
 					return templater.render(cfg.def_template, def_data)
-				end,
-				sep = "<br>\n"
+				end
 			}
 		})
 	end
