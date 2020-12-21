@@ -124,81 +124,56 @@ local config = (function()
 	return config
 end)()
 
-local function insert_tag(list, tag, value, hex, closing, default)
-	if value == nil then return end
+local function inject_tag(list, data, closing, base)
+	table.insert(list, "{")
+	for _, tag in ipairs(tags) do
+		if data[tag.id] ~= nil then
+			local value = (closing and data or base)[tag.id]
 
-	local base_value
-	if closing then
-		if default == nil then return
-		else base_value = default end
-	else base_value = value end
-
-	local insert_value
-	local val_type = type(base_value)
-	if val_type == "boolean" then
-		insert_value = base_value and "1" or "0"
-	elseif val_type == "number" then
-		insert_value = tostring(base_value)
-	else insert_value = base_value end
-
-	table.insert(list, "\\")
-	table.insert(list, tag)
-	if hex then table.insert(list, "&H") end
-	table.insert(list, insert_value)
-	if hex then table.insert(list, "&") end
+			table.insert(list, "\\")
+			table.insert(list, tag)
+			if tag.type == "boolean" then
+				table.insert(list, value and "1" or "0")
+			elseif tag.type == "number" then
+				table.insert(list, tostring(value))
+			elseif tag.type == "alpha" or tag.type == "color" then
+				table.insert(list, string.format("&H%s&", value))
+			else table.insert(list, value) end
+		end
+	end
+	table.insert(list, "}")
 end
+
+local err_str = [[{\i1}SSA error{\i0}]]
 
 local ssa = {}
 
-function ssa.get(path)
-	if not path then return config_defaults.base end
-	return cfg.get_nested(config_defaults, path)
-end
-
-function ssa.get_full(...)
-	local paths = {...}
-	local res = ssa.get()
-	for _, path in ipairs(paths) do
-		res = util.map_merge(res, ssa.get(path))
+function ssa.generate(definition)
+	local secondary_style = definition.base_style
+	if not config[secondary_style] then
+		msg.fatal("unknown secondary base style: " .. secondary_style)
+		return err_str
 	end
-	return res
-end
+	local base_data = util.map_merge(config.base, config[secondary_style].base)
 
-function ssa.generate(values_path, default_values_path, full, closing)
-	local values
-	if values_path[1] then
-		values = ssa.get(values_path)
-	else values = values_path end
-	local partial_defaults
-	if default_values_path and default_values_path[1] then
-		partial_defaults = ssa.get(default_values_path)
-	else partial_defaults = default_values_path end
-	local defaults = util.map_merge(config_defaults.base, partial_defaults)
-
-	local style_str = {"{"}
-	local function insert_tags(tags, hex)
-		for _, tag in ipairs(tags) do
-			if values[tag.id] ~= nil then
-				insert_tag(style_str, tag.tag, values[tag.id], hex, closing, defaults[tag.id])
-			elseif full and not tag.explicit and defaults[tag.id] ~= nil then
-				insert_tag(style_str, tag.tag, defaults[tag.id], hex)
+	local string_parts = {}
+	inject_tag(list, base_data)
+	for _, str_def in ipairs(definition) do
+		if type(str_def) == "string" then
+			table.insert(string_parts, str_def)
+		elseif type(str_def) == "table" then
+			local sub_data = config[secondary_style][str_def.style]
+			if sub_data then
+				inject_tag(string_parts, sub_data)
+				table.insert(string_parts, str_def.text)
+				inject_tag(string_parts, sub_data, true, base_data)
+			else
+				table.insert(string_parts, err_str)
+				msg.fatal("unknown sub style: " .. str_def.style)
 			end
-		end
+		else msg.fatal("invalid type in SSA format table: " .. type(str_def)) end
 	end
-
-	insert_tags(tags.basic, false)
-	insert_tags(tags.color, true)
-	insert_tags(tags.alpha, true)
-
-	table.insert(style_str, "}")
-
-	return table.concat(style_str)
-end
-
-function ssa.format(text, values_path, default_values_path, full)
-	local before = ssa.generate(values_path, default_values_path, full, false)
-	local after = ssa.generate(values_path, default_values_path, full, true)
-	return string.format("%s%s%s", before, text, after)
+	return table.concat(string_parts)
 end
 
 return ssa
