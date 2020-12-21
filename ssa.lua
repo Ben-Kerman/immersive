@@ -152,6 +152,12 @@ local err_str = [[{\i1}SSA error{\i0}]]
 
 local ssa = {}
 
+function ssa.custom(data)
+	local tag_parts = {}
+	inject_tag(tag_parts, data)
+	return table.concat(tag_parts)
+end
+
 function ssa.generate(definition)
 	local secondary_style = definition.base_override
 	                        and definition.base_override
@@ -173,9 +179,13 @@ function ssa.generate(definition)
 		elseif type(str_def) == "table" then
 			local sub_data
 			if str_def.style then
-				sub_data = config[definition.base_style][str_def.style]
-				if not sub_data then
-					msg.fatal("unknown sub style: " .. str_def.style)
+				if type(str_def.style) == "table" then
+					sub_data = str_def.style
+				else
+					sub_data = config[definition.base_style][str_def.style]
+					if not sub_data then
+						msg.fatal("unknown sub style: " .. str_def.style)
+					end
 				end
 			end
 
