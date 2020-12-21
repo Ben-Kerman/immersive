@@ -62,6 +62,10 @@ function util.list_filter(list, predicate)
 end
 
 function util.list_map(list, mapper)
+	if not mapper then
+		mapper = function(val) return val end
+	end
+
 	local res = {}
 	for i, val in ipairs(list) do
 		table.insert(res, mapper(val, i))
