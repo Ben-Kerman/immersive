@@ -114,13 +114,18 @@ function config.convert_bool(str)
 	else return nil end
 end
 
+function config.force_type(val, type_name)
+	if type_name == "boolean" then
+		return config.convert_bool(val)
+	elseif type_name == "number" then
+		return tonumber(val)
+	elseif type_name == "string" then
+		return tostring(val)
+	else msg.fatal("Invalid type name: " .. type_name) end
+end
+
 function config.convert_type(old_val, new_val)
-	local old_type = type(old_val)
-	if old_type == "number" then
-		return tonumber(new_val)
-	elseif old_type == "boolean" then
-		return config.convert_bool(new_val)
-	else return new_val end
+	return config.force_type(new_val, type(old_val))
 end
 
 function config.insert_nested(target, path, value, strict)
