@@ -158,18 +158,27 @@ function ssa.generate(definition)
 
 	local string_parts = {}
 	inject_tag(string_parts, base_data)
-	for _, str_def in ipairs(definition) do
+	for i, str_def in ipairs(definition) do
 		if type(str_def) == "string" then
 			table.insert(string_parts, str_def)
 		elseif type(str_def) == "table" then
-			local sub_data = config[secondary_style][str_def.style]
+			local sub_data
+			if str_def.style then
+				sub_data = config[secondary_style][str_def.style]
+			else
+				msg.fatal("unknown sub style: " .. str_def.style)
+			end
+
 			if sub_data then
 				inject_tag(string_parts, sub_data)
-				table.insert(string_parts, str_def.text)
+			end
+			table.insert(string_parts, str_def.text)
+			if sub_data then
 				inject_tag(string_parts, sub_data, true, base_data)
-			else
-				table.insert(string_parts, err_str)
-				msg.fatal("unknown sub style: " .. str_def.style)
+			end
+
+			if str_def.newline and i ~= #definition then
+				table.insert(string_parts, "\\N")
 			end
 		else msg.fatal("invalid type in SSA format table: " .. type(str_def)) end
 	end
