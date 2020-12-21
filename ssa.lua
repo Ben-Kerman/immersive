@@ -128,10 +128,10 @@ local function inject_tag(list, data, closing, base)
 	table.insert(list, "{")
 	for _, tag in ipairs(tags) do
 		if data[tag.id] ~= nil then
-			local value = (closing and data or base)[tag.id]
+			local value = (closing and base or data)[tag.id]
 
 			table.insert(list, "\\")
-			table.insert(list, tag)
+			table.insert(list, tag.tag)
 			if tag.type == "boolean" then
 				table.insert(list, value and "1" or "0")
 			elseif tag.type == "number" then
@@ -157,7 +157,7 @@ function ssa.generate(definition)
 	local base_data = util.map_merge(config.base, config[secondary_style].base)
 
 	local string_parts = {}
-	inject_tag(list, base_data)
+	inject_tag(string_parts, base_data)
 	for _, str_def in ipairs(definition) do
 		if type(str_def) == "string" then
 			table.insert(string_parts, str_def)
