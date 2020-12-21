@@ -136,7 +136,7 @@ local alpha_tags = {
 	}
 }
 
-local base_defaults = (function()
+local function get_defaults()
 	local p = {
 		str = mp.get_property,
 		bool = mp.get_property_bool,
@@ -158,36 +158,32 @@ local base_defaults = (function()
 	local shad_size = p.num("osd-shadow-offset")
 
 	return {
-		align = 5,
-		bold = p.bool("osd-bold"),
-		italic = p.bool("osd-italic"),
-		underline = false,
-		strikeout = false,
-		border = bord_size,
-		border_x = bord_size,
-		border_y = bord_size,
-		shadow = shad_size,
-		shadow_x = shad_size,
-		shadow_y = shad_size,
-		blur = p.num("osd-blur"),
-		font_name = p.str("osd-font"),
-		font_size = p.num("osd-font-size"),
-		letter_spacing = p.num("osd-spacing"),
-		primary_color = text_col,
-		secondary_color = "808080",
-		border_color = bord_col,
-		shadow_color = shad_col,
-		all_alpha = "FF",
-		primary_alpha = text_alpha,
-		secondary_alpha = "00",
-		border_alpha = bord_alpha,
-		shadow_alpha = shad_alpha
-	}
-end)()
-
-local config_defaults = (function()
-	local base = {
-		base = util.map_merge(base_defaults),
+		base = {
+			align = 5,
+			bold = p.bool("osd-bold"),
+			italic = p.bool("osd-italic"),
+			underline = false,
+			strikeout = false,
+			border = bord_size,
+			border_x = bord_size,
+			border_y = bord_size,
+			shadow = shad_size,
+			shadow_x = shad_size,
+			shadow_y = shad_size,
+			blur = p.num("osd-blur"),
+			font_name = p.str("osd-font"),
+			font_size = p.num("osd-font-size"),
+			letter_spacing = p.num("osd-spacing"),
+			primary_color = text_col,
+			secondary_color = "808080",
+			border_color = bord_col,
+			shadow_color = shad_col,
+			all_alpha = "FF",
+			primary_alpha = text_alpha,
+			secondary_alpha = "00",
+			border_alpha = bord_alpha,
+			shadow_alpha = shad_alpha
+		},
 		menu_help = {
 			base = {align = 7},
 			key = {bold = true},
@@ -207,10 +203,43 @@ local config_defaults = (function()
 			selection = {underline = true}
 		}
 	}
-	for key, value in pairs(cfg.load_subcfg("style").global) do
-		cfg.insert_nested(base, util.string_split(key, "/"), value)
+end
+
+local function find_tag(str)
+	for _, tags in ipairs({basic_tags, color_tags, alpha_tags}) do
+		local find_res = util.list_find(tags, function(tag_def)
+			return tag_def.id == str
+		end)
+		if find_res then return find_res end
 	end
-	return base
+end
+
+local config = (function()
+	local config = get_defaults()
+	local cfg_data = cfg.load_subcfg("style")
+
+	local function insert_values(tbl, entries)
+		for key, value in pairs(entries) do
+			local tag = find_tag(key)
+			if tag then
+				local success, res = pcall(cfg.force_type, value, tag.type)
+				if success then tbl[key] = res
+				else msg.warn("Ignoring invalid style value: " .. value) end
+			else msg.warn("Ignoring unknown style property: " .. key) end
+		end
+	end
+
+	if cfg_data.global then
+		insert_values(config.base, cfg_data.global)
+	end
+	for _, section in ipairs(cfg_data) do
+		local path = util.string_split(section.name, "/")
+		style_tbl = cfg.get_nested(config, path)
+		if style_tbl then
+			insert_values(style_tbl, section.entries)
+		else msg.warn("Ignoring invalid style path: " .. section.name) end
+	end
+	return config
 end)()
 
 local function insert_tag(list, tag, value, hex, closing, default)
