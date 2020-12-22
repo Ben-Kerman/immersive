@@ -178,14 +178,14 @@ function TextSelect:finish(force_sel)
 	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
 end
 
-function TextSelect:new(text, font_size, update_handler, no_style_reset, init_cursor_pos)
+function TextSelect:new(text, update_handler, font_size, no_style_reset, init_cursor_pos)
 	local ts
 	ts = {
 		cdpts = utf_8.codepoints(text),
 		curs_pos = init_cursor_pos and init_cursor_pos or 1,
 		sel = {from = 0, to = 0},
 		update_handler = update_handler and update_handler or default_update_handler,
-		font_size = font_size,
+		font_size = font_size and font_size or ssa.query{"text_select", "font_size"},
 		style_reset = not no_style_reset,
 		bindings = {
 			group = "text_select",

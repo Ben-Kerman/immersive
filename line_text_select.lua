@@ -13,11 +13,10 @@ function LineTextSelect:new(lines, line_conv, sel_conv, limit)
 			lts.active_line = line
 			if lts._text_select then lts._text_select:finish() end
 
-			local fs = ssa.query{"line_select", "selection", "font_size"}
-			lts._text_select = TextSelect:new(sel_conv(line), fs, function(self, has_sel, curs_pos, segments)
+			lts._text_select = TextSelect:new(sel_conv(line), function(self, has_sel, curs_pos, segments)
 				lts.sel_ssa_def = self:default_generator(has_sel, curs_pos, segments)
 				lts._line_select:update()
-			end, true)
+			end, ssa.query{"line_select", "selection", "font_size"}, true)
 			lts._text_select:start()
 		end
 	end

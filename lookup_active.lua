@@ -4,12 +4,10 @@ require "text_select"
 
 -- forward declarations
 local menu
-local overlay = mp.create_osd_overlay("ass-events")
 local word_sel, def_sel
 
 local function cancel()
 	menu:disable()
-	overlay:remove()
 	if word_sel then
 		word_sel:finish()
 		word_sel = nil
@@ -68,10 +66,7 @@ local lookup_active = {}
 function lookup_active.begin()
 	local sub_text = helper.check_active_sub()
 	if sub_text then
-		word_sel = TextSelect:new(sub_text, function(has_sel, curs_pos, segments)
-			overlay.data = word_sel:default_generator(has_sel, curs_pos, segments)
-			overlay:update()
-		end)
+		word_sel = TextSelect:new(sub_text)
 		word_sel:start()
 		menu:enable()
 	end
