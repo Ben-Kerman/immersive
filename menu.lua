@@ -90,8 +90,7 @@ function Menu:redraw()
 				end
 			else table.insert(ssa_definition, help_hint_off) end
 
-			local osd_spacer = string.format([[{\fs%d}\h\N]], mp.get_property_number("osd-font-size"))
-			table.insert(ssa_lines, osd_spacer .. ssa.generate(ssa_definition))
+			table.insert(ssa_lines, "\\h\\N" .. ssa.generate(ssa_definition))
 		end
 
 		if self.data.infos and not self.show_bindings then
