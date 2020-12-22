@@ -56,7 +56,7 @@ local function export_word_audio(data)
 			local tgt_path = mpu.join_path(anki.media_dir(), full_fn)
 			if not mpu.file_info(tgt_path) then
 				action(tgt_path)
-			else mp.osd_message("Word audio file " .. full_fn .. " already exists") end
+			else msg.info("Word audio file " .. full_fn .. " already exists") end
 			return full_fn
 		end
 

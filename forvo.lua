@@ -58,7 +58,7 @@ local function audio_request(url, target_path, async, callback)
 	}
 	local function handle_http_res(res)
 		if res then return target_path
-		else mp.osd_message("Failed to load Forvo audio") end
+		else msg.error("Failed to load Forvo audio") end
 	end
 	if async then
 		http.get_async(http_params, function(res)
@@ -127,9 +127,7 @@ function Pronunciation:play()
 	self:load_audio()
 	if self.audio_file then
 		player.play(self.audio_file.path)
-	else
-		mp.osd_message("Failed to download audio file")
-	end
+	else msg.error("Failed to download audio file") end
 end
 
 local function extract_pronunciations(menu, word, callback)

@@ -100,9 +100,7 @@ function TargetSelect:add_word_audio()
 	if #self.data.definitions ~= 0 then
 		local word = self.data.definitions[#self.data.definitions].word
 		menu_stack.push(Forvo:new(self.data, word))
-	else
-		mp.osd_message("No target word selected")
-	end
+	else msg.info("No target word selected") end
 end
 
 function TargetSelect:show()

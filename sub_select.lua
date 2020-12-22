@@ -1,8 +1,9 @@
+local BasicOverlay = require "basic_overlay"
 local export = require "export"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
+local msg = require "message"
 local player = require "player"
-local BasicOverlay = require "basic_overlay"
 local Subtitle = require "subtitle"
 local TargetSelect = require "target_select"
 local util = require "util"
@@ -19,7 +20,7 @@ function SubSelect:select_sub()
 	local sub_delay = mp.get_property_number("sub-delay")
 
 	if sub_text == nil or sub_text == "" then
-		mp.osd_message("No active subtitle line, nothing selected")
+		msg.info("No active subtitle line, nothing selected")
 	else
 		local sub = Subtitle:new(sub_text, sub_start, sub_end, sub_delay)
 
