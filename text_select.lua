@@ -175,17 +175,20 @@ function TextSelect:hide()
 	self:update(false)
 end
 
-function TextSelect:selection()
-	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
-end
-
-function TextSelect:finish(force_sel)
-	if force_sel and self:sel_len() == 0 then
+function TextSelect:selection(force)
+	if force and self:sel_len() == 0 then
 		mp.osd_message("Please select some text")
 		return nil
 	end
+	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
+end
+
+function TextSelect:finish(force)
+	local sel = self:selection(force)
+	if not sel then return end
+
 	self:hide()
-	return self:selection()
+	return sel
 end
 
 function TextSelect:new(text, update_handler, font_size, no_style_reset, init_cursor_pos)

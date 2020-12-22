@@ -50,16 +50,14 @@ function LineTextSelect:hide()
 	self._line_select:hide()
 end
 
-function LineTextSelect:selection()
-	return self._text_select:finish()
+function LineTextSelect:selection(force)
+	return self._text_select:selection(force)
 end
 
-function LineTextSelect:finish(force_sel)
-	local sel = self:selection()
-	if force_sel and not sel then
-		-- TODO
-		return
-	end
+function LineTextSelect:finish(force)
+	local sel = self:selection(force)
+	if not sel then return end
+
 	self:hide()
 	return sel
 end
