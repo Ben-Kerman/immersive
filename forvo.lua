@@ -102,27 +102,24 @@ function Pronunciation:new(menu, id, user, mp3_l, ogg_l, mp3_h, ogg_h)
 end
 
 function Pronunciation:load_audio(async)
+	local function set_audio_file(res)
+		if res then
+			self.audio_file = {
+				word = self.menu.word,
+				extension = extension,
+				path = res
+			}
+			self.menu.prn_sel:update()
+		end
+	end
+
 	if not self.audio_file then
 		local extension = cfg.values.forvo_prefer_mp3 and "mp3" or "ogg"
 		local src = self.audio_h and self.audio_h or self.audio_l
 		local audio_url = src[extension]
 		if async then
-			audio_request(audio_url, sys.tmp_file_name(), true, function(res)
-				self.audio_file = {
-					word = self.menu.word,
-					extension = extension,
-					path = res
-				}
-				self.menu.prn_sel:update()
-			end)
-		else
-			self.audio_file = {
-				word = self.menu.word,
-				extension = extension,
-				path = audio_request(audio_url, sys.tmp_file_name())
-			}
-			self.menu.prn_sel:update()
-		end
+			audio_request(audio_url, sys.tmp_file_name(), true, set_audio_file)
+		else set_audio_file(audio_request(audio_url, sys.tmp_file_name())) end
 	end
 end
 
