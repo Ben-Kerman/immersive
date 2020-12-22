@@ -2,7 +2,7 @@ local export = require "export"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
 local player = require "player"
-local SelectionOverlay = require "basic_overlay"
+local BasicOverlay = require "basic_overlay"
 local Subtitle = require "subtitle"
 local TargetSelect = require "target_select"
 local util = require "util"
@@ -17,6 +17,7 @@ function SubSelect:select_sub()
 	local sub_start = mp.get_property_number("sub-start")
 	local sub_end = mp.get_property_number("sub-end")
 	local sub_delay = mp.get_property_number("sub-delay")
+
 	if sub_text == nil or sub_text == "" then
 		mp.osd_message("No active subtitle line, nothing selected")
 	else
@@ -228,12 +229,21 @@ function SubSelect:new()
 	}
 	local data = new_data()
 
+	local sel_overlay = BasicOverlay:new(data.subtitles, function(data, ssa_definition)
+		for _, sub in ipairs(data) do
+			table.insert(ssa_definition, {
+				newline = true,
+				sub:short()
+			})
+		end
+	end, "selection_overlay")
+
 	ss = setmetatable({
 		data = data,
 		autoselect = autoselect,
 		infos = infos,
 		bindings = bindings,
-		sel_overlay = SelectionOverlay:new(data.subtitles),
+		sel_overlay = sel_overlay,
 		menu = Menu:new{infos = infos, bindings = bindings}
 	}, SubSelect)
 	return ss
@@ -246,7 +256,7 @@ function SubSelect:show()
 		self:observe_subs()
 	end
 	self.menu:show()
-	self.sel_overlay:redraw()
+	self.sel_overlay:show()
 end
 
 function SubSelect:hide()
@@ -254,7 +264,7 @@ function SubSelect:hide()
 		self:unobserve_subs()
 	end
 	self.menu:hide()
-	self.sel_overlay:remove()
+	self.sel_overlay:hide()
 end
 
 function SubSelect:cancel()

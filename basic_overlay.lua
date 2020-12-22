@@ -1,33 +1,38 @@
 local ssa = require "ssa"
 
-local SelectionOverlay = {}
-SelectionOverlay.__index = SelectionOverlay
+local BasicOverlay = {}
+BasicOverlay.__index = BasicOverlay
 
-function SelectionOverlay:new(selection)
-	local so = {
-		_overlay = mp.create_osd_overlay("ass-events"),
-		selection = selection
-	}
-	return setmetatable(so, SelectionOverlay)
+function BasicOverlay:new(data, converter, style)
+	return setmetatable({
+		overlay = mp.create_osd_overlay("ass-events"),
+		active = false,
+		data = data,
+		converter = converter,
+		style = style
+	}, BasicOverlay)
 end
 
-function SelectionOverlay:redraw()
-	local ssa_definition = {
-		style = "selection_overlay",
-		full_style = true
-	}
-	for _, sub in ipairs(self.selection) do
-		table.insert(ssa_definition, {
-			newline = true,
-			sub:short()
-		})
+function BasicOverlay:redraw()
+	if self.active then
+		local ssa_definition = {
+			style = self.style,
+			full_style = true
+		}
+		self.converter(self.data, ssa_definition)
+		self.overlay.data = ssa.generate(ssa_definition)
+		self.overlay:update()
 	end
-	self._overlay.data = ssa.generate(ssa_definition)
-	self._overlay:update()
 end
 
-function SelectionOverlay:remove()
-	self._overlay:remove()
+function BasicOverlay:show()
+	self.active = true
+	self:redraw()
 end
 
-return SelectionOverlay
+function BasicOverlay:hide()
+	self.active = false
+	self.overlay:remove()
+end
+
+return BasicOverlay
