@@ -1,3 +1,4 @@
+local LineSelect = require "line_select"
 local dicts = require "dict.dicts"
 
 local function def_conv(def)

@@ -78,6 +78,10 @@ local function get_defaults()
 		},
 		selection_overlay = {
 			base = {align = 3}
+		},
+		word_audio_select = {
+			unloaded = {primary_color = "808080"},
+			loaded = {}
 		}
 	}
 end

@@ -175,9 +175,10 @@ local function extract_pronunciations(word)
 end
 
 local function line_conv(prn)
-	-- TODO add support for custom styles
-	local color = prn.audio_file and [[{\1c&HFFFFFF&}]] or [[{\1c&H808080&}]]
-	return color .. prn.user
+	return {
+		style = {"word_audio_select", prn.audio_file and "loaded" or "unloaded"},
+		prn.user
+	}
 end
 
 local function play_highlighted()

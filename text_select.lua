@@ -282,3 +282,5 @@ function TextSelect:update()
 	end
 	self:update_handler(has_sel, curs_pos, segments)
 end
+
+return TextSelect
