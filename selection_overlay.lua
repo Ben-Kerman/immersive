@@ -1,4 +1,4 @@
-SelectionOverlay = {}
+local SelectionOverlay = {}
 SelectionOverlay.__index = SelectionOverlay
 
 function SelectionOverlay:new(selection)
@@ -21,3 +21,5 @@ end
 function SelectionOverlay:remove()
 	self._overlay:remove()
 end
+
+return SelectionOverlay

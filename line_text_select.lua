@@ -1,8 +1,8 @@
 local ssa = require "ssa"
-require "line_select"
-require "text_select"
+local LineSelect = require "line_select"
+local TextSelect = require "text_select"
 
-LineTextSelect = {}
+local LineTextSelect = {}
 LineTextSelect.__index = LineTextSelect
 
 function LineTextSelect:new(lines, line_conv, sel_conv, limit)
@@ -41,3 +41,5 @@ function LineTextSelect:finish(force_sel)
 	self._line_select:finish()
 	return sel
 end
+
+return LineTextSelect

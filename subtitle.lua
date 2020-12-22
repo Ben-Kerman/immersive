@@ -1,7 +1,7 @@
 local utf_8 = require "utf_8"
 local util = require "util"
 
-Subtitle = {}
+local Subtitle = {}
 Subtitle.__index = Subtitle
 
 function Subtitle.__lt(a ,b)
@@ -23,3 +23,5 @@ function Subtitle:short()
 	if #cps > 16 then return utf_8.string(util.list_slice(cps, 0, 16)) .. "…"
 	else return utf_8.string(cps) end
 end
+
+return Subtitle

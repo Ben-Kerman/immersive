@@ -5,7 +5,7 @@ local function default_line_conv(line)
 	return line
 end
 
-LineSelect = {}
+local LineSelect = {}
 LineSelect.__index = LineSelect
 
 function LineSelect:move_sel(dir)
@@ -115,3 +115,5 @@ function LineSelect:update()
 	self._overlay.data = ssa.generate(ssa_definition)
 	self._overlay:update()
 end
+
+return LineSelect

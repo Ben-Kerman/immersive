@@ -1,7 +1,7 @@
 local export = require "export"
-require "menu"
-require "selection_overlay"
-require "subtitle"
+local Menu = require "menu"
+local SelectionOverlay = require "selection_overlay"
+local Subtitle = require "subtitle"
 local util = require "util"
 local target_select = require "target_select"
 

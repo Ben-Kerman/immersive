@@ -10,7 +10,7 @@ local function def_conv(def)
 	return string.format("%s%s: %s", readings, variants, defs)
 end
 
-DefinitionSelect = {}
+local DefinitionSelect = {}
 DefinitionSelect.__index = DefinitionSelect
 
 function DefinitionSelect:new(word, prefix)
@@ -32,3 +32,5 @@ end
 function DefinitionSelect:finish(word)
 	return dicts[self.lookup_result.dict_index].get_definition(self._line_select:finish().id)
 end
+
+return DefinitionSelect

@@ -1,7 +1,7 @@
 local kbds = require "key_bindings"
 local ssa = require "ssa"
 
-Menu = {}
+local Menu = {}
 Menu.__index = Menu
 
 local help_key = (function()
@@ -119,3 +119,5 @@ function Menu:redraw()
 		self._overlay:update()
 	else self._overlay:remove() end
 end
+
+return Menu

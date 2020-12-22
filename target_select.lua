@@ -1,11 +1,11 @@
 local dicts = require "dict.dicts"
 local export = require "export"
 local forvo = require "forvo"
-require "menu"
-require "definition_select"
-require "line_select"
-require "line_text_select"
-require "text_select"
+local Menu = require "menu"
+local DefinitionSelect = require "definition_select"
+local LineSelect = require "line_select"
+local LineTextSelect = require "line_text_select"
+local TextSelect = require "text_select"
 
 -- forward declarations
 local menu

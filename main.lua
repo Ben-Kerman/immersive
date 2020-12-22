@@ -6,8 +6,8 @@ local series_id = require "series_id"
 local sub_select = require "sub_select"
 local sys = require "system"
 local target_select = require "target_select"
-require "menu"
-require "subtitle"
+local Menu = require "menu"
+local Subtitle = require "subtitle"
 
 -- forward declarations
 local menu

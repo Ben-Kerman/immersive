@@ -4,8 +4,8 @@ local http = require "http"
 local player = require "player"
 local url = require "url"
 local sys = require "system"
-require "menu"
-require "line_select"
+local Menu = require "menu"
+local LineSelect = require "line_select"
 
 -- forward declarations
 local menu

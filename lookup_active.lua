@@ -1,6 +1,6 @@
 local helper = require "helper"
-require "menu"
-require "text_select"
+local Menu = require "menu"
+local TextSelect = require "text_select"
 
 -- forward declarations
 local menu
