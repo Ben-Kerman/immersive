@@ -1,17 +1,17 @@
+local cfg = require "config"
 local dicts = require "dict.dicts"
 local LineSelect = require "line_select"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
 local msg = require "message"
+local templater = require "templater"
 
 local function def_conv(def)
-	local readings = table.concat(def.readings, "・")
-	local variants
-	if def.variants then
-		variants = "【" .. table.concat(def.variants, "・") .. "】"
-	else variants = "" end
-	local defs = table.concat(def.defs, "; ")
-	return string.format("%s%s: %s", readings, variants, defs)
+	return templater.render(cfg.values.quick_def_template, {
+		readings = {data = def.readings},
+		variants = {data = def.variants},
+		definitions = {data = def.defs}
+	})
 end
 
 local DefinitionSelect = {}

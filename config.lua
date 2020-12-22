@@ -13,7 +13,8 @@ end
 
 local config = {
 	values = {
-		anki_targets="",
+		anki_targets = "",
+		quick_def_template = "{{readings:::・}}{{variants:【:】:・}}: {{definitions:::; }}",
 		forvo_language = "ja",
 		forvo_preload_audio = true,
 		forvo_prefer_mp3 = false,
