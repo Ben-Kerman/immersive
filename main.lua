@@ -70,7 +70,7 @@ local bindings = {
 		id = "begin_sub_select",
 		default = "a",
 		desc = "Start line selection",
-		action = SubSelect.new,
+		action = function() menu_stack.push(SubSelect:new()) end,
 		global = true
 	},
 	{

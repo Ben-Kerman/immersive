@@ -1,5 +1,6 @@
 local export = require "export"
 local Menu = require "menu"
+local menu_stack = require "menu_stack"
 local player = require "player"
 local SelectionOverlay = require "selection_overlay"
 local Subtitle = require "subtitle"
@@ -123,13 +124,12 @@ end
 
 function SubSelect:start_tgt_sel()
 	if export.verify(self.data, true) then
-		self:hide()
-		TargetSelect:new(self.data)
+		menu_stack.push(TargetSelect:new(self.data))
 	end
 end
 function SubSelect:start_export()
 	if export.verify(self.data, true) then
-		self:hide()
+		menu_stack.pop()
 		export.execute(self.data)
 	end
 end
@@ -224,12 +224,6 @@ function SubSelect:new()
 			default = "f",
 			desc = "End line selection and export immediately",
 			action = function() ss:start_export() end
-		},
-		{
-			id = "cancel",
-			default = "ESC",
-			desc = "Cancel selection",
-			action = function() ss:cancel() end
 		}
 	}
 	local data = new_data()
@@ -242,7 +236,6 @@ function SubSelect:new()
 		sel_overlay = SelectionOverlay:new(data.subtitles),
 		menu = Menu:new{infos = infos, bindings = bindings}
 	}, SubSelect)
-	ss:show()
 	return ss
 end
 

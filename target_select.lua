@@ -42,12 +42,6 @@ function TargetSelect:new(data)
 			default = "f",
 			desc = "Export with selected target words",
 			action = function() ts:finish() end
-		},
-		{
-			id = "cancel",
-			default = "ESC",
-			desc = "Cancel definition selection or the card creation process",
-			action = function() ts:handle_cancel() end
 		}
 	}
 
@@ -56,8 +50,8 @@ function TargetSelect:new(data)
 		data = data,
 		menu = Menu:new{bindings = bindings}
 	}, TargetSelect)
-	ts:show()
 	ts:start_tgt_sel()
+	return ts
 end
 
 local function sel_conv(sub) return sub.text:gsub("\n", "⏎") end
