@@ -1,8 +1,8 @@
-local config = require "config"
+local cfg = require "config"
 
 local dicts = {}
 
-local dict_configs = config.load_subcfg("dictionaries")
+local dict_configs = cfg.load_subcfg("dictionaries")
 for _, dict_config in ipairs(dict_configs) do
 	local dict_id, entries = dict_config.name, dict_config.entries
 	if entries.location and entries.type then

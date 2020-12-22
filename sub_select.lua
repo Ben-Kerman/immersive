@@ -248,20 +248,20 @@ end
 
 -- COMMON FUNCTIONS --
 
-function SubSelect:hide()
-	if self.autoselect.value then
-		self:unobserve_subs()
-	end
-	self.menu:disable()
-	self.sel_overlay:remove()
-end
-
 function SubSelect:show()
 	if self.autoselect.value then
 		self:observe_subs()
 	end
 	self.menu:enable()
 	self.sel_overlay:redraw()
+end
+
+function SubSelect:hide()
+	if self.autoselect.value then
+		self:unobserve_subs()
+	end
+	self.menu:disable()
+	self.sel_overlay:remove()
 end
 
 function SubSelect:cancel()

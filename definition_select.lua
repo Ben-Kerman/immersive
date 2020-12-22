@@ -1,5 +1,5 @@
-local LineSelect = require "line_select"
 local dicts = require "dict.dicts"
+local LineSelect = require "line_select"
 
 local function def_conv(def)
 	local readings = table.concat(def.readings, "・")

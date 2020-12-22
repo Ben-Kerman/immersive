@@ -2,12 +2,12 @@ local export = require "export"
 local helper = require "helper"
 local kbds = require "key_bindings"
 local lookup_active = require "lookup_active"
+local Menu = require "menu"
 local series_id = require "series_id"
 local SubSelect = require "sub_select"
+local Subtitle = require "subtitle"
 local sys = require "system"
 local target_select = require "target_select"
-local Menu = require "menu"
-local Subtitle = require "subtitle"
 
 -- forward declarations
 local menu

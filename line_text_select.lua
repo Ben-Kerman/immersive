@@ -1,5 +1,5 @@
-local ssa = require "ssa"
 local LineSelect = require "line_select"
+local ssa = require "ssa"
 local TextSelect = require "text_select"
 
 local LineTextSelect = {}

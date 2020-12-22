@@ -1,11 +1,11 @@
 local b64 = require "base64"
 local cfg = require "config"
 local http = require "http"
-local player = require "player"
-local url = require "url"
-local sys = require "system"
-local Menu = require "menu"
 local LineSelect = require "line_select"
+local Menu = require "menu"
+local player = require "player"
+local sys = require "system"
+local url = require "url"
 
 -- forward declarations
 local menu
