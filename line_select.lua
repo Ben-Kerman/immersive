@@ -28,8 +28,19 @@ function LineSelect:new(lines, line_conv, sel_conv, update_handler, limit)
 		limit = limit,
 		active = 1,
 		bindings = {
-			{id = "line_select-prev", default = "UP", action = function() ls:move_sel(-1) end, repeatable = true},
-			{id = "line_select-next", default = "DOWN", action = function() ls:move_sel(1) end, repeatable = true},
+			group = "line_select",
+			{
+				id = "prev",
+				default = "UP",
+				action = function() ls:move_sel(-1) end,
+				repeatable = true
+			},
+			{
+				id = "next",
+				default = "DOWN",
+				action = function() ls:move_sel(1) end,
+				repeatable = true
+			},
 		}
 	}
 	return setmetatable(ls, LineSelect)

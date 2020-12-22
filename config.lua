@@ -101,7 +101,7 @@ function config.load(path)
 	return result
 end
 
-function config.load_subcfg(name, basic)
+function config.load_subcfg(name)
 	local rel_path = string.format("script-opts/%s-%s.conf", mp.get_script_name(), name)
 	return config.load(mp.find_config_file(rel_path))
 end

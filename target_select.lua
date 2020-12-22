@@ -99,38 +99,39 @@ local function handle_cancel()
 end
 
 local bindings = {
+	group = "target_select",
 	{
-		id = "target_select-lookup_exact",
+		id = "lookup_exact",
 		default = "ENTER",
 		desc = "Look up selected word / Select definition",
 		action = select_target_def
 	},
 	{
-		id = "target_select-lookup_partial",
+		id = "lookup_partial",
 		default = "Shift+ENTER",
 		desc = "Look up words starting with selection",
 		action = function() select_target_def(true) end
 	},
 	{
-		id = "target_select-add_word_audio",
+		id = "add_word_audio",
 		default = "a",
 		desc = "Add Forvo audio for target word",
 		action = add_word_audio
 	},
 	{
-		id = "target_select-delete_line",
+		id = "delete_line",
 		default = "DEL",
 		desc = "Delete selected line",
 		action = delete_line
 	},
 	{
-		id = "target_select-export",
+		id = "export",
 		default = "f",
 		desc = "Export with selected target words",
 		action = finish
 	},
 	{
-		id = "target_select-cancel",
+		id = "cancel",
 		default = "ESC",
 		desc = "Cancel definition selection or the card creation process",
 		action = handle_cancel

@@ -15,7 +15,7 @@ function Menu:new(data, enabled)
 end
 
 function Menu:enable()
-	mp.add_forced_key_binding("h", "_ankisubs-menu_show-bindings", function()
+	mp.add_forced_key_binding("h", "menu-show_help", function()
 		self.show_bindings = not self.show_bindings
 		self:redraw()
 	end)
@@ -25,7 +25,7 @@ function Menu:enable()
 end
 
 function Menu:disable()
-	mp.remove_key_binding("_ankisubs-menu_show-bindings")
+	mp.remove_key_binding("menu-show_help")
 	kbds.remove_bindings(self.data.bindings)
 	self.enabled = false
 	self:redraw()

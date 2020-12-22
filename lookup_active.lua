@@ -40,20 +40,21 @@ local function lookup(prefix)
 end
 
 local bindings = {
+	group = "lookup_active",
 	{
-		id = "lookup_active-exact",
+		id = "exact",
 		default = "ENTER",
 		desc = "Look up selected word",
 		action = lookup
 	},
 	{
-		id = "lookup_active-partial",
+		id = "partial",
 		default = "Shift+ENTER",
 		desc = "Look up words starting with selection",
 		action = function() lookup(true) end
 	},
 	{
-		id = "lookup_active-cancel",
+		id = "cancel",
 		default = "ESC",
 		desc = "Cancel lookup",
 		action = cancel

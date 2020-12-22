@@ -72,68 +72,69 @@ local function finish_export()
 end
 
 local bindings = {
+	group = "sub_select",
 	{
-		id = "sub_select-set_start_sub",
+		id = "set_start_sub",
 		default = "q",
 		desc = "Force start to start of active line",
 		action = function() set_start("sub-start") end
 	},
 	{
-		id = "sub_select-set_end_sub",
+		id = "set_end_sub",
 		default = "e",
 		desc = "Force end to end of active line",
 		action = function() set_stop("sub-end") end
 	},
 	{
-		id = "sub_select-set_start_time_pos",
+		id = "set_start_time_pos",
 		default = "Q",
 		desc = "Force start to current time",
 		action = function() set_start("time-pos") end
 	},
 	{
-		id = "sub_select-set_end_time_pos",
+		id = "set_end_time_pos",
 		default = "E",
 		desc = "Force end to current time",
 		action = function() set_stop("time-pos") end
 	},
 	{
-		id = "sub_select-set_scrot",
+		id = "set_scrot",
 		default = "s",
 		desc = "Take screenshot at current time",
 		action = function() set_scrot("time-pos") end
 	},
 	{
-		id = "sub_select-select_line",
+		id = "select_line",
 		default = "a",
 		desc = "Select current line",
 		action = select_sub
 	},
 	{
-		id = "sub_select-toggle_auto_select",
+		id = "toggle_auto_select",
 		default = "A",
 		desc = "Toggle automatic selection",
 		action = toggle_auto_select
 	},
 	{
-		id = "sub_select-reset",
+		id = "reset",
 		default = "k",
 		desc = "Reset selection",
 		action = reset
 	},
 	{
-		id = "sub_select-start_target_select",
+		id = "start_target_select",
 		default = "d",
 		desc = "End line selection and enter target selection",
 		action = finish_tgt_sel
 	},
 	{
-		id = "sub_select-instant_export",
+		id = "instant_export",
 		default = "f",
 		desc = "End line selection and export immediately",
 		action = finish_export
 	},
 	{
-		id = "sub_select-cancel",
+		id = "cancel",
 		default = "ESC",
 		desc = "Cancel selection",
 		action = cancel

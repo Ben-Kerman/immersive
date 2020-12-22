@@ -204,20 +204,21 @@ local function finish()
 end
 
 local bindings = {
+	group = "forvo",
 	{
-		id = "forvo-play",
+		id = "play",
 		default = "SPACE",
 		desc = "Play currently highlighted audio if available",
 		action = play_highlighted
 	},
 	{
-		id = "forvo-select",
+		id = "select",
 		default = "ENTER",
 		desc = "Confirm selection",
 		action = finish
 	},
 	{
-		id = "forvo-cancel",
+		id = "cancel",
 		default = "ESC",
 		desc = "Cancel audio selection",
 		action = cancel

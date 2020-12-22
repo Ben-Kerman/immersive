@@ -64,6 +64,7 @@ local function export_active_line(skip_target_select)
 end
 
 local bindings = {
+	group = "global_menu",
 	{
 		id = "begin_sub_select",
 		default = "a",
@@ -114,7 +115,7 @@ local bindings = {
 		global = true
 	},
 	{
-		id = "close_global_menu",
+		id = "close",
 		default = "ESC",
 		desc = "Close the menu",
 		action = function() menu:disable() end

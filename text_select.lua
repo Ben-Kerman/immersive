@@ -188,74 +188,75 @@ function TextSelect:new(text, font_size, update_handler, no_style_reset, init_cu
 		font_size = font_size,
 		style_reset = not no_style_reset,
 		bindings = {
+			group = "text_select",
 			{
-				id = "text_select-prev_char",
+				id = "prev_char",
 				default = "LEFT",
 				action = function() ts:move_curs(-1) end,
 				repeatable = true
 			},
 			{
-				id = "text_select-next_char",
+				id = "next_char",
 				default = "RIGHT",
 				action = function() ts:move_curs(1) end,
 				repeatable = true
 			},
 			{
-				id = "text_select-prev_word",
+				id = "prev_word",
 				default = "Ctrl+LEFT",
 				action = function() ts:move_curs_word(-1) end,
 				repeatable = true
 			},
 			{
-				id = "text_select-next_word",
+				id = "next_word",
 				default = "Ctrl+RIGHT",
 				action = function() ts:move_curs_word(1) end,
 				repeatable = true
 			},
 			{
-				id = "text_select-home",
+				id = "home",
 				default = "HOME",
 				action = function() ts:move_curs(-ts.curs_pos + 1) end,
 				repeatable = true
 			},
 			{
-				id = "text_select-end",
+				id = "end",
 				default = "END",
 				action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1) end,
 				repeatable = true
 			},
 			{
-				id = "text_select-prev_char_sel",
+				id = "prev_char_sel",
 				default = "Shift+LEFT",
 				action = function() ts:move_curs(-1, true) end,
 				repeatable = true
 			},
 			{
-				id = "text_select-next_char_sel",
+				id = "next_char_sel",
 				default = "Shift+RIGHT",
 				action = function() ts:move_curs(1, true) end,
 				repeatable = true
 			},
 			{
-				id = "text_select-prev_word_sel",
+				id = "prev_word_sel",
 				default = "Ctrl+Shift+LEFT",
 				action = function() ts:move_curs_word(-1, true) end,
 				repeatable = true
 			},
 			{
-				id = "text_select-next_word_sel",
+				id = "next_word_sel",
 				default = "Ctrl+Shift+RIGHT",
 				action = function() ts:move_curs_word(1, true) end,
 				repeatable = true
 			},
 			{
-				id = "text_select-home_sel",
+				id = "home_sel",
 				default = "Shift+HOME",
 				action = function() ts:move_curs(-ts.curs_pos + 1, true) end,
 				repeatable = true
 			},
 			{
-				id = "text_select-end_sel",
+				id = "end_sel",
 				default = "Shift+END",
 				action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1, true) end,
 				repeatable = true
