@@ -1,5 +1,4 @@
 local cfg = require "config"
-local util = require "util"
 
 local config = (function()
 	local config = {}

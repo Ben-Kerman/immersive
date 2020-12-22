@@ -80,10 +80,7 @@ end
 
 local export = {}
 
-function export.verify(data, warn)
-	-- subs present → times can be derived
-	if #data.subtitles ~= 0 then return true end
-
+function export.verify_times(data, warn)
 	local start = data.times.start and data.times.start >= 0
 	local stop = data.times.stop and data.times.stop >= 0
 
@@ -97,6 +94,13 @@ function export.verify(data, warn)
 		return false
 	end
 	return true
+end
+
+function export.verify(data, warn)
+	-- subs present → times can be derived
+	if #data.subtitles ~= 0 then return true end
+
+	return export.verify_times(data, warn)
 end
 
 function export.resolve_times(data)
