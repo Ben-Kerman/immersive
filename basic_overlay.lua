@@ -19,7 +19,11 @@ function BasicOverlay:redraw()
 			style = self.style,
 			full_style = true
 		}
-		self.converter(self.data, ssa_definition)
+		if self.converter then
+			self.converter(self.data, ssa_definition)
+		else
+			table.insert(ssa_definition, self.data)
+		end
 		self.overlay.data = ssa.generate(ssa_definition)
 		self.overlay:update()
 	end
