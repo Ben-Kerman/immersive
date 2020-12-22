@@ -73,6 +73,12 @@ function LineSelect:finish()
 end
 
 function LineSelect:update()
+	-- all lines were deleted
+	if #self.lines == 0 then
+		self:hide()
+		return
+	end
+
 	if self.update_handler then self.update_handler(self.lines[self.active], self.active) end
 
 	local first, last
