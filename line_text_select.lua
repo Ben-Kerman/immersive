@@ -31,7 +31,7 @@ function LineTextSelect:new(lines, line_conv, sel_conv, limit)
 end
 
 function LineTextSelect:start()
-	self._line_select:start()
+	self._line_select:show()
 end
 
 function LineTextSelect:finish(force_sel)

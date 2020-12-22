@@ -23,7 +23,7 @@ function DefinitionSelect:new(word, prefix)
 				_line_select = LineSelect:new(result, def_conv, nil, nil, 5),
 				lookup_result = {dict_index = i, defs = result}
 			}
-			def_sel._line_select:start()
+			def_sel._line_select:show()
 			return setmetatable(def_sel, DefinitionSelect)
 		end
 	end

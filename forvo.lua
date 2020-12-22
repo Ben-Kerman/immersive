@@ -238,7 +238,7 @@ function forvo.begin(word, callback)
 
 	prns = extract_pronunciations(word)
 	prn_sel = LineSelect:new(prns, line_conv)
-	prn_sel:start()
+	prn_sel:show()
 	menu:enable()
 
 	if cfg.values.forvo_preload_audio then

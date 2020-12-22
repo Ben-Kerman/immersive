@@ -46,19 +46,23 @@ function LineSelect:new(lines, line_conv, sel_conv, update_handler, limit)
 	return setmetatable(ls, LineSelect)
 end
 
-function LineSelect:active_line()
-	return self.lines[self.active], self.active
+function LineSelect:hide()
+	kbds.remove_bindings(self.bindings)
+	self._overlay:remove()
 end
 
-function LineSelect:start()
+function LineSelect:show()
 	kbds.add_bindings(self.bindings)
 	self:update()
 end
 
-function LineSelect:finish()
-	kbds.remove_bindings(self.bindings)
-	self._overlay:remove()
+function LineSelect:active_line()
 	return self.lines[self.active], self.active
+end
+
+function LineSelect:finish()
+	self:hide()
+	return self:active_line()
 end
 
 function LineSelect:update()
