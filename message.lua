@@ -19,7 +19,6 @@ local function update_overlay()
 		})
 	end
 	overlay.data = ssa.generate(ssa_definition)
-	print(overlay.data)
 	overlay:update()
 end
 

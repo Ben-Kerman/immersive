@@ -3,7 +3,7 @@ local Menu = require "menu"
 local player = require "player"
 local SelectionOverlay = require "selection_overlay"
 local Subtitle = require "subtitle"
-local target_select = require "target_select"
+local TargetSelect = require "target_select"
 local util = require "util"
 
 local SubSelect = {}
@@ -124,7 +124,7 @@ end
 function SubSelect:start_tgt_sel()
 	if export.verify(self.data, true) then
 		self:hide()
-		target_select.begin(self.data)
+		TargetSelect:new(self.data)
 	end
 end
 function SubSelect:start_export()
