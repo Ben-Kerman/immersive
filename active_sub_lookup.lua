@@ -1,75 +1,60 @@
+local DefinitionSelect = require "definition_select"
 local helper = require "helper"
 local Menu = require "menu"
+local menu_stack = require "menu_stack"
 local TextSelect = require "text_select"
 
--- forward declarations
-local menu
-local word_sel, def_sel
+local ActiveSubLookup = {}
+ActiveSubLookup.__index = ActiveSubLookup
 
-local function cancel()
-	menu:hide()
-	if word_sel then
-		word_sel:finish()
-		word_sel = nil
-	end
-	if def_sel then
-		def_sel:finish()
-		def_sel = nil
-	end
-end
-
-local function lookup(prefix)
-	if def_sel then
-		cancel()
-	else
-		local selection = word_sel:finish(true)
-		if not selection then
-			mp.osd_message("No word selected")
-			return nil
-		end
-
-		word_sel = nil
-		def_sel = DefinitionSelect:new(selection, prefix)
-		if not def_sel then
-			mp.osd_message("No entry found for selected word")
-			start_tgt_sel()
-		end
-	end
-end
-
-local bindings = {
-	group = "lookup_active",
-	{
-		id = "exact",
-		default = "ENTER",
-		desc = "Look up selected word",
-		action = lookup
-	},
-	{
-		id = "partial",
-		default = "Shift+ENTER",
-		desc = "Look up words starting with selection",
-		action = function() lookup(true) end
-	},
-	{
-		id = "cancel",
-		default = "ESC",
-		desc = "Cancel lookup",
-		action = cancel
-	}
-}
-
-menu = Menu:new{bindings = bindings}
-
-local lookup_active = {}
-
-function lookup_active.begin()
+function ActiveSubLookup:new()
 	local sub_text = helper.check_active_sub()
-	if sub_text then
-		word_sel = TextSelect:new(sub_text)
-		word_sel:show()
-		menu:show()
-	end
+	if not sub_text then return end
+
+	local asl
+
+	local bindings = {
+		group = "lookup_active",
+		{
+			id = "exact",
+			default = "ENTER",
+			desc = "Look up selected word",
+			action = function() asl:lookup(false) end
+		},
+		{
+			id = "partial",
+			default = "Shift+ENTER",
+			desc = "Look up words starting with selection",
+			action = function() asl:lookup(true) end
+		}
+	}
+
+	asl = setmetatable({
+		txt_sel = TextSelect:new(sub_text),
+		menu = Menu:new{bindings = bindings}
+	}, ActiveSubLookup)
+	return asl
 end
 
-return lookup_active
+function ActiveSubLookup:lookup(prefix)
+	local selection = self.txt_sel:selection(true)
+	if not selection then return end
+
+	menu_stack.push(DefinitionSelect:new(selection, prefix))
+end
+
+function ActiveSubLookup:show()
+	self.txt_sel:show()
+	self.menu:show()
+end
+
+function ActiveSubLookup:hide()
+	self.txt_sel:hide()
+	self.menu:hide()
+end
+
+function ActiveSubLookup:cancel()
+	self:hide()
+end
+
+return ActiveSubLookup
