@@ -15,7 +15,7 @@ function LineSelect:move_sel(dir)
 	self:update()
 end
 
-function LineSelect:new(lines, line_conv, sel_conv, update_handler, limit)
+function LineSelect:new(lines, line_conv, sel_conv, update_handler, limit, init)
 	if not line_conv then line_conv = default_line_conv end
 	if not sel_conv then sel_conv = line_conv end
 	local ls
@@ -26,7 +26,7 @@ function LineSelect:new(lines, line_conv, sel_conv, update_handler, limit)
 		sel_conv = sel_conv,
 		update_handler = update_handler,
 		limit = limit,
-		active = 1,
+		active = init and math.min(math.max(init, 1), #lines) or 1,
 		bindings = {
 			group = "line_select",
 			{

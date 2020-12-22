@@ -61,8 +61,8 @@ end
 
 local function sel_conv(sub) return sub.text end
 local function line_conv(sub) return sub:short() end
-function TargetSelect:start_tgt_sel()
-	self.tgt_word_sel = LineTextSelect:new(self.data.subtitles, line_conv, sel_conv, 9)
+function TargetSelect:start_tgt_sel(init_line)
+	self.tgt_word_sel = LineTextSelect:new(self.data.subtitles, line_conv, sel_conv, 9, init_line)
 	self.tgt_word_sel:show()
 end
 
@@ -96,7 +96,7 @@ function TargetSelect:delete_line()
 	local _, index = self.tgt_word_sel._line_select:finish()
 	self.tgt_word_sel:finish()
 	table.remove(self.data.subtitles, index)
-	self:start_tgt_sel()
+	self:start_tgt_sel(index)
 end
 
 function TargetSelect:add_word_audio()

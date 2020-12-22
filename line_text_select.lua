@@ -5,7 +5,7 @@ local TextSelect = require "text_select"
 local LineTextSelect = {}
 LineTextSelect.__index = LineTextSelect
 
-function LineTextSelect:new(lines, line_conv, sel_conv, limit)
+function LineTextSelect:new(lines, line_conv, sel_conv, limit, init)
 	local lts
 	local function _sel_conv() return lts.sel_ssa_def end
 	local function update_handler(line)
@@ -28,7 +28,7 @@ function LineTextSelect:new(lines, line_conv, sel_conv, limit)
 		limit = limit,
 		sel_ssa_def = {}
 	}
-	lts._line_select = LineSelect:new(lines, line_conv, _sel_conv, update_handler, limit)
+	lts._line_select = LineSelect:new(lines, line_conv, _sel_conv, update_handler, limit, init)
 	return setmetatable(lts, LineTextSelect)
 end
 
