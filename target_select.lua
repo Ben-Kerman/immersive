@@ -3,6 +3,7 @@ local export = require "export"
 local forvo = require "forvo"
 local LineTextSelect = require "line_text_select"
 local Menu = require "menu"
+local menu_stack = require "menu_stack"
 local msg = require "message"
 
 local TargetSelect = {}
@@ -16,7 +17,7 @@ function TargetSelect:new(data)
 		{
 			id = "lookup_exact",
 			default = "ENTER",
-			desc = "Look up selected word / Select definition",
+			desc = "Look up selected word",
 			action = function() ts:select_target_def() end
 		},
 		{
@@ -62,24 +63,10 @@ function TargetSelect:start_tgt_sel(init_line)
 end
 
 function TargetSelect:select_target_def(prefix)
-	if self.def_sel then
-		table.insert(self.data.definitions, self.def_sel:finish())
-		self.def_sel = nil
-		self:start_tgt_sel()
-	else
-		local selection = self.tgt_word_sel:finish(true)
-		if not selection then
-			mp.osd_message("No word selected")
-			return nil
-		end
+	local selection = self.tgt_word_sel:selection(true)
+	if not selection then return end
 
-		self.tgt_word_sel = nil
-		self.def_sel = DefinitionSelect:new(selection, prefix)
-		if not self.def_sel then
-			mp.osd_message("No entry found for selected word")
-			self:start_tgt_sel()
-		end
-	end
+	menu_stack.push(DefinitionSelect:new(selection, prefix, self.data))
 end
 
 function TargetSelect:delete_line()
@@ -92,8 +79,7 @@ function TargetSelect:add_word_audio()
 	if #self.data.definitions ~= 0 then
 		self.menu:hide()
 		if self.tgt_word_sel then self.tgt_word_sel:finish() end
-		if self.def_sel then self.def_sel:finish() end
-		self.tgt_word_sel, self.def_sel = nil
+		self.tgt_word_sel = nil
 		forvo.begin(self.data.definitions[#self.data.definitions].word, function(prn)
 			self.data.word_audio_file = prn.audio_file
 			self.menu:show()
@@ -104,20 +90,9 @@ function TargetSelect:add_word_audio()
 	end
 end
 
-function TargetSelect:handle_cancel()
-	if self.def_sel then
-		self.def_sel:finish()
-		self.def_sel = nil
-		self:start_tgt_sel()
-	else self:cancel() end
-end
-
 function TargetSelect:show()
 	if self.tgt_word_sel then
 		self.tgt_word_sel:show()
-	end
-	if self.def_sel then
-		self.def_sel:show()
 	end
 	self.menu:show()
 end
@@ -125,9 +100,6 @@ end
 function TargetSelect:hide()
 	if self.tgt_word_sel then
 		self.tgt_word_sel:hide()
-	end
-	if self.def_sel then
-		self.def_sel:hide()
 	end
 	self.menu:hide()
 end

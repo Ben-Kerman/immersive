@@ -1,5 +1,8 @@
 local dicts = require "dict.dicts"
 local LineSelect = require "line_select"
+local Menu = require "menu"
+local menu_stack = require "menu_stack"
+local msg = require "message"
 
 local function def_conv(def)
 	local readings = table.concat(def.readings, "・")
@@ -14,24 +17,63 @@ end
 local DefinitionSelect = {}
 DefinitionSelect.__index = DefinitionSelect
 
-function DefinitionSelect:new(word, prefix)
+function DefinitionSelect:new(word, prefix, data)
+	local result, dict_index
 	for i, dict in ipairs(dicts) do
 		local lookup_fn = prefix and dict.look_up_start or dict.look_up_exact
-		local result = lookup_fn(word)
+		result = lookup_fn(word)
 		if result then
-			local def_sel = {
-				_line_select = LineSelect:new(result, def_conv, nil, nil, 5),
-				lookup_result = {dict_index = i, defs = result}
-			}
-			def_sel._line_select:show()
-			return setmetatable(def_sel, DefinitionSelect)
+			dict_index = i
+			break
 		end
 	end
-	return nil
+
+	if not result then
+		msg.info("No definitions found")
+		return
+	end
+
+	local ds
+
+	local bindings = {
+		group = "definition_select",
+		{
+			id = "confirm",
+			default = "ENTER",
+			desc = "Use selected definition",
+			action = function() ds:finish() end
+		}
+	}
+
+	ds = setmetatable({
+		_line_select = LineSelect:new(result, def_conv, nil, nil, 5),
+		data = data,
+		bindings = bindings,
+		menu = Menu:new{bindings = bindings},
+		lookup_result = {dict_index = dict_index, defs = result}
+	}, DefinitionSelect)
+	return ds
 end
 
 function DefinitionSelect:finish(word)
-	return dicts[self.lookup_result.dict_index].get_definition(self._line_select:finish().id)
+	local dict = dicts[self.lookup_result.dict_index]
+	local def = dict.get_definition(self._line_select:finish().id)
+	table.insert(self.data.definitions, def)
+	menu_stack.pop()
+end
+
+function DefinitionSelect:show()
+	self.menu:show()
+	self._line_select:show()
+end
+
+function DefinitionSelect:hide()
+	self._line_select:hide()
+	self.menu:hide()
+end
+
+function DefinitionSelect:cancel()
+	self:hide()
 end
 
 return DefinitionSelect
