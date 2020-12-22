@@ -46,7 +46,7 @@ local function get_defaults()
 			shadow_y = shad_size,
 			blur = p.num("osd-blur"),
 			font_name = p.str("osd-font"),
-			font_size = p.num("osd-font-size"),
+			font_size = 30,
 			letter_spacing = p.num("osd-spacing"),
 			primary_color = text_col,
 			secondary_color = "808080",
