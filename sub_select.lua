@@ -2,8 +2,8 @@ local export = require "export"
 local Menu = require "menu"
 local SelectionOverlay = require "selection_overlay"
 local Subtitle = require "subtitle"
-local util = require "util"
 local target_select = require "target_select"
+local util = require "util"
 
 local SubSelect = {}
 SubSelect.__index = SubSelect
@@ -43,72 +43,79 @@ function SubSelect:toggle_auto_select()
 	auto_select_active = not auto_select_active
 end
 
-local function display_time(value)
+function SubSelect:display_time(var_name)
+	local value = self.data.times[var_name]
 	if value >= 0 then return tostring(value)
 	else return "{\\i1}auto{\\i0}" end
 end
-local function new_infos()
-	return {
-		{name = "Screenshot", value = -1, display = display_time},
-		{name = "Start", value = -1, display = display_time},
-		{name = "End", value = -1, display = display_time}
-	}
-end
 
-local function set_time(self, time, value)
+local function set_time(self, var_name, value)
 	local new_val
 	if type(value) == "string" then
 		new_val = mp.get_property_number(value)
 	else new_val = value end
 
-	if new_val == nil then time.value = -1
-	elseif new_val == time.value then time.value = -1
-	else time.value = new_val end
+	if new_val == nil or new_val == self.data.times[var_name] then
+		self.data.times[var_name] = -1
+	else self.data.times[var_name] = new_val end
 
 	self.menu:redraw()
 end
 function SubSelect:set_scrot(value)
-	set_time(self, self.infos[1], value)
+	set_time(self, "scrot", value)
 end
 function SubSelect:set_start(value)
-	set_time(self, self.infos[2], value)
+	set_time(self, "start", value)
 end
 function SubSelect:set_stop(value)
-	set_time(self, self.infos[3], value)
+	set_time(self, "stop", value)
+end
+
+local function new_data()
+	return {
+		subtitles = {},
+		times = {
+			scrot = -1,
+			start = -1,
+			stop = -1
+		}
+	}
 end
 
 function SubSelect:reset()
-	self.data = {subtitles = {}}
+	self.data = new_data()
 	self.sel_overlay.selection = self.data.subtitles
 	self.sel_overlay:redraw()
-	self:set_scrot()
-	self:set_start()
-	self:set_stop()
-end
-
-function SubSelect:finalize_data()
-	self.data.times = {
-		scrot = self.infos[1].value,
-		start = self.infos[2].value,
-		stop = self.infos[3].value
-	}
-	return self.data
+	self.menu:redraw()
 end
 
 function SubSelect:start_tgt_sel()
 	self:hide()
-	target_select.begin(self:finalize_data())
+	target_select.begin(self.data)
 end
 function SubSelect:start_export()
 	self:hide()
-	export.execute(self:finalize_data())
+	export.execute(self.data)
 end
 
 function SubSelect:new()
 	local ss
 	ss = {
-		data = {subtitles = {}},
-		infos = new_infos(),
+		data = new_data(),
+		infos = {
+			{
+				name = "Screenshot",
+				display = function() return ss:display_time("scrot") end
+			},
+			{
+				name = "Start",
+				display = function() return ss:display_time("start") end
+			},
+			{
+				name = "End",
+				display = function() return ss:display_time("stop") end
+			}
+		}
 	}
 	ss.bindings = {
 		group = "sub_select",
