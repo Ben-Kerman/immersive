@@ -10,6 +10,8 @@ end
 local menu_stack = {}
 
 function menu_stack.push(menu)
+	if not menu then return end
+
 	exec_top("hide")
 	table.insert(stack, menu)
 	exec_top("show")
