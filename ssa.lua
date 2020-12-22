@@ -58,6 +58,19 @@ local function get_defaults()
 			border_alpha = bord_alpha,
 			shadow_alpha = shad_alpha
 		},
+		messages = {
+			base = {align = 9},
+			fatal = {
+				bold = true,
+				primary_color = "5791F9"
+			},
+			error = {primary_color = "7A77F2"},
+			warn = {primary_color = "66CCFF"},
+			info = {},
+			verbose = {primary_color = "99CC99"},
+			debug = {primary_color = "A09F93"},
+			trace = {}
+		},
 		menu_help = {
 			base = {align = 7},
 			key = {bold = true},

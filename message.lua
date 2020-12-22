@@ -6,11 +6,20 @@ overlay.z = 127
 local messages = {}
 
 local function update_overlay()
-	local ol_data = {}
+	local ssa = require "ssa"
+	local ssa_definition = {
+		style = "messages",
+		full_style = true
+	}
 	for _, msg in ipairs(messages) do
-		table.insert(ol_data, msg.text)
+		table.insert(ssa_definition, {
+			style = {"messages", msg.level},
+			newline = true,
+			msg.text
+		})
 	end
-	overlay.data = "{\\an9}" .. table.concat(ol_data, "\\N")
+	overlay.data = ssa.generate(ssa_definition)
+	print(overlay.data)
 	overlay:update()
 end
 
@@ -31,7 +40,6 @@ local function add_msg(level, text, timeout)
 			update_overlay()
 		end)
 	end
-
 	update_overlay()
 end
 
