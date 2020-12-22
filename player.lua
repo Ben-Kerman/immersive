@@ -38,8 +38,14 @@ mp.register_event("shutdown", function() player_command('{"command":["quit"]}\n'
 
 local player = {}
 
-function player.play(path)
+function player.play(path, start, stop)
 	local cmd = {"loadfile", path, "replace"}
+	if start or stop then
+		table.insert(cmd, {
+			start = start and tostring(start),
+			["end"] = stop and tostring(stop)
+		})
+	end
 	player_command(mpu.format_json({command = cmd}) .. "\n")
 end
 
