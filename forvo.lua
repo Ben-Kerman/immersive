@@ -1,19 +1,13 @@
 local b64 = require "base64"
+local BasicOverlay = require "basic_overlay"
 local cfg = require "config"
 local http = require "http"
 local LineSelect = require "line_select"
 local Menu = require "menu"
+local menu_stack = require "menu_stack"
 local player = require "player"
 local sys = require "system"
 local url = require "url"
-
--- forward declarations
-local menu
-local prns, prn_sel
-local forvo_cb
-local tgt_word
-
-local was_paused = false
 
 local function request_headers()
 	return {
@@ -88,8 +82,9 @@ end
 local Pronunciation = {}
 Pronunciation.__index = Pronunciation
 
-function Pronunciation:new(id, user, mp3_l, ogg_l, mp3_h, ogg_h)
+function Pronunciation:new(menu, id, user, mp3_l, ogg_l, mp3_h, ogg_h)
 	local pr = {
+		menu = menu,
 		id = tonumber(id),
 		user = user,
 		audio_l = {
@@ -113,22 +108,20 @@ function Pronunciation:load_audio(async)
 		local audio_url = src[extension]
 		if async then
 			audio_request(audio_url, sys.tmp_file_name(), true, function(res)
-				if prn_sel then
-					self.audio_file = {
-						word = tgt_word,
-						extension = extension,
-						path = res
-					}
-					prn_sel:update()
-				end
+				self.audio_file = {
+					word = self.menu.word,
+					extension = extension,
+					path = res
+				}
+				self.menu.prn_sel:update()
 			end)
 		else
 			self.audio_file = {
-				word = tgt_word,
+				word = self.menu.word,
 				extension = extension,
 				path = audio_request(audio_url, sys.tmp_file_name())
 			}
-			prn_sel:update()
+			self.menu.prn_sel:update()
 		end
 	end
 end
@@ -142,7 +135,7 @@ function Pronunciation:play()
 	end
 end
 
-local function extract_pronunciations(word)
+local function extract_pronunciations(menu, word, callback)
 	local word_url = "https://forvo.com/word/" .. url.encode(word) .. "/"
 	local html = html_request(word_url)
 
@@ -168,10 +161,10 @@ local function extract_pronunciations(word)
 			_, u_end, user = html:find(user_pat_no_link, user_from + 1)
 		end
 
-		table.insert(prns, Pronunciation:new(a_id, user, a_mp3_l, a_ogg_l, a_mp3_h, a_ogg_h))
+		table.insert(prns, Pronunciation:new(menu, a_id, user, a_mp3_l, a_ogg_l, a_mp3_h, a_ogg_h))
 		next_start = u_end + 1
 	end
-	return prns
+	callback(prns)
 end
 
 local function line_conv(prn)
@@ -181,71 +174,82 @@ local function line_conv(prn)
 	}
 end
 
-local function play_highlighted()
-	if prn_sel then
-		local prn = prn_sel:selection()
+local Forvo = {}
+Forvo.__index = Forvo
+
+function Forvo:new(data, word)
+	local was_paused = mp.get_property_bool("pause")
+	mp.set_property_bool("pause", true)
+
+	local fv
+
+	local bindings = {
+		group = "forvo",
+		{
+			id = "play",
+			default = "SPACE",
+			desc = "Play currently highlighted audio, fetch if not yet loaded",
+			action = function() fv:play_selected() end
+		},
+		{
+			id = "select",
+			default = "ENTER",
+			desc = "Confirm selection",
+			action = function() fv:finish() end
+		}
+	}
+
+	fv = setmetatable({
+		resume_state = was_paused,
+		data = data,
+		word = word,
+		prns = {},
+		loading_overlay = BasicOverlay:new("Loading Forvo data...", nil, "line_select"),
+		menu = Menu:new{bindings = bindings}
+	}, Forvo)
+
+	extract_pronunciations(fv, word, function(prns)
+		fv.prns = prns
+		fv.prn_sel = LineSelect:new(prns, line_conv)
+		if cfg.values.forvo_preload_audio then
+			for _, prn in ipairs(prns) do
+				prn:load_audio(true)
+			end
+		end
+	end)
+	return fv
+end
+
+function Forvo:play_selected()
+	if self.prn_sel then
+		local prn = self.prn_sel:selection()
 		prn:play()
 	end
 end
 
-local function cancel()
-	menu:hide()
-	prn_sel:finish()
-	prns, prn_sel = nil
-	forvo_cb = nil
-	tgt_word = nil
-	mp.set_property_bool("pause", was_paused)
+function Forvo:finish()
+	local sel = self.prn_sel:selection()
+	self.data.word_audio_file = sel.audio_file
+	menu_stack.pop()
 end
 
-local function finish()
-	local cb = forvo_cb
-	local sel = prn_sel:selection()
-	cancel()
-	cb(sel)
+function Forvo:show()
+	self.menu:show()
+	if self.prn_sel then
+		self.prn_sel:show()
+	else self.loading_overlay:show() end
 end
 
-local bindings = {
-	group = "forvo",
-	{
-		id = "play",
-		default = "SPACE",
-		desc = "Play currently highlighted audio if available",
-		action = play_highlighted
-	},
-	{
-		id = "select",
-		default = "ENTER",
-		desc = "Confirm selection",
-		action = finish
-	},
-	{
-		id = "cancel",
-		default = "ESC",
-		desc = "Cancel audio selection",
-		action = cancel
-	}
-}
-
-menu = Menu:new{bindings = bindings}
-
-local forvo = {}
-
-function forvo.begin(word, callback)
-	was_paused = mp.get_property_bool("pause")
-	mp.set_property_bool("pause", true)
-	tgt_word = word
-	forvo_cb = callback
-
-	prns = extract_pronunciations(word)
-	prn_sel = LineSelect:new(prns, line_conv)
-	prn_sel:show()
-	menu:show()
-
-	if cfg.values.forvo_preload_audio then
-		for _, prn in ipairs(prns) do
-			prn:load_audio(true)
-		end
-	end
+function Forvo:hide()
+	self.menu:hide()
+	if self.prn_sel then
+		self.prn_sel:hide()
+	else self.loading_overlay:hide() end
 end
 
-return forvo
+function Forvo:cancel()
+	self:hide()
+	mp.set_property_bool("pause", self.resume_state)
+end
+
+return Forvo

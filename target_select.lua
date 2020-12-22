@@ -1,6 +1,6 @@
 local DefinitionSelect = require "definition_select"
 local export = require "export"
-local forvo = require "forvo"
+local Forvo = require "forvo"
 local LineTextSelect = require "line_text_select"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
@@ -77,14 +77,8 @@ end
 
 function TargetSelect:add_word_audio()
 	if #self.data.definitions ~= 0 then
-		self.menu:hide()
-		if self.tgt_word_sel then self.tgt_word_sel:finish() end
-		self.tgt_word_sel = nil
-		forvo.begin(self.data.definitions[#self.data.definitions].word, function(prn)
-			self.data.word_audio_file = prn.audio_file
-			self.menu:show()
-			self:start_tgt_sel()
-		end)
+		local word = self.data.definitions[#self.data.definitions].word
+		menu_stack.push(Forvo:new(self.data, word))
 	else
 		mp.osd_message("No target word selected")
 	end
