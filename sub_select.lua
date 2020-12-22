@@ -1,5 +1,6 @@
 local export = require "export"
 local Menu = require "menu"
+local player = require "player"
 local SelectionOverlay = require "selection_overlay"
 local Subtitle = require "subtitle"
 local target_select = require "target_select"
@@ -82,6 +83,20 @@ function SubSelect:set_start(value)
 end
 function SubSelect:set_stop(value)
 	set_time(self, "stop", value)
+end
+
+-- AUDIO PREVIEW --
+
+function SubSelect:preview_audio()
+	local was_paused = mp.get_property_bool("pause")
+	mp.set_property_bool("pause", true)
+
+	local start, stop = export.resolve_times(self.data)
+	player.play(mp.get_property("path"), start, stop)
+
+	mp.add_timeout(stop - start + 0.15, function()
+		mp.set_property_bool("pause", was_paused)
+	end)
 end
 
 -- INIT/DEINIT  --
@@ -179,6 +194,12 @@ function SubSelect:new()
 			default = "A",
 			desc = "Toggle automatic selection",
 			action = function() ss:toggle_auto_select() end
+		},
+		{
+			id = "preview_audio",
+			default = "p",
+			desc = "Preview selection audio",
+			action = function() ss:preview_audio() end
 		},
 		{
 			id = "reset",
