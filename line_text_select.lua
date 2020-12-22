@@ -13,11 +13,13 @@ function LineTextSelect:new(lines, line_conv, sel_conv, limit)
 			lts.active_line = line
 			if lts._text_select then lts._text_select:finish() end
 
-			lts._text_select = TextSelect:new(sel_conv(line), function(self, has_sel, curs_pos, segments)
-				lts.sel_ssa_def = self:default_generator(has_sel, curs_pos, segments)
-				lts._line_select:update()
+			lts._text_select = TextSelect:new(sel_conv(line), function(self, visible, has_sel, curs_pos, segments)
+				if visible then
+					lts.sel_ssa_def = self:default_generator(has_sel, curs_pos, segments)
+					lts._line_select:update()
+				else lts.sel_ssa_def = {} end
 			end, ssa.query{"line_select", "selection", "font_size"}, true)
-			lts._text_select:start()
+			lts._text_select:show()
 		end
 	end
 	lts = {

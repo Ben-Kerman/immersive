@@ -5,9 +5,11 @@ local util = require "util"
 
 local overlay = mp.create_osd_overlay("ass-events")
 
-local function default_update_handler(self, has_sel, curs_pos, segments)
-	overlay.data = ssa.generate(self:default_generator(has_sel, curs_pos, segments))
-	overlay:update()
+local function default_update_handler(self, visible, has_sel, curs_pos, segments)
+	if visible then
+		overlay.data = ssa.generate(self:default_generator(has_sel, curs_pos, segments))
+		overlay:update()
+	else overlay:remove() end
 end
 
 TextSelect = {}
@@ -90,7 +92,7 @@ function TextSelect:move_curs(amount, change_sel)
 
 	self.curs_pos = new_curs_pos
 
-	self:update()
+	self:update(true)
 end
 
 local whitespace_cps = {
@@ -163,9 +165,18 @@ function TextSelect:move_curs_word(dir, change_sel)
 	self:move_curs(new_pos - self.curs_pos, change_sel)
 end
 
-function TextSelect:start()
+function TextSelect:show()
 	kbds.add_bindings(self.bindings)
-	self:update()
+	self:update(true)
+end
+
+function TextSelect:hide()
+	kbds.remove_bindings(self.bindings)
+	self:update(false)
+end
+
+function TextSelect:selection()
+	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
 end
 
 function TextSelect:finish(force_sel)
@@ -173,9 +184,8 @@ function TextSelect:finish(force_sel)
 		mp.osd_message("Please select some text")
 		return nil
 	end
-	kbds.remove_bindings(self.bindings, "_ankisubs-text_select_binding-")
-	overlay:remove()
-	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
+	self:hide()
+	return self:selection()
 end
 
 function TextSelect:new(text, update_handler, font_size, no_style_reset, init_cursor_pos)
@@ -266,7 +276,12 @@ function TextSelect:new(text, update_handler, font_size, no_style_reset, init_cu
 	return setmetatable(ts, TextSelect)
 end
 
-function TextSelect:update()
+function TextSelect:update(visible)
+	if not visible then
+		self:update_handler(false)
+		return
+	end
+
 	local segments = {}
 	local curs_pos
 	local has_sel = self:sel_len() ~= 0
@@ -280,7 +295,7 @@ function TextSelect:update()
 		table.insert(segments, utf_8.string(util.list_range(self.cdpts, self.curs_pos, #self.cdpts)))
 		curs_pos = 0
 	end
-	self:update_handler(has_sel, curs_pos, segments)
+	self:update_handler(true, has_sel, curs_pos, segments)
 end
 
 return TextSelect

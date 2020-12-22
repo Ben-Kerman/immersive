@@ -67,7 +67,7 @@ function lookup_active.begin()
 	local sub_text = helper.check_active_sub()
 	if sub_text then
 		word_sel = TextSelect:new(sub_text)
-		word_sel:start()
+		word_sel:show()
 		menu:enable()
 	end
 end
