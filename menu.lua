@@ -4,6 +4,11 @@ local ssa = require "ssa"
 Menu = {}
 Menu.__index = Menu
 
+local help_key = (function()
+	local cfg_key = kbds.query_key("show_help", "menu")
+	return cfg_key and cfg_key or "h"
+end)()
+
 function Menu:new(data, enabled)
 	local m = {
 		_overlay = mp.create_osd_overlay("ass-events"),
@@ -15,7 +20,7 @@ function Menu:new(data, enabled)
 end
 
 function Menu:enable()
-	mp.add_forced_key_binding("h", "menu-show_help", function()
+	mp.add_forced_key_binding(help_key, "menu-show_help", function()
 		self.show_bindings = not self.show_bindings
 		self:redraw()
 	end)
@@ -36,7 +41,7 @@ local help_hint_off = {
 	"Press ",
 	{
 		style = {"menu_help", "key"},
-		"h"
+		help_key
 	},
 	" to show key bindings"
 }
@@ -46,7 +51,7 @@ local help_hint_on = {
 	"Key Bindings (",
 	{
 		style = {"menu_help", "key"},
-		"h"
+		help_key
 	},
 	" to hide)"
 }
@@ -65,12 +70,15 @@ function Menu:redraw()
 				table.insert(ssa_definition, help_hint_on)
 
 				for _, binding in ipairs(self.data.bindings) do
+					local grp = binding.global and "global" or self.data.bindings.group
+					local cfg_key = kbds.query_key(binding.id, grp)
+
 					local binding_ssa_def = {
 						newline = true,
 						"\\h\\h\\h",
 						{
 							style = {"menu_help", "key"},
-							binding.default
+							cfg_key and cfg_key or binding.default
 						},
 						": ",
 						binding.desc
