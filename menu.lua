@@ -37,6 +37,10 @@ function Menu:hide()
 	self:redraw()
 end
 
+function Menu:cancel()
+	self:hide()
+end
+
 local help_hint_off = {
 	style = {"menu_help", "hint"},
 	"Press ",
