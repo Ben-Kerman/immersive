@@ -75,6 +75,9 @@ local function get_defaults()
 		text_select = {
 			base = {},
 			selection = {underline = true}
+		},
+		selection_overlay = {
+			base = {align = 3}
 		}
 	}
 end

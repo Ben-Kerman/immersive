@@ -1,3 +1,5 @@
+local ssa = require "ssa"
+
 local SelectionOverlay = {}
 SelectionOverlay.__index = SelectionOverlay
 
@@ -10,11 +12,17 @@ function SelectionOverlay:new(selection)
 end
 
 function SelectionOverlay:redraw()
-	local lines = {"{\\an3}"}
+	local ssa_definition = {
+		style = "selection_overlay",
+		full_style = true
+	}
 	for _, sub in ipairs(self.selection) do
-		table.insert(lines, sub:short())
+		table.insert(ssa_definition, {
+			newline = true,
+			sub:short()
+		})
 	end
-	self._overlay.data = table.concat(lines, "\\N")
+	self._overlay.data = ssa.generate(ssa_definition)
 	self._overlay:update()
 end
 
