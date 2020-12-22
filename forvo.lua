@@ -60,11 +60,17 @@ local function audio_request(url, target_path, async, callback)
 	end
 end
 
-local function html_request(url)
-	return http.get{
+local function html_request(url, callback)
+	return http.get_async({
 		url = url,
 		headers = html_headers
-	}
+	}, function(res)
+		if not res then
+			msg.error("Failed to load Forvo website")
+			return
+		end
+		callback(res)
+	end)
 end
 
 local Pronunciation = {}
@@ -115,39 +121,39 @@ function Pronunciation:play()
 	self:load_audio()
 	if self.audio_file then
 		player.play(self.audio_file.path)
-	else msg.error("Failed to download audio file") end
+	end
 end
 
 local function extract_pronunciations(menu, word, callback)
 	local word_url = "https://forvo.com/word/" .. url.encode(word) .. "/"
-	local html = html_request(word_url)
+	html_request(word_url, function(html)
+		local start_pat = [[pronunciation in%s*<a href="https://forvo%.com/languages/]] .. cfg.values.forvo_language .. [[/">]]
+		local end_pat = [[<div class="more_actions">]]
+		local audio_pat = [[onclick="Play%((%d+),'([^']*)','([^']*)',([^,]*),'([^']*)','([^']*)','(.)'%);return false;"]]
+		local user_prefix_pat = "Pronunciation by%s+"
+		local user_pat = [[^<span class="ofLink" data%-p1="[^"]+" data%-p2="([^"]+)" >]]
+		local user_pat_no_link = "^(%S+)"
 
-	local start_pat = [[pronunciation in%s*<a href="https://forvo%.com/languages/]] .. cfg.values.forvo_language .. [[/">]]
-	local end_pat = [[<div class="more_actions">]]
-	local audio_pat = [[onclick="Play%((%d+),'([^']*)','([^']*)',([^,]*),'([^']*)','([^']*)','(.)'%);return false;"]]
-	local user_prefix_pat = "Pronunciation by%s+"
-	local user_pat = [[^<span class="ofLink" data%-p1="[^"]+" data%-p2="([^"]+)" >]]
-	local user_pat_no_link = "^(%S+)"
+		local _, audio_from = html:find(start_pat)
+		local audio_to = html:find(end_pat, audio_from)
 
-	local _, audio_from = html:find(start_pat)
-	local audio_to = html:find(end_pat, audio_from)
+		local prns = {}
+		local next_start = audio_from
+		while true do
+			local a_start, a_end, a_id, a_mp3_l, a_ogg_l, a_bool, a_mp3_h, a_ogg_h, a_char = html:find(audio_pat, next_start)
+			if not a_start or a_start > audio_to then break end
 
-	local prns = {}
-	local next_start = audio_from
-	while true do
-		local a_start, a_end, a_id, a_mp3_l, a_ogg_l, a_bool, a_mp3_h, a_ogg_h, a_char = html:find(audio_pat, next_start)
-		if not a_start or a_start > audio_to then break end
+			local _, user_from = html:find(user_prefix_pat, a_end + 1)
+			local _, u_end, user = html:find(user_pat, user_from + 1)
+			if not user then
+				_, u_end, user = html:find(user_pat_no_link, user_from + 1)
+			end
 
-		local _, user_from = html:find(user_prefix_pat, a_end + 1)
-		local _, u_end, user = html:find(user_pat, user_from + 1)
-		if not user then
-			_, u_end, user = html:find(user_pat_no_link, user_from + 1)
+			table.insert(prns, Pronunciation:new(menu, a_id, user, a_mp3_l, a_ogg_l, a_mp3_h, a_ogg_h))
+			next_start = u_end + 1
 		end
-
-		table.insert(prns, Pronunciation:new(menu, a_id, user, a_mp3_l, a_ogg_l, a_mp3_h, a_ogg_h))
-		next_start = u_end + 1
-	end
-	callback(prns)
+		callback(prns)
+	end)
 end
 
 local function line_conv(prn)
@@ -192,13 +198,15 @@ function Forvo:new(data, word)
 	}, Forvo)
 
 	extract_pronunciations(fv, word, function(prns)
-		fv.prns = prns
-		fv.prn_sel = LineSelect:new(prns, line_conv)
 		if cfg.values.forvo_preload_audio then
 			for _, prn in ipairs(prns) do
 				prn:load_audio(true)
 			end
 		end
+		fv.prns = prns
+		fv.prn_sel = LineSelect:new(prns, line_conv)
+		fv.loading_overlay:hide()
+		fv.prn_sel:show()
 	end)
 	return fv
 end
