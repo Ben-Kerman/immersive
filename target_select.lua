@@ -5,6 +5,7 @@ local LineTextSelect = require "line_text_select"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
 local msg = require "message"
+local sys = require "system"
 
 local TargetSelect = {}
 TargetSelect.__index = TargetSelect
@@ -18,13 +19,19 @@ function TargetSelect:new(data)
 			id = "lookup_exact",
 			default = "ENTER",
 			desc = "Look up selected word",
-			action = function() ts:select_target_def() end
+			action = function() ts:select_target_def(false) end
 		},
 		{
 			id = "lookup_partial",
 			default = "Shift+ENTER",
 			desc = "Look up words starting with selection",
 			action = function() ts:select_target_def(true) end
+		},
+		{
+			id = "lookup_clipboard",
+			default = "v",
+			desc = "Look up word from clipboard",
+			action = function() ts:clipboard_lookup() end
 		},
 		{
 			id = "add_word_audio",
@@ -62,11 +69,25 @@ function TargetSelect:start_tgt_sel(init_line)
 	self.tgt_word_sel:show()
 end
 
+local function lookup(word, prefix, data)
+	menu_stack.push(DefinitionSelect:new(word, prefix, data))
+end
+
 function TargetSelect:select_target_def(prefix)
 	local selection = self.tgt_word_sel:selection(true)
 	if not selection then return end
 
-	menu_stack.push(DefinitionSelect:new(selection, prefix, self.data))
+	lookup(selection, prefix, self.data)
+end
+
+function TargetSelect:clipboard_lookup()
+	local word = sys.clipboard_read()
+	if not word then
+		msg.error("Failed to get clipboard content")
+		return
+	end
+
+	lookup(word, false, self.data)
 end
 
 function TargetSelect:delete_line()
