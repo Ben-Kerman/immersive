@@ -77,28 +77,32 @@ local function export_word_audio(data)
 	end
 end
 
-local function resolve_times(data)
-	if not data.times then
-		data.times = {scrot = -1, start = -1, stop = -1}
-	end
-	local ts = data.times
-	ts.scrot = ts.scrot < 0 and mp.get_property_number("time-pos") or ts.scrot
-	ts.start = ts.start < 0 and data.subtitles[1].start or ts.start
-	ts.stop = ts.stop < 0 and util.list_max(data.subtitles, function(a, b)
-		return a.stop < b.stop
-	end).stop or ts.stop
-end
-
 local export = {}
+
+function export.resolve_times(data)
+	local ts = util.map_merge({
+		scrot = -1,
+		start = -1,
+		stop = -1
+	}, data.times)
+
+	local start = ts.start < 0 and data.subtitles[1]:real_start() or ts.start
+	local stop = ts.stop < 0 and util.list_max(data.subtitles, function(a, b)
+		return a.stop < b.stop
+	end):real_stop() or ts.stop
+	local scrot = ts.scrot < 0 and mp.get_property_number("time-pos") or ts.scrot
+
+	return start, stop, scrot
+end
 
 function export.execute(data)
 	local tgt_cfg = anki.active_target().config
-	resolve_times(data)
+	local start, stop, scrot = export.resolve_times(data)
 
 	local audio_filename = anki.generate_filename(series_id.get_id(), tgt_cfg.audio.extension)
 	local image_filename = anki.generate_filename(series_id.get_id(), tgt_cfg.image.extension)
-	encoder.audio(mpu.join_path(anki.media_dir(), audio_filename), data.times.start, data.times.stop)
-	encoder.image(mpu.join_path(anki.media_dir(), image_filename), data.times.scrot)
+	encoder.audio(mpu.join_path(anki.media_dir(), audio_filename), start, stop)
+	encoder.image(mpu.join_path(anki.media_dir(), image_filename), scrot)
 	local word_audio_filename = export_word_audio(data)
 
 	local fields = {}
