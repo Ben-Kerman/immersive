@@ -32,15 +32,31 @@ function LineTextSelect:new(lines, line_conv, sel_conv, limit)
 	return setmetatable(lts, LineTextSelect)
 end
 
-function LineTextSelect:start()
+function LineTextSelect:show()
+	if self._text_select then
+		self._text_select:show()
+	end
 	self._line_select:show()
 end
 
-function LineTextSelect:finish(force_sel)
-	local sel = self._text_select:finish(force_sel)
-	if not sel then return end
+function LineTextSelect:hide()
+	if self._text_select then
+		self._text_select:hide()
+	end
+	self._line_select:hide()
+end
 
-	self._line_select:finish()
+function LineTextSelect:selection()
+	return self._text_select:finish()
+end
+
+function LineTextSelect:finish(force_sel)
+	local sel = self:selection()
+	if force_sel and not sel then
+		-- TODO
+		return
+	end
+	self:hide()
 	return sel
 end
 

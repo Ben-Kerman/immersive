@@ -18,7 +18,7 @@ local function sel_conv(sub) return sub.text end
 local function line_conv(sub) return sub:short() end
 local function start_tgt_sel()
 	tgt_word_sel = LineTextSelect:new(data.subtitles, line_conv, sel_conv, 9)
-	tgt_word_sel:start()
+	tgt_word_sel:show()
 end
 
 local function select_target_def(prefix)
