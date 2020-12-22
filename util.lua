@@ -174,4 +174,22 @@ function util.string_split(str, pattern, filter_empty)
 	return res
 end
 
+function util.num_limit(num, min, max)
+	if not num then
+		return min and min or max
+	end
+
+	if min then
+		local lower = math.max(num, min)
+		if max then
+			return math.min(lower, max)
+		else return lower end
+	elseif max then
+		local upper = math.min(num, max)
+		if min then
+			return math.max(upper, min)
+		else return upper end
+	else return num end
+end
+
 return util

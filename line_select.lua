@@ -1,5 +1,6 @@
 local kbds = require "key_bindings"
 local ssa = require "ssa"
+local util = require "util"
 
 local function default_line_conv(line)
 	return line
@@ -26,7 +27,7 @@ function LineSelect:new(lines, line_conv, sel_conv, update_handler, limit, init)
 		sel_conv = sel_conv,
 		update_handler = update_handler,
 		limit = limit,
-		active = init and math.min(math.max(init, 1), #lines) or 1,
+		active = util.num_limit(init, 1, #lines),
 		bindings = {
 			group = "line_select",
 			{
