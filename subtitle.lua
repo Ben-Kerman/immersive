@@ -32,9 +32,11 @@ function Subtitle:real_stop()
 end
 
 function Subtitle:short()
-	local cps = utf_8.codepoints(self.text:gsub("\n", "⏎"))
-	if #cps > 16 then return utf_8.string(util.list_slice(cps, 0, 16)) .. "…"
-	else return utf_8.string(cps) end
+	local one_line = self.text:gsub("\n", "⏎")
+	local cps = utf_8.codepoints(one_line)
+
+	if #cps > 16 then return utf_8.string(util.list_range(cps, 1, 16)) .. "…"
+	else return one_line end
 end
 
 return Subtitle
