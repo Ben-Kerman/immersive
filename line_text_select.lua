@@ -5,6 +5,10 @@ local TextSelect = require "text_select"
 local LineTextSelect = {}
 LineTextSelect.__index = LineTextSelect
 
+function LineTextSelect:delete_sel()
+	self._line_select:delete_sel()
+end
+
 function LineTextSelect:new(lines, line_conv, sel_conv, limit, init)
 	local lts
 	local function _sel_conv() return lts.sel_ssa_def end

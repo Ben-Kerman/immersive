@@ -3,6 +3,7 @@ local export = require "export"
 local forvo = require "forvo"
 local LineTextSelect = require "line_text_select"
 local Menu = require "menu"
+local msg = require "message"
 
 local TargetSelect = {}
 TargetSelect.__index = TargetSelect
@@ -88,15 +89,9 @@ function TargetSelect:select_target_def(prefix)
 end
 
 function TargetSelect:delete_line()
-	if self.def_sel then
-		mp.osd_message("Not available in definition mode")
-		return nil
-	end
-
-	local _, index = self.tgt_word_sel._line_select:finish()
-	self.tgt_word_sel:finish()
-	table.remove(self.data.subtitles, index)
-	self:start_tgt_sel(index)
+	if #self.data.subtitles == 1 and not export.verify_times(self.data) then
+		msg.warn("Can't delete last sub if times aren't set")
+	else self.tgt_word_sel:delete_sel() end
 end
 
 function TargetSelect:add_word_audio()

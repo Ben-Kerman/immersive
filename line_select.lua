@@ -16,6 +16,12 @@ function LineSelect:move_sel(dir)
 	self:update()
 end
 
+function LineSelect:delete_sel()
+	table.remove(self.lines, self.active)
+	self.active = util.num_limit(self.active, 1, #self.lines)
+	self:update()
+end
+
 function LineSelect:new(lines, line_conv, sel_conv, update_handler, limit, init)
 	if not line_conv then line_conv = default_line_conv end
 	if not sel_conv then sel_conv = line_conv end
