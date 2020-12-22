@@ -3,7 +3,7 @@ local helper = require "helper"
 local kbds = require "key_bindings"
 local lookup_active = require "lookup_active"
 local series_id = require "series_id"
-local sub_select = require "sub_select"
+local SubSelect = require "sub_select"
 local sys = require "system"
 local target_select = require "target_select"
 local Menu = require "menu"
@@ -69,7 +69,7 @@ local bindings = {
 		id = "begin_sub_select",
 		default = "a",
 		desc = "Start line selection",
-		action = sub_select.begin,
+		action = SubSelect.new,
 		global = true
 	},
 	{
