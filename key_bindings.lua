@@ -3,8 +3,10 @@ local key_bindings = {}
 local function add_bindings_internal(bindings, global)
 	for i, binding in ipairs(bindings) do
 		if not not binding.global == global then
+			local add_fn = binding.global and mp.add_key_binding or mp.add_forced_key_binding
+
 			local flags = binding.repeatable and {repeatable = true} or nil
-			mp.add_forced_key_binding(binding.default, binding.id, binding.action, flags)
+			add_fn(binding.default, binding.id, binding.action, flags)
 		end
 	end
 end
