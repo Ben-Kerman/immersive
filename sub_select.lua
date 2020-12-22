@@ -8,14 +8,17 @@ local util = require "util"
 local SubSelect = {}
 SubSelect.__index = SubSelect
 
+-- SUB SELECTION --
+
 function SubSelect:select_sub()
 	local sub_text = mp.get_property("sub-text")
 	local sub_start = mp.get_property_number("sub-start")
-	local sub_en = mp.get_property_number("sub-end")
+	local sub_end = mp.get_property_number("sub-end")
+	local sub_delay = mp.get_property_number("sub-delay")
 	if sub_text == nil or sub_text == "" then
 		mp.osd_message("No active subtitle line, nothing selected")
 	else
-		local sub = Subtitle:new(sub_text, sub_start, sub_en)
+		local sub = Subtitle:new(sub_text, sub_start, sub_end, sub_delay)
 
 		local subtitles = self.data.subtitles
 		-- check for end time, lines with identical start times get combined by mpv
@@ -51,6 +54,8 @@ function SubSelect:unobserve_subs()
 	end
 end
 
+-- TIME DISPLAY --
+
 function SubSelect:display_time(var_name)
 	local value = self.data.times[var_name]
 	if value >= 0 then return tostring(value)
@@ -78,6 +83,8 @@ end
 function SubSelect:set_stop(value)
 	set_time(self, "stop", value)
 end
+
+-- INIT/DEINIT  --
 
 local function new_data()
 	return {
@@ -211,6 +218,8 @@ function SubSelect:new()
 	ss:show()
 	return ss
 end
+
+-- COMMON FUNCTIONS --
 
 function SubSelect:hide()
 	if self.autoselect.value then
