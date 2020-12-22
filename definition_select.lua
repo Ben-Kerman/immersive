@@ -56,9 +56,11 @@ function DefinitionSelect:new(word, prefix, data)
 end
 
 function DefinitionSelect:finish(word)
-	local dict = dicts[self.lookup_result.dict_index]
-	local def = dict.get_definition(self._line_select:finish().id)
-	table.insert(self.data.definitions, def)
+	if self.data then
+		local dict = dicts[self.lookup_result.dict_index]
+		local def = dict.get_definition(self._line_select:finish().id)
+		table.insert(self.data.definitions, def)
+	end
 	menu_stack.pop()
 end
 
