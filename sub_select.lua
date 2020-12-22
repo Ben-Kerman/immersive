@@ -27,20 +27,28 @@ function SubSelect:select_sub()
 	end
 end
 
-local auto_select_active = false
 function SubSelect:toggle_auto_select()
-	if auto_select_active then
+	if self.autoselect.value then
+		self:unobserve_subs()
+	else self:observe_subs() end
+	self.autoselect.value = not self.autoselect.value
+	self.menu:redraw()
+end
+
+function SubSelect:observe_subs()
+	self.sub_observer = function(_, sub_text)
+		if sub_text ~= nil and sub_text ~= "" then
+			self:select_sub()
+		end
+	end
+	mp.observe_property("sub-text", "string", self.sub_observer)
+end
+
+function SubSelect:unobserve_subs()
+	if self.sub_observer then
 		mp.unobserve_property(self.sub_observer)
 		self.sub_observer = nil
-	else
-		self.sub_observer = function(_, sub_text)
-			if sub_text ~= nil and sub_text ~= "" then
-				self:select_sub()
-			end
-		end
-		mp.observe_property("sub-text", "string", self.sub_observer)
 	end
-	auto_select_active = not auto_select_active
 end
 
 function SubSelect:display_time(var_name)
@@ -99,9 +107,16 @@ function SubSelect:start_export()
 end
 
 function SubSelect:new()
+	local autoselect = {
+		name = "Autoselect",
+		value = false,
+		display = function(val) return val and "on" or "off" end
+	}
+
 	local ss
 	ss = {
 		data = new_data(),
+		autoselect = autoselect,
 		infos = {
 			{
 				name = "Screenshot",
@@ -114,7 +129,8 @@ function SubSelect:new()
 			{
 				name = "End",
 				display = function() return ss:display_time("stop") end
-			}
+			},
+			autoselect
 		}
 	}
 	ss.bindings = {
@@ -194,17 +210,23 @@ function SubSelect:new()
 end
 
 function SubSelect:hide()
+	if self.autoselect.value then
+		self:unobserve_subs()
+	end
 	self.menu:disable()
 	self.sel_overlay:remove()
 end
 
 function SubSelect:show()
+	if self.autoselect.value then
+		self:observe_subs()
+	end
 	self.menu:enable()
 	self.sel_overlay:redraw()
 end
 
 function SubSelect:cancel()
-	mp.unobserve_property(self.sub_observer)
+	self:unobserve_subs()
 	self:hide()
 end
 
