@@ -56,13 +56,13 @@ function LineSelect:show()
 	self:update()
 end
 
-function LineSelect:active_line()
+function LineSelect:selection()
 	return self.lines[self.active], self.active
 end
 
 function LineSelect:finish()
 	self:hide()
-	return self:active_line()
+	return self:selection()
 end
 
 function LineSelect:update()

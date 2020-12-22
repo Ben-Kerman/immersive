@@ -183,7 +183,7 @@ end
 
 local function play_highlighted()
 	if prn_sel then
-		local prn = prn_sel:active_line()
+		local prn = prn_sel:selection()
 		prn:play()
 	end
 end
@@ -199,7 +199,7 @@ end
 
 local function finish()
 	local cb = forvo_cb
-	local sel = prn_sel:active_line()
+	local sel = prn_sel:selection()
 	cancel()
 	cb(sel)
 end
