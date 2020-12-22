@@ -25,10 +25,6 @@ end
 local audio_headers = (function()
 	local headers = request_headers()
 	table.insert(headers, {
-		name = "Host",
-		value = "audio00.forvo.com"
-	})
-	table.insert(headers, {
 		name = "Accept",
 		value = "audio/webm,audio/ogg,audio/wav,audio/*;q=0.9,application/ogg;q=0.7,video/*;q=0.6,*/*;q=0.5"
 	})
@@ -38,10 +34,6 @@ end)()
 local html_headers = (function()
 	local headers = request_headers()
 	table.insert(headers, {
-		name = "Host",
-		value = "forvo.com"
-	})
-	table.insert(headers, {
 		name = "Accept",
 		value = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
 	})
@@ -49,11 +41,9 @@ local html_headers = (function()
 end)()
 
 local function audio_request(url, target_path, async, callback)
-	local headers = request_headers()
-	table.insert(headers, audio_accept)
 	local http_params = {
 		url = url,
-		headers = headers,
+		headers = audio_headers,
 		target_path = target_path
 	}
 	local function handle_http_res(res)
@@ -71,11 +61,9 @@ local function audio_request(url, target_path, async, callback)
 end
 
 local function html_request(url)
-	local headers = request_headers()
-	table.insert(headers, html_accept)
 	return http.get{
 		url = url,
-		headers = headers
+		headers = html_headers
 	}
 end
 
