@@ -60,7 +60,7 @@ function TargetSelect:new(data)
 	ts:start_tgt_sel()
 end
 
-local function sel_conv(sub) return sub.text end
+local function sel_conv(sub) return sub.text:gsub("\n", "⏎") end
 local function line_conv(sub) return sub:short() end
 function TargetSelect:start_tgt_sel(init_line)
 	self.tgt_word_sel = LineTextSelect:new(self.data.subtitles, line_conv, sel_conv, 9, init_line)
