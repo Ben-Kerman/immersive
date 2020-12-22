@@ -3,6 +3,7 @@ local helper = require "helper"
 local kbds = require "key_bindings"
 local lookup_active = require "lookup_active"
 local Menu = require "menu"
+local menu_stack = require "menu_stack"
 local series_id = require "series_id"
 local SubSelect = require "sub_select"
 local Subtitle = require "subtitle"
@@ -76,7 +77,7 @@ local bindings = {
 		id = "open_global_menu",
 		default = "Ctrl+a",
 		desc = "Open the global menu",
-		action = function() menu:show() end,
+		action = function() menu_stack.push(menu) end,
 		global = true
 	},
 	{
@@ -115,10 +116,18 @@ local bindings = {
 		global = true
 	},
 	{
-		id = "close",
+		id = "close_menu",
 		default = "ESC",
-		desc = "Close the menu",
-		action = function() menu:hide() end
+		desc = "Go back to previous menu",
+		action = menu_stack.pop,
+		global = true
+	},
+	{
+		id = "clear_menus",
+		default = "Shift+ESC",
+		desc = "Close all active menus",
+		action = menu_stack.clear,
+		global = true
 	}
 }
 
