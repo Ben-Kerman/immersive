@@ -1,7 +1,7 @@
 local export = require "export"
 local helper = require "helper"
 local kbds = require "key_bindings"
-local lookup_active = require "lookup_active"
+local lookup_active = require "active_sub_lookup"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
 local series_id = require "series_id"
