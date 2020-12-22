@@ -3,6 +3,7 @@ local ankicon = require "ankiconnect"
 local cfg = require "config"
 local encoder = require "encoder"
 local mpu = require "mp.utils"
+local msg = require "message"
 local series_id = require "series_id"
 local sys = require "system"
 local templater = require "templater"
@@ -78,6 +79,25 @@ local function export_word_audio(data)
 end
 
 local export = {}
+
+function export.verify(data, warn)
+	-- subs present → times can be derived
+	if #data.subtitles ~= 0 then return true end
+
+	local start = data.times.start and data.times.start >= 0
+	local stop = data.times.stop and data.times.stop >= 0
+
+	if not data.times or not (start or stop) then
+		if warn then msg.warn("Select subtitles or set times manually") end
+		return false
+	end
+
+	if not (start and stop) then
+		if warn then msg.warn("Start or end time missing") end
+		return false
+	end
+	return true
+end
 
 function export.resolve_times(data)
 	local ts = util.map_merge({

@@ -88,15 +88,17 @@ end
 -- AUDIO PREVIEW --
 
 function SubSelect:preview_audio()
-	local was_paused = mp.get_property_bool("pause")
-	mp.set_property_bool("pause", true)
+	if export.verify(self.data, true) then
+		local was_paused = mp.get_property_bool("pause")
+		mp.set_property_bool("pause", true)
 
-	local start, stop = export.resolve_times(self.data)
-	player.play(mp.get_property("path"), start, stop)
+		local start, stop = export.resolve_times(self.data)
+		player.play(mp.get_property("path"), start, stop)
 
-	mp.add_timeout(stop - start + 0.15, function()
-		mp.set_property_bool("pause", was_paused)
-	end)
+		mp.add_timeout(stop - start + 0.15, function()
+			mp.set_property_bool("pause", was_paused)
+		end)
+	end
 end
 
 -- INIT/DEINIT  --
@@ -120,12 +122,16 @@ function SubSelect:reset()
 end
 
 function SubSelect:start_tgt_sel()
-	self:hide()
-	target_select.begin(self.data)
+	if export.verify(self.data, true) then
+		self:hide()
+		target_select.begin(self.data)
+	end
 end
 function SubSelect:start_export()
-	self:hide()
-	export.execute(self.data)
+	if export.verify(self.data, true) then
+		self:hide()
+		export.execute(self.data)
+	end
 end
 
 function SubSelect:new()
