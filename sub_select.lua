@@ -107,33 +107,29 @@ function SubSelect:start_export()
 end
 
 function SubSelect:new()
+	local ss
+
 	local autoselect = {
 		name = "Autoselect",
 		value = false,
 		display = function(val) return val and "on" or "off" end
 	}
-
-	local ss
-	ss = {
-		data = new_data(),
-		autoselect = autoselect,
-		infos = {
-			{
-				name = "Screenshot",
-				display = function() return ss:display_time("scrot") end
-			},
-			{
-				name = "Start",
-				display = function() return ss:display_time("start") end
-			},
-			{
-				name = "End",
-				display = function() return ss:display_time("stop") end
-			},
-			autoselect
-		}
+	local infos = {
+		{
+			name = "Screenshot",
+			display = function() return ss:display_time("scrot") end
+		},
+		{
+			name = "Start",
+			display = function() return ss:display_time("start") end
+		},
+		{
+			name = "End",
+			display = function() return ss:display_time("stop") end
+		},
+		autoselect
 	}
-	ss.bindings = {
+	local bindings = {
 		group = "sub_select",
 		{
 			id = "set_start_sub",
@@ -202,9 +198,16 @@ function SubSelect:new()
 			action = function() ss:cancel() end
 		}
 	}
-	ss.sel_overlay = SelectionOverlay:new(ss.data.subtitles)
-	ss.menu = Menu:new{infos = ss.infos, bindings = ss.bindings}
-	setmetatable(ss, SubSelect)
+	local data = new_data()
+
+	ss = setmetatable({
+		data = data,
+		autoselect = autoselect,
+		infos = infos,
+		bindings = bindings,
+		sel_overlay = SelectionOverlay:new(data.subtitles),
+		menu = Menu:new{infos = infos, bindings = bindings}
+	}, SubSelect)
 	ss:show()
 	return ss
 end
