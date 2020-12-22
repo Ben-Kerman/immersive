@@ -20,7 +20,7 @@ function Menu:new(data, enabled)
 	return setmetatable(m, Menu)
 end
 
-function Menu:enable()
+function Menu:show()
 	mp.add_forced_key_binding(help_key, "menu-show_help", function()
 		self.show_bindings = not self.show_bindings
 		self:redraw()
@@ -30,7 +30,7 @@ function Menu:enable()
 	self:redraw()
 end
 
-function Menu:disable()
+function Menu:hide()
 	mp.remove_key_binding("menu-show_help")
 	kbds.remove_bindings(self.bindings)
 	self.enabled = false

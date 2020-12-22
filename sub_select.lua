@@ -252,7 +252,7 @@ function SubSelect:show()
 	if self.autoselect.value then
 		self:observe_subs()
 	end
-	self.menu:enable()
+	self.menu:show()
 	self.sel_overlay:redraw()
 end
 
@@ -260,7 +260,7 @@ function SubSelect:hide()
 	if self.autoselect.value then
 		self:unobserve_subs()
 	end
-	self.menu:disable()
+	self.menu:hide()
 	self.sel_overlay:remove()
 end
 

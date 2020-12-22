@@ -189,7 +189,7 @@ local function play_highlighted()
 end
 
 local function cancel()
-	menu:disable()
+	menu:hide()
 	prn_sel:finish()
 	prns, prn_sel = nil
 	forvo_cb = nil
@@ -239,7 +239,7 @@ function forvo.begin(word, callback)
 	prns = extract_pronunciations(word)
 	prn_sel = LineSelect:new(prns, line_conv)
 	prn_sel:show()
-	menu:enable()
+	menu:show()
 
 	if cfg.values.forvo_preload_audio then
 		for _, prn in ipairs(prns) do

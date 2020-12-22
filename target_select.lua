@@ -96,13 +96,13 @@ end
 
 function TargetSelect:add_word_audio()
 	if #self.data.definitions ~= 0 then
-		self.menu:disable()
+		self.menu:hide()
 		if self.tgt_word_sel then self.tgt_word_sel:finish() end
 		if self.def_sel then self.def_sel:finish() end
 		self.tgt_word_sel, self.def_sel = nil
 		forvo.begin(self.data.definitions[#self.data.definitions].word, function(prn)
 			self.data.word_audio_file = prn.audio_file
-			self.menu:enable()
+			self.menu:show()
 			self:start_tgt_sel()
 		end)
 	else
@@ -125,7 +125,7 @@ function TargetSelect:show()
 	if self.def_sel then
 		self.def_sel:show()
 	end
-	self.menu:enable()
+	self.menu:show()
 end
 
 function TargetSelect:hide()
@@ -135,7 +135,7 @@ function TargetSelect:hide()
 	if self.def_sel then
 		self.def_sel:hide()
 	end
-	self.menu:disable()
+	self.menu:hide()
 end
 
 function TargetSelect:cancel()

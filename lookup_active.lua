@@ -7,7 +7,7 @@ local menu
 local word_sel, def_sel
 
 local function cancel()
-	menu:disable()
+	menu:hide()
 	if word_sel then
 		word_sel:finish()
 		word_sel = nil
@@ -68,7 +68,7 @@ function lookup_active.begin()
 	if sub_text then
 		word_sel = TextSelect:new(sub_text)
 		word_sel:show()
-		menu:enable()
+		menu:show()
 	end
 end
 

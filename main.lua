@@ -76,7 +76,7 @@ local bindings = {
 		id = "open_global_menu",
 		default = "Ctrl+a",
 		desc = "Open the global menu",
-		action = function() menu:enable() end,
+		action = function() menu:show() end,
 		global = true
 	},
 	{
@@ -118,7 +118,7 @@ local bindings = {
 		id = "close",
 		default = "ESC",
 		desc = "Close the menu",
-		action = function() menu:disable() end
+		action = function() menu:hide() end
 	}
 }
 
