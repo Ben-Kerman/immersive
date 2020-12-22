@@ -1,3 +1,4 @@
+local mpu = require "mp.utils"
 local sys = require "system"
 
 local socket_name = (function()
@@ -38,8 +39,8 @@ mp.register_event("shutdown", function() player_command('{"command":["quit"]}\n'
 local player = {}
 
 function player.play(path)
-	local cmd = string.format('{"command":["loadfile","%s"]}\n', path:gsub("\"", [[\"]]))
-	player_command(cmd)
+	local cmd = {"loadfile", path, "replace"}
+	player_command(mpu.format_json({command = cmd}) .. "\n")
 end
 
 return player
