@@ -12,7 +12,8 @@ end)()
 function Menu:new(data, enabled)
 	local m = {
 		_overlay = mp.create_osd_overlay("ass-events"),
-		data = data,
+		bindings = data.bindings,
+		infos = data.infos,
 		enabled = enabled or false,
 		show_bindings = false
 	}
@@ -24,14 +25,14 @@ function Menu:enable()
 		self.show_bindings = not self.show_bindings
 		self:redraw()
 	end)
-	kbds.add_bindings(self.data.bindings)
+	kbds.add_bindings(self.bindings)
 	self.enabled = true
 	self:redraw()
 end
 
 function Menu:disable()
 	mp.remove_key_binding("menu-show_help")
-	kbds.remove_bindings(self.data.bindings)
+	kbds.remove_bindings(self.bindings)
 	self.enabled = false
 	self:redraw()
 end
@@ -60,7 +61,7 @@ function Menu:redraw()
 	if self.enabled then
 		local ssa_lines = {}
 
-		if self.data.bindings then
+		if self.bindings then
 			local ssa_definition = {
 				style = "menu_help",
 				full_style = true
@@ -69,8 +70,8 @@ function Menu:redraw()
 			if self.show_bindings then
 				table.insert(ssa_definition, help_hint_on)
 
-				for _, binding in ipairs(self.data.bindings) do
-					local grp = binding.global and "global" or self.data.bindings.group
+				for _, binding in ipairs(self.bindings) do
+					local grp = binding.global and "global" or self.bindings.group
 					local cfg_key = kbds.query_key(binding.id, grp)
 
 					local binding_ssa_def = {
@@ -93,13 +94,13 @@ function Menu:redraw()
 			table.insert(ssa_lines, "\\h\\N" .. ssa.generate(ssa_definition))
 		end
 
-		if self.data.infos and not self.show_bindings then
+		if self.infos and not self.show_bindings then
 			local ssa_definition = {
 				style = "menu_info",
 				full_style = true
 			}
 
-			for _, info in ipairs(self.data.infos) do
+			for _, info in ipairs(self.infos) do
 				local display = info.display and info.display(info.value) or info.value
 				table.insert(ssa_definition, {
 					newline = true,
