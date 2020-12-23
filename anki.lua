@@ -3,8 +3,6 @@ local mpu = require "mp.utils"
 local sys = require "system"
 local util = require "util"
 
-local active_target_index = 1
-
 local function default_tgt_cfg()
 	return {
 		audio = {
@@ -75,6 +73,7 @@ for _, raw_tgt in ipairs(cfg.load_subcfg("targets")) do
 	load_tgt(raw_tgt)
 end
 
+local active_tgt_index = 1
 function anki.active_target(err_msg)
 	local tgt = anki.targets[active_tgt_index]
 	if not tgt then
@@ -86,6 +85,10 @@ function anki.active_target(err_msg)
 		return
 	end
 	return tgt
+end
+
+function anki.switch_target(dir)
+	active_tgt_index = util.num_limit(active_tgt_index, 1, #anki.targets)
 end
 
 function anki.media_dir()
