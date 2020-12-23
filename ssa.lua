@@ -94,6 +94,7 @@ local function get_defaults()
 		},
 		word_audio_select = {
 			unloaded = {primary_color = "808080"},
+			loading = {primary_color = "FFD0D0"},
 			loaded = {}
 		}
 	}

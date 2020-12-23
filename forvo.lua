@@ -84,7 +84,8 @@ function Pronunciation:new(menu, id, user, mp3_l, ogg_l, mp3_h, ogg_h)
 		audio_l = {
 			mp3 = "https://audio00.forvo.com/mp3/" .. b64.decode(mp3_l),
 			ogg = "https://audio00.forvo.com/ogg/" .. b64.decode(ogg_l)
-		}
+		},
+		loading = false
 	}
 	if mp3_h ~= "" and ogg_h ~= "" then
 		pr.audio_h = {
@@ -98,6 +99,7 @@ end
 function Pronunciation:load_audio(async)
 	local function set_audio_file(res)
 		if res then
+			self.loading = false
 			self.audio_file = {
 				word = self.menu.word,
 				extension = extension,
@@ -108,6 +110,11 @@ function Pronunciation:load_audio(async)
 	end
 
 	if not self.audio_file then
+		self.loading = true
+		if self.menu.prn_sel then
+			self.menu.prn_sel:update()
+		end
+
 		local extension = cfg.values.forvo_prefer_mp3 and "mp3" or "ogg"
 		local src = self.audio_h and self.audio_h or self.audio_l
 		local audio_url = src[extension]
@@ -157,8 +164,15 @@ local function extract_pronunciations(menu, word, callback)
 end
 
 local function line_conv(prn)
+	local style_name
+	if prn.audio_file then
+		style_name = "loaded"
+	elseif prn.loading then
+		style_name = "loading"
+	else style_name = "unloaded" end
+
 	return {
-		style = {"word_audio_select", prn.audio_file and "loaded" or "unloaded"},
+		style = {"word_audio_select", style_name},
 		prn.user
 	}
 end
@@ -213,8 +227,7 @@ end
 
 function Forvo:play_selected()
 	if self.prn_sel then
-		local prn = self.prn_sel:selection()
-		prn:play()
+		self.prn_sel:selection():play()
 	end
 end
 
