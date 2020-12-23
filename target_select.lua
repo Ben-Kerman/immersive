@@ -1,3 +1,4 @@
+local BasicOverlay = require "basic_overlay"
 local DefinitionSelect = require "definition_select"
 local export = require "export"
 local Forvo = require "forvo"
@@ -56,6 +57,14 @@ function TargetSelect:new(data)
 	data.definitions = {}
 	ts = setmetatable({
 		data = data,
+		word_overlay = BasicOverlay:new(data.definitions, function(defs, ssa_def)
+			for _, def in ipairs(defs) do
+				table.insert(ssa_def, {
+					newline = true,
+					def.word
+				})
+			end
+		end, "selection_overlay"),
 		menu = Menu:new{bindings = bindings}
 	}, TargetSelect)
 	ts:start_tgt_sel()
@@ -107,6 +116,7 @@ function TargetSelect:show()
 	if self.tgt_word_sel then
 		self.tgt_word_sel:show()
 	end
+	self.word_overlay:show()
 	self.menu:show()
 end
 
@@ -114,6 +124,7 @@ function TargetSelect:hide()
 	if self.tgt_word_sel then
 		self.tgt_word_sel:hide()
 	end
+	self.word_overlay:hide()
 	self.menu:hide()
 end
 
