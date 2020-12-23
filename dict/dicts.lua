@@ -21,7 +21,6 @@ local function load_dicts()
 		load_dict(dict_cfg)
 	end
 	loaded = true
-	msg.debug("loaded dictionaries")
 end
 
 if not cfg.values.lazy_load_dicts then

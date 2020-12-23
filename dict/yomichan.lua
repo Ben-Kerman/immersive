@@ -1,5 +1,6 @@
 local dict_util = require "dict.dict_util"
 local mpu = require "mp.utils"
+local msg = require "message"
 local sys = require "system"
 local utf_8 = require "utf_8"
 local util = require "util"
@@ -183,12 +184,16 @@ local function import(id, dir)
 		table.insert(term_list, entry_list)
 	end
 
+	local index, start_index = create_index(term_list)
+
 	dict_util.write_json_file(dict_util.cache_path(id), {
 		terms = term_list,
-		tags = tag_map
+		tags = tag_map,
+		index = index,
+		start_index = start_index
 	})
 
-	return term_list, tag_map
+	return term_list, tag_map, index, start_index
 end
 
 local function generate_dict_table(config, terms, tags, index, start_index)
@@ -262,16 +267,17 @@ end
 local yomichan = {}
 
 function yomichan.load(dict_id, config)
-	local terms, tag_map = (function()
+	local start = mp.get_time()
+
+	local terms, tag_map, index, start_index = (function()
 		local cache_path = dict_util.cache_path(dict_id)
 		if mpu.file_info(cache_path) then
 			local data = dict_util.parse_json_file(cache_path)
-			return data.terms, data.tags
+			return data.terms, data.tags, data.index, data.start_index
 		else return import(dict_id, config.location) end
 	end)()
 
-	local index, start_index = create_index(terms)
-
+	msg.debug(dict_id .. "(Yomichan): " .. mp.get_time() - start)
 	return generate_dict_table(config, terms, tag_map, index, start_index)
 end
 
