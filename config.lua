@@ -1,6 +1,6 @@
 local mpo = require "mp.options"
 local mpu = require "mp.utils"
-local smsg = require "startup_msg"
+local msg = require "message"
 local util = require "util"
 
 local function check_file(path)
@@ -36,12 +36,12 @@ local function warn_msg(msg_txt, file, line)
 	if file then
 		msg_str = string.format(msg_fmt, msg_txt, file, line)
 	else msg_str = "config: " .. msg_txt end
-	smsg.warn(msg_str)
+	msg.warn(msg_str)
 end
 
 function config.load(path)
 	if not check_file(path) then
-		smsg.verbose("config file could not be loaded")
+		msg.verbose("config file could not be loaded")
 		return {}
 	end
 
@@ -118,7 +118,7 @@ function config.convert_bool(str)
 		return true
 	elseif str == "no" or str == "false" then
 		return false
-	else smsg.warn("invalid boolean ('" .. str .. "'), must be 'yes', 'true', 'no' or 'false'") end
+	else msg.warn("invalid boolean ('" .. str .. "'), must be 'yes', 'true', 'no' or 'false'") end
 end
 
 function config.force_type(val, type_name)
@@ -128,7 +128,7 @@ function config.force_type(val, type_name)
 		return tonumber(val)
 	elseif type_name == "string" then
 		return tostring(val)
-	else smsg.fatal("invalid type name: " .. type_name) end
+	else msg.fatal("invalid type name: " .. type_name) end
 end
 
 function config.convert_type(old_val, new_val)

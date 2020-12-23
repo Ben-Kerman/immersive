@@ -19,19 +19,33 @@ local messages = {}
 
 local function update_overlay()
 	local ssa = require "ssa"
+
 	local ssa_definition = {
 		style = "messages",
 		full_style = true
 	}
 	for _, msg in ipairs(messages) do
-		table.insert(ssa_definition, {
-			style = {"messages", msg.level},
-			newline = true,
-			msg.text
-		})
+		local _, index = util.list_find(levels, msg.level)
+		if index and index <= 4 then
+			table.insert(ssa_definition, {
+				style = {"messages", msg.level},
+				newline = true,
+				msg.text
+			})
+		end
 	end
 	overlay.data = ssa.generate(ssa_definition)
 	overlay:update()
+end
+
+local function add_msg_timeout(msg)
+	if msg.duration ~= 0 then
+		mp.add_timeout(msg.duration, function()
+			local _, pos = util.list_find(messages, msg)
+			table.remove(messages, pos)
+			update_overlay()
+		end)
+	end
 end
 
 local function add_msg(level, text, duration)
@@ -39,21 +53,13 @@ local function add_msg(level, text, duration)
 
 	local msg = {
 		level = level,
+		duration = duration and duration or durations[level],
 		text = text
 	}
 	table.insert(messages, msg)
 
-	if not duration then duration = durations[level] end
-	if duration ~= 0 then
-		mp.add_timeout(duration, function()
-			local _, pos = util.list_find(messages, msg)
-			table.remove(messages, pos)
-			update_overlay()
-		end)
-	end
-
-	local _, index = util.list_find(levels, level)
-	if index and index <= 4 then
+	if started then
+		add_msg_timeout(msg)
 		update_overlay()
 	end
 end
@@ -63,6 +69,16 @@ local message = {}
 for level, _ in pairs(durations) do
 	message[level] = function(text, duration)
 		add_msg(level, text, duration)
+	end
+end
+
+function message.end_startup()
+	if not started then
+		started = true
+		for _, msg in ipairs(messages) do
+			add_msg_timeout(msg)
+		end
+		update_overlay()
 	end
 end
 

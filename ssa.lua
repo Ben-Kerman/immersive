@@ -1,5 +1,5 @@
 local cfg = require "config"
-local smsg = require "startup_msg"
+local msg = require "message"
 local tags = require "ssa_tags"
 local util = require "util"
 
@@ -117,8 +117,8 @@ local function verify_convert_value(key, value)
 		else res = cfg.force_type(value, tag.type) end
 
 		if res then return res
-		else smsg.warn("Ignoring invalid style value: " .. key .. "=" .. value) end
-	else smsg.warn("Ignoring unknown style property: " .. key) end
+		else msg.warn("invalid style value ignored: " .. key .. "=" .. value) end
+	else msg.warn("unknown style property ignored: " .. key) end
 end
 
 local config = (function()
@@ -140,7 +140,7 @@ local config = (function()
 		style_tbl = cfg.get_nested(config, path)
 		if style_tbl then
 			insert_values(style_tbl, section.entries)
-		else smsg.warn("Ignoring invalid style path: " .. section.name) end
+		else msg.warn("invalid style path ignored: " .. section.name) end
 	end
 	return config
 end)()
@@ -200,7 +200,7 @@ local function find_style(style_def)
 			if #style_def ~= 0 then
 				return cfg.get_nested(config, style_def)
 			else return style_def end
-		else smsg.fatal("invalid style type: " .. type(style_def)) end
+		else msg.fatal("invalid style type: " .. type(style_def)) end
 	end
 end
 
@@ -230,7 +230,7 @@ local function generate_rec(string_parts, definition, base_data)
 		if definition.newline then
 			table.insert(string_parts, "\\N")
 		end
-	else smsg.fatal("invalid type in SSA format table: " .. type(definition)) end
+	else msg.fatal("invalid type in SSA format table: " .. type(definition)) end
 end
 
 function ssa.generate(definition)
