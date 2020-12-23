@@ -94,6 +94,24 @@ function util.compact_list(list, init_len)
 	end
 end
 
+function util.list_append(tgt, src, inplace)
+	local res
+	if inplace then res = tgt
+	else
+		res = {}
+		for _, elem in ipairs(tgt) do
+			table.insert(res, elem)
+		end
+	end
+
+	if src then
+		for _, elem in ipairs(src) do
+			table.insert(res, elem)
+		end
+	end
+	return res
+end
+
 function util.list_insert_cond(list, value)
 	if not util.list_find(list, value) then
 		table.insert(list, value)
