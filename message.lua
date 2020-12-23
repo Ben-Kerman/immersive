@@ -3,8 +3,9 @@ local util = require "util"
 local overlay = mp.create_osd_overlay("ass-events")
 overlay.z = 127
 
+local levels = {"fatal", "error", "warn", "info", "verbose", "debug", "trace"}
 local osd_duration = mp.get_property_number("osd-duration") / 1000
-local levels = {
+local durations = {
 	fatal = 0,
 	error = math.max(osd_duration, 10),
 	warn = math.max(osd_duration, 5),
@@ -33,7 +34,7 @@ local function update_overlay()
 	overlay:update()
 end
 
-local function add_msg(level, text, timeout)
+local function add_msg(level, text, duration)
 	mp.msg[level](text)
 
 	local msg = {
@@ -42,9 +43,9 @@ local function add_msg(level, text, timeout)
 	}
 	table.insert(messages, msg)
 
-	if not timeout then timeout = levels[level] end
-	if timeout ~= 0 then
-		mp.add_timeout(timeout, function()
+	if not duration then duration = durations[level] end
+	if duration ~= 0 then
+		mp.add_timeout(duration, function()
 			local _, pos = util.list_find(messages, msg)
 			table.remove(messages, pos)
 			update_overlay()
@@ -59,9 +60,9 @@ end
 
 local message = {}
 
-for level, _ in pairs(levels) do
-	message[level] = function(text, timeout)
-		add_msg(level, text, timeout)
+for level, _ in pairs(durations) do
+	message[level] = function(text, duration)
+		add_msg(level, text, duration)
 	end
 end
 
