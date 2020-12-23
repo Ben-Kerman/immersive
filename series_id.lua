@@ -34,7 +34,10 @@ end
 local series_id = {}
 
 function series_id.get_id()
-	local filename = mp.get_property("filename"):lower()
+	local fn_prop = mp.get_property("filename")
+	if not fn_prop then return nil end
+
+	local filename = fn_prop:lower()
 	local matched_id
 	for id, keywords in pairs(id_conf) do
 		local match = true
