@@ -19,7 +19,7 @@ DefinitionSelect.__index = DefinitionSelect
 
 function DefinitionSelect:new(word, prefix, data)
 	local result, dict_index
-	for i, dict in ipairs(dicts) do
+	for i, dict in ipairs(dicts.get()) do
 		local lookup_fn = prefix and dict.look_up_start or dict.look_up_exact
 		result = lookup_fn(word)
 		if result then
@@ -57,7 +57,7 @@ end
 
 function DefinitionSelect:finish(word)
 	if self.data then
-		local dict = dicts[self.lookup_result.dict_index]
+		local dict = dicts.get()[self.lookup_result.dict_index]
 		local def = dict.get_definition(self._line_select:finish().id)
 		table.insert(self.data.definitions, def)
 	end
