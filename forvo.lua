@@ -115,10 +115,11 @@ function Pronunciation:load_audio(callback)
 		local src = self.audio_h and self.audio_h or self.audio_l
 		local audio_url = src[extension]
 
-		audio_request(audio_url, sys.tmp_file_name(), true, function(res)
+		local req = audio_request(audio_url, sys.tmp_file_name(), function(res)
 			set_audio_file(res)
 			callback()
 		end)
+		table.insert(self.menu.requests, req)
 	end
 end
 
@@ -132,7 +133,7 @@ end
 
 local function extract_pronunciations(menu, word, callback)
 	local word_url = "https://forvo.com/word/" .. url.encode(word) .. "/"
-	html_request(word_url, function(html)
+	return html_request(word_url, function(html)
 		local start_pat = [[pronunciation in%s*<a href="https://forvo%.com/languages/]] .. cfg.values.forvo_language .. [[/">]]
 		local end_pat = [[<div class="more_actions">]]
 		local audio_pat = [[onclick="Play%((%d+),'([^']*)','([^']*)',([^,]*),'([^']*)','([^']*)','(.)'%);return false;"]]
@@ -202,6 +203,7 @@ function Forvo:new(data, word)
 	}
 
 	fv = setmetatable({
+		requests = {},
 		resume_state = was_paused,
 		data = data,
 		word = word,
@@ -210,7 +212,7 @@ function Forvo:new(data, word)
 		menu = Menu:new{bindings = bindings}
 	}, Forvo)
 
-	extract_pronunciations(fv, word, function(prns)
+	local req = extract_pronunciations(fv, word, function(prns)
 		if cfg.values.forvo_preload_audio then
 			for _, prn in ipairs(prns) do
 				prn:load_audio()
@@ -221,6 +223,7 @@ function Forvo:new(data, word)
 		fv.loading_overlay:hide()
 		fv.prn_sel:show()
 	end)
+	table.insert(fv.requests, req)
 	return fv
 end
 
@@ -252,6 +255,9 @@ end
 
 function Forvo:cancel()
 	self:hide()
+	for _, req in ipairs(self.requests) do
+		mp.abort_async_command(req)
+	end
 	mp.set_property_bool("pause", self.resume_state)
 end
 
