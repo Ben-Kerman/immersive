@@ -94,6 +94,12 @@ function util.compact_list(list, init_len)
 	end
 end
 
+function util.list_insert_cond(list, value)
+	if not util.list_find(list, value) then
+		table.insert(list, value)
+	end
+end
+
 function util.map_filter_keys(map, predicate)
 	local res = {}
 	for key, val in pairs(map) do

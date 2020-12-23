@@ -178,14 +178,10 @@ local function generate_dict_table(config, data)
 		local readings, variants, defs = {}, {}, {}
 		for _, sub_entry in ipairs(entry) do
 			for _, reading in ipairs(sub_entry.rdng) do
-				if not util.list_find(readings, reading.rdng) then
-					table.insert(readings, reading.rdng)
-				end
+				util.list_insert_cond(readings, reading.rdng)
 				if reading.vars then
 					for i, var in ipairs(reading.vars) do
-						if not util.list_find(variants, var) then
-							table.insert(variants, var)
-						end
+						util.list_insert_cond(variants, var)
 					end
 				end
 			end
