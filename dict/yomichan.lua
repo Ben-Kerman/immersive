@@ -25,6 +25,10 @@ local function list_search_terms(entry)
 end
 
 local function verify(dir)
+	if not dir then
+		return nil, "no directory at specified location"
+	end
+
 	local stat_res = mpu.file_info(dir)
 	if not stat_res or not stat_res.is_dir then
 		return nil, "path doesn't exist of is not a directory"
