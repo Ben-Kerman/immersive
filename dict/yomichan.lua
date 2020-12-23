@@ -24,28 +24,28 @@ local function list_search_terms(entry)
 	return search_terms
 end
 
-local function create_index(term_list)
+local function create_index(entries)
 	local function index_insert(index, key, value)
 		if index[key] then table.insert(index[key], value)
 		else index[key] = {value} end
 	end
 
 	local index, start_index = {}, {}
-	for entry_list_pos, entry_list in ipairs(term_list) do
+	for entry_pos, entry in ipairs(entries) do
 		-- find all unique readings/spelling variants
-		local search_terms = list_search_terms(entry_list)
+		local search_terms = list_search_terms(entry)
 
 		-- build index from search_terms and find first characters
 		local initial_chars = {}
 		for _, term in ipairs(search_terms) do
 			initial_chars[utf_8.string(utf_8.codepoints(term, 1, 1))] = true
 
-			index_insert(index, term, entry_list_pos)
+			index_insert(index, term, entry_pos)
 		end
 
 		-- build first character index
 		for initial_char, _ in pairs(initial_chars) do
-			index_insert(start_index, initial_char, entry_list_pos)
+			index_insert(start_index, initial_char, entry_pos)
 		end
 	end
 
@@ -85,10 +85,10 @@ local function import(id, dir)
 	if not verif_res then return nil, files_or_error end
 
 	local function load_bank(prefix, action)
-		for _, tag_bank in ipairs(util.list_filter(files_or_error, function(filename)
+		for _, bank in ipairs(util.list_filter(files_or_error, function(filename)
 			return util.string_starts(filename, prefix)
 		end)) do
-			local bank_data = dict_util.parse_json_file(mpu.join_path(dir, tag_bank))
+			local bank_data = dict_util.parse_json_file(mpu.join_path(dir, bank))
 			for _, entry in ipairs(bank_data) do
 				action(entry)
 			end
@@ -135,33 +135,33 @@ local function import(id, dir)
 	end)
 
 	-- convert terms to usable format
-	local term_list = {}
-	for _, entry_list in pairs(term_map) do
+	local entries = {}
+	for _, entry in pairs(term_map) do
 		-- sort by Yomichan usage score
-		table.sort(entry_list, function(ta, tb) return ta.scor > tb.scor end)
+		table.sort(entry, function(ta, tb) return ta.scor > tb.scor end)
 
-		local init_len = #entry_list
+		local init_len = #entry
 		for i = 1, init_len do
-			local entry = entry_list[i]
-			if entry then
+			local sub_entry = entry[i]
+			if sub_entry then
 				-- combine entries with the same definitions
 				for k = i + 1, init_len do
-					if entry_list[k] and util.list_compare(entry.defs, entry_list[k].defs) then
-						table.insert(entry.alts, {
-							term = entry_list[k].term,
-							rdng = entry_list[k].rdng
+					if entry[k] and util.list_compare(sub_entry.defs, entry[k].defs) then
+						table.insert(sub_entry.alts, {
+							term = entry[k].term,
+							rdng = entry[k].rdng
 						})
-						entry_list[k] = nil
+						entry[k] = nil
 					end
 				end
 
-				-- group spellings by reading
-				local readings = entry.rdng and {{
-					rdng = entry.rdng,
-					vars = {entry.term}
-				}} or {{rdng = entry.term}}
-				if #entry.alts ~= 0 then
-					for _, alt in ipairs(entry.alts) do
+				-- group variants by reading
+				local readings = sub_entry.rdng and {{
+					rdng = sub_entry.rdng,
+					vars = {sub_entry.term}
+				}} or {{rdng = sub_entry.term}}
+				if #sub_entry.alts ~= 0 then
+					for _, alt in ipairs(sub_entry.alts) do
 						local reading = util.list_find(readings, function(reading)
 							return alt.rdng == reading.rdng
 						end)
@@ -173,21 +173,21 @@ local function import(id, dir)
 							} or {rdng = alt.term }) end
 					end
 				end
-				entry.term = nil
-				entry.alts = nil
-				entry.rdng = readings
+				sub_entry.term = nil
+				sub_entry.alts = nil
+				sub_entry.rdng = readings
 			end
 		end
-		util.compact_list(entry_list, init_len)
+		util.compact_list(entry, init_len)
 
 		-- having entries as a list makes JSON import/export easier
-		table.insert(term_list, entry_list)
+		table.insert(entries, entry)
 	end
 
-	local index, start_index = create_index(term_list)
+	local index, start_index = create_index(entries)
 	local data = {
-		terms = term_list,
 		tags = tag_map,
+		entries = entries,
 		index = index,
 		start_index = start_index
 	}
@@ -223,13 +223,13 @@ local function generate_dict_table(config, data)
 		if not ids then return nil end
 
 		local entries = util.list_map(ids, function(id)
-			return {id = id, entries = data.terms[id]}
+			return {id = id, entry = data.entries[id]}
 		end)
 		table.sort(entries, function(entry_a, entry_b)
-			return entry_a.entries[1].scor > entry_b.entries[1].scor
+			return entry_a.entry[1].scor > entry_b.entry[1].scor
 		end)
 		return util.list_map(entries, function(entry)
-			local quick_def = get_quick_def(entry.entries)
+			local quick_def = get_quick_def(entry.entry)
 			quick_def.id = entry.id
 			return quick_def
 		end)
@@ -237,22 +237,20 @@ local function generate_dict_table(config, data)
 
 	return {
 		look_up_exact = function(term)
-		print(term)
 			return export_entries(data.index[term])
 		end,
 		look_up_start = function(term)
-		print(term)
 			local first_char = utf_8.string(utf_8.codepoints(term, 1, 1))
 			local start_matches = data.start_index[first_char]
 			local matches = util.list_filter(start_matches, function(id)
-				if util.list_find(list_search_terms(data.terms[id]), function(search_term)
+				if util.list_find(list_search_terms(data.entries[id]), function(search_term)
 					return util.string_starts(search_term, term)
 				end) then return true end
 			end)
 			return export_entries(matches)
 		end,
 		get_definition = function(id)
-			local entry = data.terms[id]
+			local entry = data.entries[id]
 			local word
 			if entry[1].rdng[1].vars then
 				word = entry[1].rdng[1].vars[1]
