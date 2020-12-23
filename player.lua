@@ -2,10 +2,11 @@ local mpu = require "mp.utils"
 local sys = require "system"
 
 local socket_name = (function()
+	local filename = script_name .. "_socket"
 	if sys.platform == "lnx" then
-		return "/tmp/ankisubs_socket"
+		return "/tmp/" .. filename
 	elseif sys.platform == "win" then
-		return [[\\.\socket\ankisubs_socket]]
+		return [[\\.\socket\]] .. filename
 	elseif sys.platform == "mac" then
 		return "" -- TODO
 	end

@@ -1,7 +1,9 @@
+script_name = mp.get_script_name()
+
 -- always log verbose messages unless the user overrides msg-level
 mp.set_property("msg-level", (function()
 	local msg_lvl = mp.get_property("msg-level")
-	local new_msg_lvl = "ankisubs=v"
+	local new_msg_lvl = script_name .. "=v"
 	if msg_lvl and #msg_lvl ~= 0 then
 		new_msg_lvl = new_msg_lvl .. "," .. msg_lvl
 	end

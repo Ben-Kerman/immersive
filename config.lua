@@ -121,7 +121,7 @@ function config.check_required(cfg, opt_names)
 end
 
 function config.load_subcfg(name)
-	local rel_path = string.format("script-opts/%s-%s.conf", mp.get_script_name(), name)
+	local rel_path = string.format("script-opts/%s-%s.conf", script_name, name)
 	return config.load(mp.find_config_file(rel_path))
 end
 

@@ -32,7 +32,7 @@ local function default_tgt_cfg()
 			}
 		},
 		anki = {
-			tags = {"ankisubs"},
+			tags = {"immersive"},
 			fields = {}
 		}
 	}

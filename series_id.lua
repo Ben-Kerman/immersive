@@ -2,7 +2,7 @@ local util = require "util"
 
 local id_conf = {}
 
-local id_cfg_path = mp.find_config_file("script-opts/" .. mp.get_script_name() .. "-ids.conf")
+local id_cfg_path = mp.find_config_file("script-opts/" .. script_name .. "-ids.conf")
 if id_cfg_path then
 	local id_cfg_file = io.open(id_cfg_path, "r")
 	for line in id_cfg_file:lines() do
