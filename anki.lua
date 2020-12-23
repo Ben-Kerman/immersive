@@ -43,30 +43,35 @@ local anki = {
 	targets = {}
 }
 
--- parse target definitions
-for name, profile, deck, note_type
-	in cfg.values.anki_targets:gmatch("%[([^:]+):([^;]+);([^;]+);([^%]]+)%]") do
-	table.insert(anki.targets, {
-		name = name, profile = profile, deck = deck, note_type = note_type, config = default_tgt_cfg()
-	})
-end
-
+local required_opts = {"profile", "deck", "note_type"}
 -- parse target config file
-local raw_tgt_cfgs = cfg.load_subcfg("targets")
-for _, raw_tgt_cfg in ipairs(raw_tgt_cfgs) do
-	local tgt_cfg = util.list_find(anki.targets, function(tgt)
-		return tgt.name == raw_tgt_cfg.name
-	end).config
+for _, raw_tgt in ipairs(cfg.load_subcfg("targets")) do
+	local valid, missing = cfg.check_required(raw_tgt.entries, required_opts)
+	if not valid then
+		local fmt = "target '%s' is missing these required options: %s"
+		msg.warn(string.format(fmt, raw_tgt.name, table.concat(missing, ", ")))
+		return
+	end
 
-	for key, value in pairs(raw_tgt_cfg.entries) do
+	local tgt_cfg = default_tgt_cfg()
+	local tgt = {
+		name = raw_tgt.name,
+		profile = raw_tgt.entries.profile,
+		deck = raw_tgt.entries.deck,
+		note_type = raw_tgt.entries.note_type,
+		config = tgt_cfg
+	}
+
+	for key, value in pairs(raw_tgt.entries) do
 		if util.string_starts(key, "field:") then
 			tgt_cfg.anki.fields[key:sub(7)] = value
 		elseif key == "anki/tags" then
 			tgt_cfg.anki.tags = util.string_split(value)
-		else
+		elseif not util.list_find(required_opts, key) then
 			cfg.insert_nested(tgt_cfg, util.string_split(key, "/"), value, true)
 		end
 	end
+	table.insert(anki.targets, tgt)
 end
 
 function anki.active_target()
