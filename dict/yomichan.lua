@@ -118,13 +118,12 @@ local function import(id, dir)
 		end
 
 		local reading = term_entry[2]
-		if reading == "" then
+		if #reading == 0 then
 			reading = nil
 		end
 
 		table.insert(term_map[id], {
 			term = term_entry[1],
-			alts = {},
 			rdng = reading,
 			defs = defs,
 			clss = term_entry[4],
@@ -144,37 +143,37 @@ local function import(id, dir)
 		for i = 1, init_len do
 			local sub_entry = entry[i]
 			if sub_entry then
-				-- combine entries with the same definitions
+				local readings = {sub_entry.rdng and {
+					rdng = sub_entry.rdng,
+					vars = {sub_entry.term}
+				} or {rdng = sub_entry.term}}
+
+				-- combine entries with the same definitions and group variants by reading
 				for k = i + 1, init_len do
 					if entry[k] and util.list_compare(sub_entry.defs, entry[k].defs) then
-						table.insert(sub_entry.alts, {
-							term = entry[k].term,
-							rdng = entry[k].rdng
-						})
+						local other_rdng = entry[k].rdng and entry[k].rdng or entry[k].term
+						local other_var = entry[k].rdng and entry[k].term or nil
+
+						local reading = util.list_find(readings, function(reading)
+							return other_rdng == reading.rdng
+						end)
+
+						if reading then
+							if other_var then
+								table.insert(reading.vars, other_var)
+							end
+						else
+							table.insert(readings, {
+								rdng = other_rdng,
+								vars = {other_var}
+							})
+						end
+
 						entry[k] = nil
 					end
 				end
 
-				-- group variants by reading
-				local readings = sub_entry.rdng and {{
-					rdng = sub_entry.rdng,
-					vars = {sub_entry.term}
-				}} or {{rdng = sub_entry.term}}
-				if #sub_entry.alts ~= 0 then
-					for _, alt in ipairs(sub_entry.alts) do
-						local reading = util.list_find(readings, function(reading)
-							return alt.rdng == reading.rdng
-						end)
-
-						if reading then table.insert(reading.vars, alt.term)
-						else table.insert(readings, alt.rdng and {
-								rdng = alt.rdng,
-								vars = {alt.term}
-							} or {rdng = alt.term }) end
-					end
-				end
 				sub_entry.term = nil
-				sub_entry.alts = nil
 				sub_entry.rdng = readings
 			end
 		end
