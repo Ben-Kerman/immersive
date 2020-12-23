@@ -33,13 +33,15 @@ end
 
 local dicts = {}
 
-function dicts.active()
+function dicts.active(block_loading)
 	local dict = dict_list[active_dict_index]
 	if not dict then
 		msg.warn("no dictionaries found")
 		return nil
 	end
-	return load_dict(active_dict_index)
+
+	if block_loading then return dict
+	else return load_dict(active_dict_index) end
 end
 
 function dicts.switch(dir)

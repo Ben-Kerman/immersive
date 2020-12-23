@@ -10,6 +10,7 @@ end)())
 
 local ActiveSubLookup = require "active_sub_lookup"
 local anki = require "anki"
+local dicts = require "dict.dicts"
 local export = require "export"
 local helper = require "helper"
 local kbds = require "key_bindings"
@@ -47,6 +48,14 @@ local infos = {
 		display = function()
 			local tgt = anki.active_target(false)
 			if tgt then return tgt.name
+			else return {style = {"menu_info", "unset"}, "none"} end
+		end
+	},
+	{
+		name = "Dictionary",
+		display = function()
+			local dict = dicts.active(true)
+			if dict then return dict.id
 			else return {style = {"menu_info", "unset"}, "none"} end
 		end
 	}
@@ -160,6 +169,18 @@ local bindings = {
 		default = "Ctrl+DOWN",
 		desc = "Switch to the next Anki target",
 		action = function() anki.switch_target(1); menu:redraw() end
+	},
+	{
+		id = "prev_dict",
+		default = "Alt+UP",
+		desc = "Switch to the previous dictionary",
+		action = function() dicts.switch(-1); menu:redraw() end
+	},
+	{
+		id = "next_dict",
+		default = "Alt+DOWN",
+		desc = "Switch to the next dictionary",
+		action = function() dicts.switch(1); menu:redraw() end
 	},
 	{
 		id = "close_menu",
