@@ -1,5 +1,6 @@
 local BasicOverlay = require "basic_overlay"
 local export = require "export"
+local helper = require "helper"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
 local msg = require "message"
@@ -96,7 +97,7 @@ function SubSelect:preview_audio()
 		mp.set_property_bool("pause", true)
 
 		local start, stop = export.resolve_times(self.data)
-		player.play(mp.get_property("path"), start, stop)
+		player.play(helper.current_path_abs(), start, stop)
 
 		mp.add_timeout(stop - start + 0.15, function()
 			mp.set_property_bool("pause", was_paused)

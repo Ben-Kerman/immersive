@@ -1,4 +1,5 @@
 local anki = require "anki"
+local helper = require "helper"
 local sys = require "system"
 
 local function calc_dimension(cfg_val, prop_name)
@@ -31,7 +32,7 @@ end
 function encoder.audio(path, start, stop)
 	local tgt_cfg = anki.active_target().config.audio
 	encoder.any_audio{
-		src_path = mp.get_property("path"),
+		src_path = helper.current_path_abs(),
 		tgt_path = path,
 		track = mp.get_property("aid"),
 		format = tgt_cfg.format,
@@ -49,7 +50,7 @@ function encoder.image(path, time)
 
 	local args = {
 		"mpv",
-		mp.get_property("path"),
+		helper.current_path_abs(),
 		"--o=" .. path,
 		"--no-ocopy-metadata",
 		"--vid=" .. mp.get_property("vid"),
