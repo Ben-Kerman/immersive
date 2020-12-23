@@ -35,7 +35,7 @@ function dicts.get()
 	if not loaded then
 		load_dicts()
 	end
-	return dicts
+	return dict_list
 end
 
 return dicts

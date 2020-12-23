@@ -185,18 +185,17 @@ local function import(id, dir)
 	end
 
 	local index, start_index = create_index(term_list)
-
-	dict_util.write_json_file(dict_util.cache_path(id), {
+	local data = {
 		terms = term_list,
 		tags = tag_map,
 		index = index,
 		start_index = start_index
-	})
-
-	return term_list, tag_map, index, start_index
+	}
+	dict_util.write_json_file(dict_util.cache_path(id), data)
+	return data
 end
 
-local function generate_dict_table(config, terms, tags, index, start_index)
+local function generate_dict_table(config, data)
 	local function get_quick_def(entry)
 		local readings, variants, defs = {}, {}, {}
 		for _, sub_entry in ipairs(entry) do
@@ -224,7 +223,7 @@ local function generate_dict_table(config, terms, tags, index, start_index)
 		if not ids then return nil end
 
 		local entries = util.list_map(ids, function(id)
-			return {id = id, entries = terms[id]}
+			return {id = id, entries = data.terms[id]}
 		end)
 		table.sort(entries, function(entry_a, entry_b)
 			return entry_a.entries[1].scor > entry_b.entries[1].scor
@@ -238,20 +237,22 @@ local function generate_dict_table(config, terms, tags, index, start_index)
 
 	return {
 		look_up_exact = function(term)
-			return export_entries(index[term])
+		print(term)
+			return export_entries(data.index[term])
 		end,
 		look_up_start = function(term)
+		print(term)
 			local first_char = utf_8.string(utf_8.codepoints(term, 1, 1))
-			local start_matches = start_index[first_char]
+			local start_matches = data.start_index[first_char]
 			local matches = util.list_filter(start_matches, function(id)
-				if util.list_find(list_search_terms(terms[id]), function(search_term)
+				if util.list_find(list_search_terms(data.terms[id]), function(search_term)
 					return util.string_starts(search_term, term)
 				end) then return true end
 			end)
 			return export_entries(matches)
 		end,
 		get_definition = function(id)
-			local entry = terms[id]
+			local entry = data.terms[id]
 			local word
 			if entry[1].rdng[1].vars then
 				word = entry[1].rdng[1].vars[1]
@@ -259,7 +260,7 @@ local function generate_dict_table(config, terms, tags, index, start_index)
 
 			local exporter_id = config.exporter and config.exporter or "default"
 			local exporter = require("dict.yomichan." .. exporter_id)
-			return {word = word, definition = exporter(entry, config, tags)}
+			return {word = word, definition = exporter(entry, config, data.tags)}
 		end
 	}
 end
@@ -269,16 +270,14 @@ local yomichan = {}
 function yomichan.load(dict_id, config)
 	local start = mp.get_time()
 
-	local terms, tag_map, index, start_index = (function()
-		local cache_path = dict_util.cache_path(dict_id)
-		if mpu.file_info(cache_path) then
-			local data = dict_util.parse_json_file(cache_path)
-			return data.terms, data.tags, data.index, data.start_index
-		else return import(dict_id, config.location) end
-	end)()
+	local data
+	local cache_path = dict_util.cache_path(dict_id)
+	if mpu.file_info(cache_path) then
+		data = dict_util.parse_json_file(cache_path)
+	else data = import(dict_id, config.location) end
 
 	msg.debug(dict_id .. "(Yomichan): " .. mp.get_time() - start)
-	return generate_dict_table(config, terms, tag_map, index, start_index)
+	return generate_dict_table(config, data)
 end
 
 return yomichan
