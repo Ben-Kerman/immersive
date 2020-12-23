@@ -1,5 +1,6 @@
+local mpo = require "mp.options"
 local mpu = require "mp.utils"
-local msg = require "message"
+local smsg = require "startup_msg"
 local util = require "util"
 
 local function check_file(path)
@@ -27,12 +28,20 @@ local config = {
 	}
 }
 
-local mp_opts = require "mp.options"
-mp_opts.read_options(config.values)
+mpo.read_options(config.values)
+
+local msg_fmt = "config: %s; %s:%d"
+local function warn_msg(msg_txt, file, line)
+	local msg_str
+	if file then
+		msg_str = string.format(msg_fmt, msg_txt, file, line)
+	else msg_str = "config: " .. msg_txt end
+	smsg.warn(msg_str)
+end
 
 function config.load(path)
 	if not check_file(path) then
-		msg.verbose("config file '" .. "' could not be loaded")
+		smsg.verbose("config file could not be loaded: " .. path)
 		return {}
 	end
 
@@ -71,9 +80,7 @@ function config.load(path)
 						elseif global_entries then insert_global() end
 
 						section_name, section_entries = new_section_name, {}
-					else
-						msg.warn("Ignoring invalid section header: " .. path .. ":" .. count)
-					end
+					else warn_msg("invalid section header ('" .. line .. "')", path, count) end
 				else
 					local entries
 					if section_name then entries = section_entries
@@ -89,9 +96,7 @@ function config.load(path)
 							block_token = "]" .. block_token_match .. "]"
 							block_key, block_value = key, {}
 						else entries[key] = value end
-					else
-						msg.warn("Ignoring invalid line: " .. path .. ":" .. count)
-					end
+					else warn_msg("invalid line ('" .. line .. "')", path, count) end
 				end
 			end
 		end
@@ -99,6 +104,7 @@ function config.load(path)
 	end
 	if section_name then insert_section()
 	else insert_global() end
+
 	return result
 end
 
@@ -112,7 +118,7 @@ function config.convert_bool(str)
 		return true
 	elseif str == "no" or str == "false" then
 		return false
-	else msg.warn("Boolean config values must be yes, true, no or false") end
+	else smsg.warn("invalid boolean ('" .. str .. "'), must be 'yes', 'true', 'no' or 'false'") end
 end
 
 function config.force_type(val, type_name)
@@ -122,7 +128,7 @@ function config.force_type(val, type_name)
 		return tonumber(val)
 	elseif type_name == "string" then
 		return tostring(val)
-	else msg.fatal("Invalid type name: " .. type_name) end
+	else smsg.fatal("invalid type name: " .. type_name) end
 end
 
 function config.convert_type(old_val, new_val)

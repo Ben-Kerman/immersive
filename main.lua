@@ -15,6 +15,7 @@ local kbds = require "key_bindings"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
 local series_id = require "series_id"
+local smsg = require "startup_msg"
 local SubSelect = require "sub_select"
 local Subtitle = require "subtitle"
 local sys = require "system"
@@ -144,3 +145,5 @@ local bindings = {
 menu = Menu:new{infos = infos,bindings = bindings}
 
 kbds.add_global_bindings(bindings)
+
+smsg.display()
