@@ -1,4 +1,5 @@
 local kbds = require "key_bindings"
+local msg = require "message"
 local ssa = require "ssa"
 local utf_8 = require "utf_8"
 local util = require "util"
@@ -177,7 +178,7 @@ end
 
 function TextSelect:selection(force)
 	if force and self:sel_len() == 0 then
-		msg.warn("No text selected")
+		msg.info("No text selected")
 		return nil
 	end
 	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
