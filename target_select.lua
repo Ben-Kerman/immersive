@@ -54,7 +54,9 @@ function TargetSelect:new(data)
 		}
 	}
 
-	data.definitions = {}
+	if not data.definitions then
+		data.definitions = {}
+	end
 	ts = setmetatable({
 		data = data,
 		word_overlay = BasicOverlay:new(data.definitions, function(defs, ssa_def)
