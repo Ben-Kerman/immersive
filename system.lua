@@ -48,7 +48,7 @@ local function handle_process_result(success, res, err)
 		msg.error("Failed to run subprocess: '" .. err .. "'; arguments: " .. mpu.format_json(args))
 		return
 	end
-	return res.status, res.stdout, res.error_string
+	return res.status, res.stdout, res.error_string, res.killed_by_us
 end
 
 function system.subprocess(args)
@@ -68,8 +68,7 @@ function system.background_process(args, callback)
 		capture_stdout = true,
 		args = args
 	}, function(success, res, err)
-		local status, stdout, error_string = handle_process_result(success, res, err)
-		callback(status, stdout, error_string)
+		callback(handle_process_result(success, res, err))
 	end)
 end
 

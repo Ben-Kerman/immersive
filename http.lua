@@ -40,8 +40,10 @@ local function request(params, async, callback)
 	end
 
 	if async then
-		local internal_callback = callback and function(status, stdout, error_string)
-			callback(handle_result(status, stdout))
+		local internal_callback = callback and function(status, stdout, err_str, killed_by_us)
+			if not killed_by_us then
+				callback(handle_result(status, stdout, err_str))
+			end
 		end
 		return sys.background_process(args, internal_callback)
 	else
