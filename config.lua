@@ -151,12 +151,16 @@ function config.insert_nested(target, path, value, strict)
 	for i, comp in ipairs(path) do
 		if target[comp] == nil then
 			if strict then
-				-- TODO handle error
+				msg.warn("invalid config path: " .. table.concat(path, "/"))
+				return
 			else target[comp] = {} end
-		elseif type(target[comp]) ~= "table" then
-			-- TODO handle error
 		end
-		if i ~= #path then target = target[comp] end
+		if i ~= #path then
+			target = target[comp]
+		elseif type(target[comp]) == "table" then
+			msg.warn("config path ends too soon: " .. table.concat(path, "/"))
+			return
+		end
 	end
 	target[path[#path]] = config.convert_type(target[path[#path]], value)
 end
