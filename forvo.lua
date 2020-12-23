@@ -5,6 +5,7 @@ local http = require "http"
 local LineSelect = require "line_select"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
+local msg = require "message"
 local player = require "player"
 local sys = require "system"
 local url = require "url"
@@ -40,7 +41,7 @@ local html_headers = (function()
 	return headers
 end)()
 
-local function audio_request(url, target_path, async, callback)
+local function audio_request(url, target_path, callback)
 	local http_params = {
 		url = url,
 		headers = audio_headers,
@@ -50,14 +51,9 @@ local function audio_request(url, target_path, async, callback)
 		if res then return target_path
 		else msg.error("Failed to load Forvo audio") end
 	end
-	if async then
-		http.get_async(http_params, function(res)
-			callback(handle_http_res(res))
-		end)
-	else
-		local res = http.get(http_params)
-		return handle_http_res(res)
-	end
+	return http.get_async(http_params, function(res)
+		callback(handle_http_res(res))
+	end)
 end
 
 local function html_request(url, callback)
@@ -96,7 +92,7 @@ function Pronunciation:new(menu, id, user, mp3_l, ogg_l, mp3_h, ogg_h)
 	return setmetatable(pr, Pronunciation)
 end
 
-function Pronunciation:load_audio(async)
+function Pronunciation:load_audio(callback)
 	local function set_audio_file(res)
 		if res then
 			self.loading = false
@@ -118,17 +114,20 @@ function Pronunciation:load_audio(async)
 		local extension = cfg.values.forvo_prefer_mp3 and "mp3" or "ogg"
 		local src = self.audio_h and self.audio_h or self.audio_l
 		local audio_url = src[extension]
-		if async then
-			audio_request(audio_url, sys.tmp_file_name(), true, set_audio_file)
-		else set_audio_file(audio_request(audio_url, sys.tmp_file_name())) end
+
+		audio_request(audio_url, sys.tmp_file_name(), true, function(res)
+			set_audio_file(res)
+			callback()
+		end)
 	end
 end
 
 function Pronunciation:play()
-	self:load_audio()
-	if self.audio_file then
-		player.play(self.audio_file.path)
-	end
+	self:load_audio(function()
+		if self.audio_file then
+			player.play(self.audio_file.path)
+		end
+	end)
 end
 
 local function extract_pronunciations(menu, word, callback)
@@ -214,7 +213,7 @@ function Forvo:new(data, word)
 	extract_pronunciations(fv, word, function(prns)
 		if cfg.values.forvo_preload_audio then
 			for _, prn in ipairs(prns) do
-				prn:load_audio(true)
+				prn:load_audio()
 			end
 		end
 		fv.prns = prns
