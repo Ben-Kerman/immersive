@@ -24,34 +24,6 @@ local function list_search_terms(entry)
 	return search_terms
 end
 
-local function create_index(entries)
-	local function index_insert(index, key, value)
-		if index[key] then table.insert(index[key], value)
-		else index[key] = {value} end
-	end
-
-	local index, start_index = {}, {}
-	for entry_pos, entry in ipairs(entries) do
-		-- find all unique readings/spelling variants
-		local search_terms = list_search_terms(entry)
-
-		-- build index from search_terms and find first characters
-		local initial_chars = {}
-		for _, term in ipairs(search_terms) do
-			initial_chars[utf_8.string(utf_8.codepoints(term, 1, 1))] = true
-
-			index_insert(index, term, entry_pos)
-		end
-
-		-- build first character index
-		for initial_char, _ in pairs(initial_chars) do
-			index_insert(start_index, initial_char, entry_pos)
-		end
-	end
-
-	return index, start_index
-end
-
 local function verify(dir)
 	local stat_res = mpu.file_info(dir)
 	if not stat_res or not stat_res.is_dir then
@@ -183,7 +155,7 @@ local function import(id, dir)
 		table.insert(entries, entry)
 	end
 
-	local index, start_index = create_index(entries)
+	local index, start_index = dict_util.create_index(entries, list_search_terms)
 	local data = {
 		tags = tag_map,
 		entries = entries,
