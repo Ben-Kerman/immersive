@@ -3,6 +3,8 @@ local util = require "util"
 local overlay = mp.create_osd_overlay("ass-events")
 overlay.z = 127
 
+local levels = {"fatal", "error", "warn", "info", "verbose", "debug", "trace"}
+
 local messages = {}
 
 local function update_overlay()
@@ -39,12 +41,15 @@ local function add_msg(level, text, timeout)
 			update_overlay()
 		end)
 	end
-	update_overlay()
+
+	local _, index = util.list_find(levels, level)
+	if index and index <= 4 then
+		update_overlay()
+	end
 end
 
 local message = {}
 
-local levels = {"fatal", "error", "warn", "info", "verbose", "debug", "trace"}
 for _, level in ipairs(levels) do
 	message[level] = function(text, timeout)
 		add_msg(level, text, timeout)

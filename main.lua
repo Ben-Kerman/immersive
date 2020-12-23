@@ -1,3 +1,13 @@
+-- always log verbose messages unless the user overrides msg-level
+mp.set_property("msg-level", (function()
+	local msg_lvl = mp.get_property("msg-level")
+	local new_msg_lvl = "ankisubs=v"
+	if msg_lvl and #msg_lvl ~= 0 then
+		new_msg_lvl = new_msg_lvl .. "," .. msg_lvl
+	end
+	return new_msg_lvl
+end)())
+
 local ActiveSubLookup = require "active_sub_lookup"
 local export = require "export"
 local helper = require "helper"
@@ -10,7 +20,7 @@ local Subtitle = require "subtitle"
 local sys = require "system"
 local target_select = require "target_select"
 
--- forward declarations
+-- forward declaration
 local menu
 
 local autocopy = false

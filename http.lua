@@ -35,7 +35,7 @@ local function request(params, async, callback)
 
 	local function handle_result(status, stdout)
 		if status ~= 0 then
-			msg.error("HTTP " .. params.method .. " request for URL '" .. params.url .. "' failed.")
+			msg.verbose("HTTP " .. params.method .. " request for URL '" .. params.url .. "' failed.")
 		else return stdout end
 	end
 
@@ -43,7 +43,7 @@ local function request(params, async, callback)
 		local internal_callback = callback and function(status, stdout, error_string)
 			callback(handle_result(status, stdout))
 		end
-		sys.background_process(args, internal_callback)
+		return sys.background_process(args, internal_callback)
 	else
 		local status, stdout = sys.subprocess(args)
 		return handle_result(status, stdout)
