@@ -32,8 +32,15 @@ local function display_bool(val)
 end
 
 local infos = {
-	{name = "Series ID", value = "{\\i1}no file loaded{\\i0}"},
-	{name = "Sub auto-copy", value = autocopy, display = display_bool}
+	{
+		name = "Series ID",
+		value = "{\\i1}no file loaded{\\i0}"
+	},
+	{
+		name = "Sub auto-copy",
+		value = autocopy,
+		display = display_bool
+	}
 }
 
 mp.register_event("file-loaded", function()
