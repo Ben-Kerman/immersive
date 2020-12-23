@@ -53,7 +53,9 @@ local infos = {
 }
 
 mp.register_event("file-loaded", function()
-	infos[1].value = series_id.get_id()
+	local id, custom = series_id.get_id()
+	if custom then infos[1].value = id
+	else infos[1].value = {style = {"menu_info", "unset"}, id} end
 	menu:redraw()
 end)
 

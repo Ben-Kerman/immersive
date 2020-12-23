@@ -49,8 +49,8 @@ function series_id.get_id()
 			break
 		end
 	end
-	if matched_id then return matched_id end
-	return generate_id(filename)
+	if matched_id then return matched_id, true
+	else return generate_id(filename), false end
 end
 
 return series_id
