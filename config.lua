@@ -41,7 +41,7 @@ end
 
 function config.load(path)
 	if not check_file(path) then
-		smsg.verbose("config file could not be loaded: " .. path)
+		smsg.verbose("config file could not be loaded")
 		return {}
 	end
 
