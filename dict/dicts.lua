@@ -2,9 +2,8 @@ local cfg = require "config"
 
 local dicts = {}
 
-local dict_configs = cfg.load_subcfg("dictionaries")
-for _, dict_config in ipairs(dict_configs) do
-	local dict_id, entries = dict_config.name, dict_config.entries
+local function load_dict(dict_cfg)
+	local dict_id, entries = dict_cfg.name, dict_cfg.entries
 	if entries.location and entries.type then
 		local status, loader = pcall(require, "dict." .. entries.type)
 		if status then
@@ -13,6 +12,10 @@ for _, dict_config in ipairs(dict_configs) do
 			-- TODO handle error
 		end
 	end
+end
+
+for _, dict_cfg in ipairs(cfg.load_subcfg("dictionaries")) do
+	load_dict(dict_cfg)
 end
 
 return dicts
