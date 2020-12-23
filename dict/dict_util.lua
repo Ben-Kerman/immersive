@@ -1,6 +1,7 @@
 local mpu = require "mp.utils"
 local sys = require "system"
 local utf_8 = require "utf_8"
+local util = require "util"
 
 local dict_util = {}
 
@@ -52,6 +53,16 @@ function dict_util.create_index(entries, search_term_gen)
 	end
 
 	return index, start_index
+end
+
+function dict_util.find_start_matches(term, data, search_term_fn)
+	local first_char = utf_8.string(utf_8.codepoints(term, 1, 1))
+	local start_matches = data.start_index[first_char]
+	return util.list_filter(start_matches, function(id)
+		if util.list_find(search_term_fn(data.entries[id]), function(search_term)
+			return util.string_starts(search_term, term)
+		end) then return true end
+	end)
 end
 
 return dict_util

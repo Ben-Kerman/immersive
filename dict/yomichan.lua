@@ -214,14 +214,7 @@ local function generate_dict_table(config, data)
 			return export_entries(data.index[term])
 		end,
 		look_up_start = function(term)
-			local first_char = utf_8.string(utf_8.codepoints(term, 1, 1))
-			local start_matches = data.start_index[first_char]
-			local matches = util.list_filter(start_matches, function(id)
-				if util.list_find(list_search_terms(data.entries[id]), function(search_term)
-					return util.string_starts(search_term, term)
-				end) then return true end
-			end)
-			return export_entries(matches)
+			return export_entries(dict_util.find_start_matches(term, data, list_search_terms))
 		end,
 		get_definition = function(id)
 			local entry = data.entries[id]
