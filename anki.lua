@@ -1,5 +1,6 @@
 local cfg = require "config"
 local mpu = require "mp.utils"
+local msg = require "message"
 local sys = require "system"
 local util = require "util"
 
@@ -76,7 +77,7 @@ end
 local active_tgt_index = 1
 function anki.active_target(err_msg)
 	local tgt = anki.targets[active_tgt_index]
-	if not tgt then
+	if not tgt and err_msg ~= false then
 		local err_str = "no Anki targets found"
 		if err_msg then
 			err_str = err_str .. ": " .. err_msg

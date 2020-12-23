@@ -45,7 +45,7 @@ local infos = {
 	{
 		name = "Anki target",
 		display = function()
-			local tgt = anki.active_target()
+			local tgt = anki.active_target(false)
 			if tgt then return tgt.name
 			else return "none" end
 		end
