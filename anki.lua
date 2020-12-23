@@ -75,12 +75,24 @@ for _, raw_tgt in ipairs(cfg.load_subcfg("targets")) do
 	load_tgt(raw_tgt)
 end
 
-function anki.active_target()
-	return anki.targets[active_target_index]
+function anki.active_target(err_msg)
+	local tgt = anki.targets[active_tgt_index]
+	if not tgt then
+		local err_str = "no Anki targets found"
+		if err_msg then
+			err_str = err_str .. ": " .. err_msg
+		end
+		msg.warn(err_str)
+		return
+	end
+	return tgt
 end
 
 function anki.media_dir()
-	local profile = anki.active_target().profile
+	local tgt = anki.active_target("could not determine media dir")
+	if not tgt then return end
+
+	local profile = tgt.profile
 	local profile_dir = mpu.join_path(sys.anki_base_dir, profile)
 	return mpu.join_path(profile_dir, "collection.media")
 end

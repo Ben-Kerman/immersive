@@ -30,7 +30,10 @@ function encoder.any_audio(params)
 end
 
 function encoder.audio(path, start, stop)
-	local tgt_cfg = anki.active_target().config.audio
+	local tgt = anki.active_target("could not encode audio")
+	if not tgt then return end
+
+	local tgt_cfg = tgt.config.audio
 	encoder.any_audio{
 		src_path = helper.current_path_abs(),
 		tgt_path = path,
@@ -44,7 +47,10 @@ function encoder.audio(path, start, stop)
 end
 
 function encoder.image(path, time)
-	local tgt_cfg = anki.active_target().config.image
+	local tgt = anki.active_target("could not extract screenshot")
+	if not tgt then return end
+
+	local tgt_cfg = tgt.config.image
 	local width = calc_dimension(tgt_cfg.max_width, "width")
 	local height = calc_dimension(tgt_cfg.max_height, "height")
 

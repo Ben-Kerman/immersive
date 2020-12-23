@@ -120,7 +120,10 @@ function export.resolve_times(data)
 end
 
 function export.execute(data)
-	local tgt_cfg = anki.active_target().config
+	local tgt = anki.active_target("could not execute export")
+	if not tgt then return end
+
+	local tgt_cfg = tgt.config.config
 	local start, stop, scrot = export.resolve_times(data)
 
 	local audio_filename = anki.generate_filename(series_id.get_id(), tgt_cfg.audio.extension)

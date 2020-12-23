@@ -16,7 +16,9 @@ function ankiconnect.request(action, params)
 end
 
 function ankiconnect.add_note(fields)
-	local tgt = anki.active_target()
+	local tgt = anki.active_target("could not add deck")
+	if not tgt then return end
+
 	ankiconnect.request("addNote", {
 		note = {
 			deckName = tgt.deck,
