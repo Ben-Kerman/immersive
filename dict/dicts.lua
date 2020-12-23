@@ -1,41 +1,50 @@
 local cfg = require "config"
 local msg = require "message"
+local util = require "util"
 
 local loaded = false
-local dict_list = {}
+local dict_list = util.list_map(cfg.load_subcfg("dictionaries"), function(dict_cfg)
+	return {id = dict_cfg.name, config = dict_cfg.entries, table = nil}
+end)
+local active_dict_index = 1
 
-local function load_dict(dict_cfg)
-	local dict_id, entries = dict_cfg.name, dict_cfg.entries
+local function load_dict(index)
+	local dict = dict_list[index]
+	if dict.table then return end
 
-	if cfg.check_required(entries, {"location", "type"}) then
-		local status, loader = pcall(require, "dict." .. entries.type)
+	msg.debug("loading dictionary '" .. dict.id .. "'")
+	if cfg.check_required(dict.config, {"location", "type"}) then
+		local status, loader = pcall(require, "dict." .. dict.config.type)
 		if status then
-			table.insert(dict_list, loader.load(dict_id, entries))
-		else msg.error("unknown dict type: " .. entries.type) end
+			dict.table = loader.load(dict.id, entries)
+		else msg.error("unknown dictionary type: " .. dict.config.type) end
 	end
-end
-
-local function load_dicts()
-	msg.debug("loading dictionaries")
-	for _, dict_cfg in ipairs(cfg.load_subcfg("dictionaries")) do
-		load_dict(dict_cfg)
-	end
-	loaded = true
+	return dict
 end
 
 if not cfg.values.lazy_load_dicts then
 	mp.register_event("start-file", function()
-		load_dicts()
+		for i = 1, #dict_list do
+			load_dict(i)
+		end
+		loaded = true
 	end)
 end
 
 local dicts = {}
 
-function dicts.get()
-	if not loaded then
-		load_dicts()
+function dicts.active()
+	local dict = dict_list[active_dict_index]
+	if not dict then
+		msg.warn("no dictionaries found")
+		return nil
 	end
-	return dict_list
+	return load_dict(active_dict_index)
+end
+
+function dicts.switch(dir)
+	active_dict_index = util.num_limit(active_dict_index + dir, 1, #dict_list)
+	load_dict(active_dict_index)
 end
 
 return dicts
