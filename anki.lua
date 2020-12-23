@@ -88,7 +88,7 @@ function anki.active_target(err_msg)
 end
 
 function anki.switch_target(dir)
-	active_tgt_index = util.num_limit(active_tgt_index, 1, #anki.targets)
+	active_tgt_index = util.num_limit(active_tgt_index + dir, 1, #anki.targets)
 end
 
 function anki.media_dir()

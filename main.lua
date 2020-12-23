@@ -9,6 +9,7 @@ mp.set_property("msg-level", (function()
 end)())
 
 local ActiveSubLookup = require "active_sub_lookup"
+local anki = require "anki"
 local export = require "export"
 local helper = require "helper"
 local kbds = require "key_bindings"
@@ -40,6 +41,14 @@ local infos = {
 		name = "Sub auto-copy",
 		value = autocopy,
 		display = display_bool
+	},
+	{
+		name = "Anki target",
+		display = function()
+			local tgt = anki.active_target()
+			if tgt then return tgt.name
+			else return "none" end
+		end
 	}
 }
 
@@ -132,6 +141,18 @@ local bindings = {
 		desc = "Create card from active subtitle, export immediately",
 		action = function() export_active_line(true) end,
 		global = true
+	},
+	{
+		id = "prev_target",
+		default = "Ctrl+UP",
+		desc = "Switch to the previous Anki target",
+		action = function() anki.switch_target(-1); menu:redraw() end
+	},
+	{
+		id = "next_target",
+		default = "Ctrl+DOWN",
+		desc = "Switch to the next Anki target",
+		action = function() anki.switch_target(1); menu:redraw() end
 	},
 	{
 		id = "close_menu",
