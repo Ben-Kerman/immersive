@@ -35,7 +35,7 @@ end
 local infos = {
 	{
 		name = "Series ID",
-		value = "{\\i1}no file loaded{\\i0}"
+		value = {style = {"menu_info", "unset"}, "no file loaded"}
 	},
 	{
 		name = "Sub auto-copy",
@@ -47,7 +47,7 @@ local infos = {
 		display = function()
 			local tgt = anki.active_target(false)
 			if tgt then return tgt.name
-			else return "none" end
+			else return {style = {"menu_info", "unset"}, "none"} end
 		end
 	}
 }
