@@ -39,13 +39,10 @@ local function default_tgt_cfg()
 	}
 end
 
-local anki = {
-	targets = {}
-}
+local anki = {targets = {}}
 
 local required_opts = {"profile", "deck", "note_type"}
--- parse target config file
-for _, raw_tgt in ipairs(cfg.load_subcfg("targets")) do
+local function load_tgt(raw_tgt)
 	local valid, missing = cfg.check_required(raw_tgt.entries, required_opts)
 	if not valid then
 		local fmt = "target '%s' is missing these required options: %s"
@@ -72,6 +69,10 @@ for _, raw_tgt in ipairs(cfg.load_subcfg("targets")) do
 		end
 	end
 	table.insert(anki.targets, tgt)
+end
+
+for _, raw_tgt in ipairs(cfg.load_subcfg("targets")) do
+	load_tgt(raw_tgt)
 end
 
 function anki.active_target()
