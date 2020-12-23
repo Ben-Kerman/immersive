@@ -2,7 +2,6 @@ local dict_util = require "dict.dict_util"
 local mpu = require "mp.utils"
 local msg = require "message"
 local sys = require "system"
-local utf_8 = require "utf_8"
 local util = require "util"
 
 local function list_search_terms(entry)
