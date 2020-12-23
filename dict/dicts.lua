@@ -10,13 +10,13 @@ local active_dict_index = 1
 
 local function load_dict(index)
 	local dict = dict_list[index]
-	if dict.table then return end
+	if dict.table then return dict end
 
 	msg.debug("loading dictionary '" .. dict.id .. "'")
 	if cfg.check_required(dict.config, {"location", "type"}) then
 		local status, loader = pcall(require, "dict." .. dict.config.type)
 		if status then
-			dict.table = loader.load(dict.id, entries)
+			dict.table = loader.load(dict.id, dict.config)
 		else msg.error("unknown dictionary type: " .. dict.config.type) end
 	end
 	return dict
@@ -44,7 +44,6 @@ end
 
 function dicts.switch(dir)
 	active_dict_index = util.num_limit(active_dict_index + dir, 1, #dict_list)
-	load_dict(active_dict_index)
 end
 
 return dicts

@@ -18,15 +18,8 @@ local DefinitionSelect = {}
 DefinitionSelect.__index = DefinitionSelect
 
 function DefinitionSelect:new(word, prefix, data)
-	local result, dict_index
-	for i, dict in ipairs(dicts.get()) do
-		local lookup_fn = prefix and dict.look_up_start or dict.look_up_exact
-		result = lookup_fn(word)
-		if result then
-			dict_index = i
-			break
-		end
-	end
+	local dict = dicts.active().table
+	local result = (prefix and dict.look_up_start or dict.look_up_exact)(word)
 
 	if not result then
 		msg.info("No definitions found")
@@ -50,14 +43,14 @@ function DefinitionSelect:new(word, prefix, data)
 		data = data,
 		bindings = bindings,
 		menu = Menu:new{bindings = bindings},
-		lookup_result = {dict_index = dict_index, defs = result}
+		lookup_result = {dict = dict, defs = result}
 	}, DefinitionSelect)
 	return ds
 end
 
 function DefinitionSelect:finish(word)
 	if self.data then
-		local dict = dicts.get()[self.lookup_result.dict_index]
+		local dict = self.lookup_result.dict
 		local def = dict.get_definition(self._line_select:finish().id)
 		table.insert(self.data.definitions, def)
 	end
