@@ -108,6 +108,18 @@ function config.load(path)
 	return result
 end
 
+function config.check_required(cfg, opt_names)
+	local valid = true
+	local missing = {}
+	for _, opt in ipairs(opt_names) do
+		if not cfg[opt] then
+			table.insert(missing, opt)
+			valid = false
+		end
+	end
+	return valid, missing
+end
+
 function config.load_subcfg(name)
 	local rel_path = string.format("script-opts/%s-%s.conf", mp.get_script_name(), name)
 	return config.load(mp.find_config_file(rel_path))
