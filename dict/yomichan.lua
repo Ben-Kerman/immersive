@@ -26,31 +26,31 @@ end
 
 local function verify(dir)
 	if not dir then
-		return nil, "no directory at specified location"
+		return false, "no directory at specified location"
 	end
 
 	local stat_res = mpu.file_info(dir)
 	if not stat_res or not stat_res.is_dir then
-		return nil, "path doesn't exist of is not a directory"
+		return false, "path doesn't exist of is not a directory"
 	end
 
 	local files = sys.list_files(dir)
 	if not util.list_find(files, "index.json") then
-		return nil, "no index found"
+		return false, "no index found"
 	end
 
 	local index = dict_util.parse_json_file(mpu.join_path(dir, "index.json"))
 
 	local format = index.format and index.format or index.version
 	if format ~= 3 then
-		return nil, "only v3 Yomichan dictionaries are supported"
+		return false, "only v3 Yomichan dictionaries are supported"
 	end
 
 	local term_banks = util.list_find(files, function(filename)
 		return util.string_starts(filename, "term_bank_")
 	end)
 	if #term_banks == 0 then
-		return nil, "no term banks found"
+		return false, "no term banks found"
 	end
 
 	return true, files
@@ -58,7 +58,10 @@ end
 
 local function import(id, dir)
 	local verif_res, files_or_error = verify(dir)
-	if not verif_res then return nil, files_or_error end
+	if not verif_res then
+		msg.error("failed to load Yomichan dict (" .. id .. "): " .. files_or_error)
+		return nil
+	end
 
 	local function load_bank(prefix, action)
 		for _, bank in ipairs(util.list_filter(files_or_error, function(filename)
