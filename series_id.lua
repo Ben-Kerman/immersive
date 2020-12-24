@@ -1,21 +1,14 @@
+local cfg = require "config"
 local util = require "util"
 
-local id_conf = {}
-
-local id_cfg_path = mp.find_config_file("script-opts/" .. script_name .. "-ids.conf")
-if id_cfg_path then
-	local id_cfg_file = io.open(id_cfg_path, "r")
-	for line in id_cfg_file:lines() do
-		local id, value = line:match("([^=]+)=(.+)")
-		if id then
-			local keywords = util.string_split(value:lower(), " ", true)
-			if keywords then
-				id_conf[id] = keywords
-			end
-		end
+local config = util.map_map(cfg.load_subcfg("series"), function(_, series)
+	if not cfg.check_required(series.entries, {"keywords"}) then
+		return nil
 	end
-	id_cfg_file:close()
-end
+	return series.name, {
+		keywords = util.string_split(series.entries.keywords:lower(), " ", true)
+	}
+end)
 
 local function generate_id(filename)
 	return (filename:gsub("%.[^%.]+$", "")        -- file extension
@@ -31,29 +24,33 @@ local function generate_id(filename)
 	                :gsub("%-+$", ""))            -- trailing dashes
 end
 
-local series_id = {}
-
-function series_id.get_id()
-	local fn_prop = mp.get_property("filename")
-	if not fn_prop then return nil end
-
-	local filename = fn_prop:lower()
-	local matched_id
-	for id, keywords in pairs(id_conf) do
+local function match_filename(filename)
+	local filename_lc = filename:lower()
+	for id, values in pairs(config) do
 		local match = true
-		for _, kw in ipairs(keywords) do
-			if not filename:find(kw) then
+		for _, kw in ipairs(values.keywords) do
+			if not filename_lc:find(kw) then
 				match = false
 				break
 			end
 		end
 		if match then
-			matched_id = id
-			break
+			return id, values
 		end
 	end
-	if matched_id then return matched_id, true
-	else return generate_id(filename), false end
+	return false
+end
+
+local series_id = {}
+
+function series_id.id()
+	local filename = mp.get_property("filename")
+	if not filename then return nil end
+
+	local filename_lc = filename:lower()
+	local id = match_filename(filename_lc)
+	if id then return id, true
+	else return generate_id(filename_lc), false end
 end
 
 return series_id
