@@ -26,7 +26,9 @@ local config = {
 		forvo_extension = "mka",
 		forvo_format = "matroska",
 		forvo_codec = "libopus",
-		forvo_bitrate = "64ki"
+		forvo_bitrate = "64ki",
+		ankiconnect_host = "localhost",
+		ankiconnect_port = 8765
 	}
 }
 

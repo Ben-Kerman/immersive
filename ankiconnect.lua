@@ -1,12 +1,15 @@
+local cfg = require "config"
 local anki = require "anki"
 local http = require "http"
 local mpu = require "mp.utils"
 local msg = require "message"
 local util = require "util"
 
+local ankiconnect_url = string.format("%s:%d", cfg.values.ankiconnect_host, cfg.values.ankiconnect_port)
+
 local function request(action, params)
 	local res = http.post_json{
-		url = "localhost:8765",
+		url = ankiconnect_url,
 		data = mpu.format_json{
 			action = action,
 			params = params,
