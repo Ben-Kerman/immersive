@@ -1,3 +1,4 @@
+local cfg = require "config"
 local mpu = require "mp.utils"
 local msg = require "message"
 
@@ -16,7 +17,7 @@ function helper.format_time(time, hide_ms)
 
 	local units = {"days", "h", "min"}
 	local values = {
-		min = min ~= 0 and min or nil,
+		min = (min ~= 0 or cfg.values.always_show_minutes) and min or nil,
 		h = h ~= 0 and h or nil,
 		days = days ~= 0 and days or nil
 	}
