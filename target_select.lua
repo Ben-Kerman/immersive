@@ -2,6 +2,7 @@ local BasicOverlay = require "basic_overlay"
 local cfg = require "config"
 local DefinitionSelect = require "definition_select"
 local export = require "export"
+local ExportMenu = require "export_menu"
 local Forvo = require "forvo"
 local LineTextSelect = require "line_text_select"
 local Menu = require "menu"
@@ -52,6 +53,12 @@ function TargetSelect:new(data, menu_lvl)
 			default = "f",
 			desc = "Export with selected target words",
 			action = function() ts:finish() end
+		},
+		{
+			id = "export_menu",
+			default = "F",
+			desc = "Export with selected target words using menu",
+			action = function() menu_stack.push(ExportMenu:new(ts.data)) end
 		}
 	}
 

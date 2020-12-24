@@ -56,6 +56,7 @@ local function load_tgt(raw_tgt)
 		deck = raw_tgt.entries.deck,
 		note_type = raw_tgt.entries.note_type,
 		add_mode = "append",
+		note_template = "{{type}}: {{id}}",
 		config = tgt_cfg
 	}
 
