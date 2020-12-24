@@ -1,5 +1,3 @@
-
-
 local config = require "config"
 local templater = require "templater"
 local utf_8 = require "utf_8"

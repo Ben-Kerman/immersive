@@ -2,6 +2,7 @@ local anki = require "anki"
 local http = require "http"
 local mpu = require "mp.utils"
 local msg = require "message"
+local util = require "util"
 
 local function request(action, params)
 	local res = http.post_json{
@@ -101,6 +102,35 @@ end
 
 function ankiconnect.gui_add_cards(fields)
 	return add_note_generic(fields, "guiAddCards", --[[{closeAfterAdding = true}]]nil, "open card GUI")
+end
+
+function ankiconnect.prepare_target(tgt)
+	if not ankiconnect.check() then return false end
+
+	local profiles = ankiconnect.get_profiles()
+	if not profiles or not util.list_find(profiles, tgt.profile) then
+		msg.error("Anki profile '" .. tgt.profile .. "' not found")
+		return false
+	end
+
+	if not ankiconnect.load_profile(tgt.profile) then
+		msg.error("failed to load Anki profile '" .. tgt.profile .. "'")
+		return false
+	end
+
+	local decks = ankiconnect.deck_names()
+	if not decks or not util.list_find(decks, tgt.deck) then
+		msg.error("deck '" .. tgt.deck .. "' not found")
+		return false
+	end
+
+	local note_types = ankiconnect.model_names()
+	if not note_types or not util.list_find(note_types, tgt.note_type) then
+		msg.error("note type '" .. tgt.note_type .. "' not found")
+		return false
+	end
+
+	return true
 end
 
 return ankiconnect

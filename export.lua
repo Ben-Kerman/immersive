@@ -162,7 +162,9 @@ function export.execute(data)
 		fields[name] = replace_field_vars(def, data, audio_filename, image_filename, word_audio_filename, start, stop)
 	end
 
-	ankicon.add_note(fields)
+	if ankicon.prepare_target(tgt) then
+		ankicon.add_note(fields)
+	end
 end
 
 return export
