@@ -127,7 +127,7 @@ end
 
 function SubSelect:start_tgt_sel()
 	if export.verify(self.data, true) then
-		menu_stack.push(TargetSelect:new(self.data))
+		menu_stack.push(TargetSelect:new(self.data, 2))
 	end
 end
 function SubSelect:start_export()

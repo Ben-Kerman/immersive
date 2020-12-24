@@ -12,7 +12,7 @@ local sys = require "system"
 local TargetSelect = {}
 TargetSelect.__index = TargetSelect
 
-function TargetSelect:new(data)
+function TargetSelect:new(data, menu_lvl)
 	local ts
 
 	local bindings = {
@@ -60,6 +60,7 @@ function TargetSelect:new(data)
 	end
 	ts = setmetatable({
 		data = data,
+		menu_lvl = menu_lvl and menu_lvl or 1,
 		word_overlay = BasicOverlay:new(data.definitions, function(defs, ssa_def)
 			for _, def in ipairs(defs) do
 				table.insert(ssa_def, {
@@ -141,7 +142,9 @@ function TargetSelect:cancel()
 end
 
 function TargetSelect:finish()
-	self:hide()
+	for i = 1, self.menu_lvl do
+		menu_stack.pop()
+	end
 	export.execute(self.data)
 end
 
