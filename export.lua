@@ -126,8 +126,8 @@ function export.execute(data)
 	local tgt_cfg = tgt.config
 	local start, stop, scrot = export.resolve_times(data)
 
-	local audio_filename = anki.generate_filename(series_id.get_id(), tgt_cfg.audio.extension)
-	local image_filename = anki.generate_filename(series_id.get_id(), tgt_cfg.image.extension)
+	local audio_filename = anki.generate_filename(series_id.id(), tgt_cfg.audio.extension)
+	local image_filename = anki.generate_filename(series_id.id(), tgt_cfg.image.extension)
 	encoder.audio(mpu.join_path(anki.media_dir(), audio_filename), start, stop)
 	encoder.image(mpu.join_path(anki.media_dir(), image_filename), scrot)
 	local word_audio_filename = export_word_audio(data)

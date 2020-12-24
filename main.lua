@@ -23,7 +23,7 @@ local msg = require "message"
 local SubSelect = require "sub_select"
 local Subtitle = require "subtitle"
 local sys = require "system"
-local target_select = require "target_select"
+local TargetSelect = require "target_select"
 
 -- forward declaration
 local menu
@@ -104,7 +104,9 @@ end
 local function export_active_line(skip_target_select)
 	local sub_text = helper.check_active_sub()
 	if sub_text then
-		local fn = skip_target_select and export.execute or target_select.begin
+		local fn = skip_target_select and export.execute or function(data)
+			menu_stack.push(TargetSelect:new(data))
+		end
 		fn{
 			subtitles = {
 				Subtitle:new(sub_text,
