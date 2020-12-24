@@ -119,17 +119,17 @@ end
 
 local migaku = {}
 
-function migaku.load(dict_id, config)
+function migaku.load(dict)
 	local start = mp.get_time()
 
 	local data
-	local cache_path = dict_util.cache_path(dict_id)
+	local cache_path = dict_util.cache_path(dict.id)
 	if mpu.file_info(cache_path) then
 		data = dict_util.parse_json_file(cache_path)
-	else data = import(dict_id, config.location) end
+	else data = import(dict.id, dict.config.location) end
 
-	msg.debug(dict_id .. " (Migaku): " .. mp.get_time() - start)
-	return generate_dict_table(config, data)
+	msg.debug(dict.id .. " (Migaku): " .. mp.get_time() - start)
+	return generate_dict_table(dict.config, data)
 end
 
 return migaku

@@ -27,7 +27,7 @@ local function load_dict(index, show_overlay)
 	if cfg.check_required(dict.config, {"location", "type"}) then
 		local status, loader = pcall(require, "dict." .. dict.config.type)
 		if status then
-			dict.table = loader.load(dict.id, dict.config)
+			dict.table = loader.load(dict)
 		else msg.error("unknown dictionary type: " .. dict.config.type) end
 	end
 	if show_overlay then
