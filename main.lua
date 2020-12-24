@@ -41,6 +41,10 @@ local infos = {
 		value = {style = {"menu_info", "unset"}, "no file loaded"}
 	},
 	{
+		name = "Title",
+		value = {style = {"menu_info", "unset"}, "no file loaded"}
+	},
+	{
 		name = "Sub auto-copy",
 		value = autocopy,
 		display = display_bool
@@ -64,14 +68,17 @@ local infos = {
 }
 
 mp.register_event("file-loaded", function()
-	local id, custom = series_id.get_id()
-	if custom then infos[1].value = id
-	else
-		infos[1].value = {
-			style = {"menu_info", "unset"},
-			id and id or "unknown"
-		}
+	local function set_info(info, value, custom)
+		if custom then info.value = value
+		else
+			info.value = {
+				style = {"menu_info", "unset"},
+				value and value or "unknown"
+			}
+		end
 	end
+	set_info(infos[1], series_id.id())
+	set_info(infos[2], series_id.title())
 	menu:redraw()
 end)
 
@@ -91,7 +98,7 @@ local function toggle_autocopy()
 		mp.observe_property("sub-text", "none", copy_active_line)
 	end
 	autocopy = not autocopy
-	infos[2].value = autocopy
+	infos[3].value = autocopy
 	menu:redraw()
 end
 
