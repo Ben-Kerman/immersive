@@ -117,4 +117,31 @@ function anki.generate_filename(series_id, extension)
 	return string.format("%s-%04d.%s", series_id, next_number, extension)
 end
 
+function anki.add_candidates()
+	local ankicon = require "ankiconnect"
+
+	local tgt = anki.active_target("could not get notes to add to")
+	if not tgt then return nil end
+
+	if not ankicon.prepare_target(tgt) then return nil end
+
+	local query = string.format([["deck:%s" "note:%s" is:new]], tgt.deck, tgt.note_type)
+	local card_ids = ankicon.find_cards(query)
+	if not card_ids then return nil end
+	local cards = ankicon.cards_info(card_ids)
+	if not cards then return nil end
+
+	table.sort(cards, function(card_a, card_b)
+		return card_a.due > card_b.due
+	end)
+
+	local note_ids = util.list_unique(util.list_map(cards, function(card)
+		return card.note
+	end))
+	local notes = ankicon.notes_info(note_ids)
+	if not notes then return nil end
+
+	return notes
+end
+
 return anki

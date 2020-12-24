@@ -57,6 +57,24 @@ function ankiconnect.model_field_names(model_name)
 	})
 end
 
+function ankiconnect.notes_info(note_ids)
+	return request("notesInfo", {
+		notes = note_ids
+	})
+end
+
+function ankiconnect.find_cards(query)
+	return request("findCards", {
+		query = query
+	})
+end
+
+function ankiconnect.cards_info(card_ids)
+	return request("cardsInfo", {
+		cards = card_ids
+	})
+end
+
 function ankiconnect.load_profile(profile)
 	return request("loadProfile", {
 		name = profile
