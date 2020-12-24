@@ -69,9 +69,11 @@ function ankiconnect.can_add_note(fields)
 	local tgt = anki.active_target("could not check note")
 	if not tgt then return end
 
-	return request("canAddNotes", {
+	local res = request("canAddNotes", {
 		notes = {make_note(fields, {allowDuplicate = true})}
 	})
+	if not res then return false
+	else return res[1] end
 end
 
 local function add_note_generic(fields, action, options, err_msg)
