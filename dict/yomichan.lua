@@ -243,9 +243,9 @@ end
 
 local yomichan = {}
 
-function yomichan.load(dict)
+function yomichan.load(dict, force_import)
 	local start = mp.get_time()
-	local data = dict_util.generic_load(dict, import)
+	local data = dict_util.generic_load(dict, import, force_import)
 	msg.debug(dict.id .. " (Yomichan): " .. mp.get_time() - start)
 	return generate_dict_table(dict.config, data)
 end

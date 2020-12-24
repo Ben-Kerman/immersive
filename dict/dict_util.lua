@@ -19,13 +19,12 @@ function dict_util.is_imported(dict)
 	return not not mpu.file_info(dict_util.cache_path(dict))
 end
 
-function dict_util.generic_load(dict, import_fn)
-	if dict_util.is_imported(dict) then
+function dict_util.generic_load(dict, import_fn, force_import)
+	if not force_import and dict_util.is_imported(dict) then
 		return helper.parse_json_file(dict_util.cache_path(dict))
 	end
 	return import_fn(dict)
 end
-
 
 function dict_util.create_index(entries, search_term_gen)
 	local function index_insert(index, key, value)

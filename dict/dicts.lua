@@ -1,11 +1,11 @@
 local BasicOverlay = require "basic_overlay"
 local cfg = require "config"
+local dict_util = require "dict.dict_util"
 local kbds = require "key_bindings"
 local menu_stack = require "menu_stack"
 local msg = require "message"
 local util = require "util"
 
-local loaded = false
 local dict_list = util.list_map(cfg.load_subcfg("dictionaries"), function(dict_cfg)
 	return {id = dict_cfg.name, config = dict_cfg.entries, table = nil}
 end)
@@ -15,9 +15,8 @@ local function loading_overlay(id)
 	return BasicOverlay:new("initializing dictionary (" .. id .. ")...", nil, "info_overlay")
 end
 
-local function load_dict(index, show_overlay)
-	local dict = dict_list[index]
-	if dict.table then return dict end
+local function load_dict(dict, show_overlay, force_import)
+	if not force_import and dict.table then return dict end
 
 	kbds.disable_global()
 	if show_overlay then
@@ -27,7 +26,7 @@ local function load_dict(index, show_overlay)
 	if cfg.check_required(dict.config, {"location", "type"}) then
 		local status, loader = pcall(require, "dict." .. dict.config.type)
 		if status then
-			dict.table = loader.load(dict)
+			dict.table = loader.load(dict, force_import)
 		else msg.error("unknown dictionary type: " .. dict.config.type) end
 	end
 	if show_overlay then
@@ -39,10 +38,9 @@ end
 
 if not cfg.values.lazy_load_dicts then
 	mp.register_event("start-file", function()
-		for i = 1, #dict_list do
-			load_dict(i, cfg.values.startup_dict_overlay)
+		for _, dict in ipairs(dict_list) do
+			load_dict(dict, cfg.values.startup_dict_overlay)
 		end
-		loaded = true
 	end)
 end
 
@@ -56,11 +54,19 @@ function dicts.active(block_loading)
 	end
 
 	if block_loading then return dict
-	else return load_dict(active_dict_index, true) end
+	else return load_dict(dict, true) end
 end
 
 function dicts.switch(dir)
 	active_dict_index = util.num_limit(active_dict_index + dir, 1, #dict_list)
+end
+
+function dicts.reimport_all()
+	for _, dict in ipairs(dict_list) do
+		if dict_util.is_imported(dict) then
+			load_dict(dict, true, true)
+		end
+	end
 end
 
 return dicts

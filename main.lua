@@ -193,6 +193,12 @@ local bindings = {
 		action = function() dicts.switch(1); menu:redraw() end
 	},
 	{
+		id = "reimport_dicts",
+		default = "r",
+		desc = "Reimport all imported dictionaries",
+		action = function() dicts.reimport_all() end
+	},
+	{
 		id = "close_menu",
 		default = "ESC",
 		desc = "Go back to previous menu",
