@@ -28,6 +28,16 @@ end
 
 local ankiconnect = {}
 
+function ankiconnect.check()
+	local res = request("version")
+	if res and res >= 6 then
+		return true
+	elseif res and res < 6 then
+		msg.error("wrong AnkiConnect API version")
+	else msg.error("AnkiConnect not available") end
+	return false
+end
+
 function ankiconnect.get_profiles()
 	return request("getProfiles")
 end
