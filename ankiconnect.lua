@@ -23,7 +23,7 @@ local function request(action, params)
 		if params then
 			msg.debug("params: " .. mpu.format_json(params))
 		end
-		return nil
+		return false
 	else return res.result end
 end
 
@@ -121,6 +121,16 @@ end
 function ankiconnect.gui_add_cards(fields)
 	-- if closeAfterAdding == true, the note type isn't set correctly
 	return add_note_generic(fields, "guiAddCards", --[[{closeAfterAdding = true}]]nil, "open card GUI")
+end
+
+function ankiconnect.update_note_fields(note_id, fields)
+	local res = request("updateNoteFields", {
+		note = {
+			id = note_id,
+			fields = fields
+		}
+	})
+	if res ~= false then return true end
 end
 
 function ankiconnect.prepare_target(tgt)

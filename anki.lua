@@ -55,6 +55,7 @@ local function load_tgt(raw_tgt)
 		profile = raw_tgt.entries.profile,
 		deck = raw_tgt.entries.deck,
 		note_type = raw_tgt.entries.note_type,
+		add_mode = "append",
 		config = tgt_cfg
 	}
 
@@ -63,8 +64,14 @@ local function load_tgt(raw_tgt)
 			tgt_cfg.anki.fields[key:sub(7)] = value
 		elseif key == "anki/tags" then
 			tgt_cfg.anki.tags = util.string_split(value)
-		elseif not util.list_find(required_opts, key) then
+		elseif string.find(key, "/") then
 			cfg.insert_nested(tgt_cfg, util.string_split(key, "/"), value, true)
+		elseif not util.list_find(required_opts, key) then
+			if key == "add_mode" then
+				if util.list_find({"prepend", "append", "overwrite"}, value) then
+					tgt.add_mode = value
+				else msg.warn("unkown Anki add mode ('" .. value .. "'), using 'append'") end
+			end
 		end
 	end
 	table.insert(anki.targets, tgt)

@@ -187,4 +187,33 @@ function export.execute_gui(data)
 	end
 end
 
+local function combine_fields(note, fields, tgt)
+	local new_fields = {}
+	for name, content in pairs(note.fields) do
+		if fields[name] then
+			local new_value = fields[name]
+			if tgt.add_mode == "append" then
+				new_value = content.value .. fields[name]
+			elseif tgt.add_mode == "prepend" then
+				new_value = fields[name] .. content.value
+			elseif tgt.add_mode == "overwrite" then
+				new_value = fields[name]
+			else new_value = content.value end
+			new_fields[name] = new_value
+		else new_fields[name] = content.value end
+	end
+	return new_fields
+end
+
+function export.execute_add(data, note)
+	local fields, tgt = prepare_fields(data)
+	if fields then
+		local new_fields = combine_fields(note, fields, tgt)
+
+		if ankicon.update_note_fields(note.noteId, new_fields) then
+			msg.info("note updated successfully")
+		else msg.warn("note couldn't be updated") end
+	end
+end
+
 return export
