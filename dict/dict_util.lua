@@ -1,3 +1,4 @@
+local helper = require "helper"
 local mpu = require "mp.utils"
 local sys = require "system"
 local utf_8 = require "utf_8"
@@ -5,27 +6,26 @@ local util = require "util"
 
 local dict_util = {}
 
-function dict_util.cache_path(dict_id)
+function dict_util.cache_path(dict)
 	local config_dir =  mp.find_config_file("."):sub(1, -3)
 	local cache_dir = mpu.join_path(config_dir, script_name .. "-dict-cache")
 	if not mpu.file_info(cache_dir) then
 		sys.create_dir(cache_dir)
 	end
-	return mpu.join_path(cache_dir, dict_id .. ".json")
+	return mpu.join_path(cache_dir, dict.id .. ".json")
 end
 
-function dict_util.parse_json_file(path)
-	local file = io.open(path)
-	local data = file:read("*a")
-	file:close()
-	return mpu.parse_json(data)
+function dict_util.is_imported(dict)
+	return not not mpu.file_info(dict_util.cache_path(dict))
 end
 
-function dict_util.write_json_file(path, data)
-	local file = io.open(path, "w")
-	file:write((mpu.format_json(data)))
-	file:close()
+function dict_util.generic_load(dict, import_fn)
+	if dict_util.is_imported(dict) then
+		return helper.parse_json_file(dict_util.cache_path(dict))
+	end
+	return import_fn(dict)
 end
+
 
 function dict_util.create_index(entries, search_term_gen)
 	local function index_insert(index, key, value)

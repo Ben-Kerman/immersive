@@ -1,4 +1,5 @@
 local dict_util = require "dict.dict_util"
+local helper = require "helper"
 local mpu = require "mp.utils"
 local msg = require "message"
 local templater = require "templater"
@@ -23,14 +24,14 @@ local function verify(file)
 	return true
 end
 
-local function import(id, file)
-	local verif_res, err_msg = verify(file)
+local function import(dict)
+	local verif_res, err_msg = verify(dict.config.location)
 	if not verif_res then
-		msg.error("failed to load Migaku dict (" .. id .. "): " .. err_msg)
+		msg.error("failed to load Migaku dict (" .. dict.id .. "): " .. err_msg)
 		return nil
 	end
 
-	local raw_entries = dict_util.parse_json_file(file)
+	local raw_entries = helper.parse_json_file(dict.config.location)
 
 	local entry_map = {}
 	for _, raw_entry in ipairs(raw_entries) do
@@ -72,7 +73,7 @@ local function import(id, file)
 		index = index,
 		start_index = start_index
 	}
-	dict_util.write_json_file(dict_util.cache_path(id), data)
+	helper.write_json_file(dict_util.cache_path(dict), data)
 	return data
 end
 
@@ -121,13 +122,7 @@ local migaku = {}
 
 function migaku.load(dict)
 	local start = mp.get_time()
-
-	local data
-	local cache_path = dict_util.cache_path(dict.id)
-	if mpu.file_info(cache_path) then
-		data = dict_util.parse_json_file(cache_path)
-	else data = import(dict.id, dict.config.location) end
-
+	local data = dict_util.generic_load(dict, import)
 	msg.debug(dict.id .. " (Migaku): " .. mp.get_time() - start)
 	return generate_dict_table(dict.config, data)
 end

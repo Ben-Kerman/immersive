@@ -81,4 +81,17 @@ function helper.short_str(str, len, lf_sub)
 	else return str end
 end
 
+function helper.parse_json_file(path)
+	local file = io.open(path)
+	local data = file:read("*a")
+	file:close()
+	return mpu.parse_json(data)
+end
+
+function helper.write_json_file(path, data)
+	local file = io.open(path, "w")
+	file:write((mpu.format_json(data)))
+	file:close()
+end
+
 return helper

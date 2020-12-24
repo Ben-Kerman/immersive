@@ -1,4 +1,5 @@
 local dict_util = require "dict.dict_util"
+local helper = require "helper"
 local mpu = require "mp.utils"
 local msg = require "message"
 local sys = require "system"
@@ -41,7 +42,7 @@ local function verify(dir)
 		return false, "no index found"
 	end
 
-	local index = dict_util.parse_json_file(mpu.join_path(dir, "index.json"))
+	local index = helper.parse_json_file(mpu.join_path(dir, "index.json"))
 
 	local format = index.format and index.format or index.version
 	if format ~= 3 then
@@ -58,8 +59,8 @@ local function verify(dir)
 	return true, files
 end
 
-local function import(id, dir)
-	local verif_res, files_or_error = verify(dir)
+local function import(dict)
+	local verif_res, files_or_error = verify(dict.config.location)
 	if not verif_res then
 		msg.error("failed to load Yomichan dict (" .. id .. "): " .. files_or_error)
 		return nil
@@ -69,7 +70,7 @@ local function import(id, dir)
 		for _, bank in ipairs(util.list_filter(files_or_error, function(filename)
 			return util.string_starts(filename, prefix)
 		end)) do
-			local bank_data = dict_util.parse_json_file(mpu.join_path(dir, bank))
+			local bank_data = helper.parse_json_file(mpu.join_path(dict.config.location, bank))
 			for _, entry in ipairs(bank_data) do
 				action(entry)
 			end
@@ -171,7 +172,7 @@ local function import(id, dir)
 		index = index,
 		start_index = start_index
 	}
-	dict_util.write_json_file(dict_util.cache_path(id), data)
+	helper.write_json_file(dict_util.cache_path(dict), data)
 	return data
 end
 
@@ -244,13 +245,7 @@ local yomichan = {}
 
 function yomichan.load(dict)
 	local start = mp.get_time()
-
-	local data
-	local cache_path = dict_util.cache_path(dict.id)
-	if mpu.file_info(cache_path) then
-		data = dict_util.parse_json_file(cache_path)
-	else data = import(dict.id, dict.config.location) end
-
+	local data = dict_util.generic_load(dict, import)
 	msg.debug(dict.id .. " (Yomichan): " .. mp.get_time() - start)
 	return generate_dict_table(dict.config, data)
 end
