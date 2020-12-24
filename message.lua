@@ -75,10 +75,12 @@ end
 function message.end_startup()
 	if not started then
 		started = true
-		for _, msg in ipairs(messages) do
-			add_msg_timeout(msg)
+		if #messages ~= 0 then
+			for _, msg in ipairs(messages) do
+				add_msg_timeout(msg)
+			end
+			update_overlay()
 		end
-		update_overlay()
 	end
 end
 
