@@ -46,6 +46,12 @@ function ankiconnect.model_field_names(model_name)
 	})
 end
 
+function ankiconnect.load_profile(profile)
+	return request("loadProfile", {
+		name = profile
+	})
+end
+
 local function make_note(fields, options)
 	local tgt = anki.active_target("could not make note")
 	if not tgt then return end
