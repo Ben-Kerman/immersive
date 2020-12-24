@@ -1,4 +1,5 @@
 local BasicOverlay = require "basic_overlay"
+local cfg = require "config"
 local DefinitionSelect = require "definition_select"
 local export = require "export"
 local Forvo = require "forvo"
@@ -85,6 +86,11 @@ local function lookup(word, prefix, data)
 end
 
 function TargetSelect:select_target_def(prefix)
+	if cfg.values.max_targets ~= 0 and #self.data.definitions >= cfg.values.max_targets then
+		msg.info("configured target word limit (" .. cfg.values.max_targets .. ") reached")
+		return
+	end
+
 	local selection = self.tgt_word_sel:selection(true)
 	if not selection then return end
 
