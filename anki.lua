@@ -57,6 +57,7 @@ local function load_tgt(raw_tgt)
 		note_type = raw_tgt.entries.note_type,
 		add_mode = "append",
 		note_template = "{{type}}: {{id}}",
+		media_directory = nil,
 		config = tgt_cfg
 	}
 
@@ -72,6 +73,8 @@ local function load_tgt(raw_tgt)
 				if util.list_find({"prepend", "append", "overwrite"}, value) then
 					tgt.add_mode = value
 				else msg.warn("unkown Anki add mode ('" .. value .. "'), using 'append'") end
+			elseif util.list_find({"media_directory"}, key) then
+				tgt[key] = value
 			end
 		end
 	end
@@ -102,15 +105,32 @@ end
 
 function anki.media_dir()
 	local tgt = anki.active_target("could not determine media dir")
-	if not tgt then return end
+	if not tgt then return nil end
 
-	local profile = tgt.profile
-	local profile_dir = mpu.join_path(sys.anki_base_dir, profile)
-	return mpu.join_path(profile_dir, "collection.media")
+	local media_dir
+	if tgt.media_directory then
+		media_dir = tgt.media_directory
+	else
+		local profile = tgt.profile
+		local profile_dir = mpu.join_path(sys.anki_base_dir, profile)
+		media_dir = mpu.join_path(profile_dir, "collection.media")
+	end
+
+	if media_dir then
+		local stat_res = mpu.file_info(media_dir)
+		if stat_res and stat_res.is_dir then
+			return media_dir
+		end
+	end
+	msg.error("media dir doesn't exist or is not a directory")
+	return nil
 end
 
 function anki.generate_filename(series_id, extension)
-	local files = sys.list_files(anki.media_dir())
+	local media_dir = anki.media_dir()
+	if not media_dir then return nil end
+
+	local files = sys.list_files(media_dir)
 	local existing = util.list_filter(files, function(file)
 		return util.string_starts(file, series_id) and file:match("%." .. extension .. "$")
 	end)

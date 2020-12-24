@@ -73,13 +73,14 @@ local function replace_field_vars(field_def, data, audio_file, image_file, word_
 end
 
 local function export_word_audio(data)
-	if data.word_audio_file then
+	local media_dir = anki.media_dir()
+	if data.word_audio_file and media_dir then
 		local src_path = data.word_audio_file.path
 		local base_fn = string.format("%s-%s.", cfg.values.forvo_prefix, data.word_audio_file.word)
 
 		local function check_file(extension, action)
 			local full_fn = base_fn .. extension
-			local tgt_path = mpu.join_path(anki.media_dir(), full_fn)
+			local tgt_path = mpu.join_path(media_dir, full_fn)
 			if not mpu.file_info(tgt_path) then
 				action(tgt_path)
 			else msg.info("word audio file " .. full_fn .. " already exists") end
@@ -147,7 +148,8 @@ local function prepare_fields(data)
 	local tgt = anki.active_target("could not execute export")
 	if not tgt then return end
 
-	if not ankicon.prepare_target(tgt) then
+	local media_dir = anki.media_dir()
+	if not media_dir or not ankicon.prepare_target(tgt) then
 		return nil
 	end
 
@@ -156,8 +158,8 @@ local function prepare_fields(data)
 
 	local audio_filename = anki.generate_filename(series_id.id(), tgt_cfg.audio.extension)
 	local image_filename = anki.generate_filename(series_id.id(), tgt_cfg.image.extension)
-	encoder.audio(mpu.join_path(anki.media_dir(), audio_filename), start, stop)
-	encoder.image(mpu.join_path(anki.media_dir(), image_filename), scrot)
+	encoder.audio(mpu.join_path(media_dir, audio_filename), start, stop)
+	encoder.image(mpu.join_path(media_dir, image_filename), scrot)
 	local word_audio_filename = export_word_audio(data)
 
 	local fields = {}
@@ -169,6 +171,8 @@ local function prepare_fields(data)
 end
 
 local function fill_first_field(fields, tgt, ignore_nil)
+	if not fields then return end
+
 	local field_names = ankicon.model_field_names(tgt.note_type)
 	local first_field = fields[field_names[1]]
 	if (not first_field and not ignore_nil) or (first_field and #first_field == 0) then
