@@ -1,4 +1,5 @@
 local cfg = require "config"
+local msg = require "message"
 local util = require "util"
 
 local config = (function()
@@ -38,6 +39,7 @@ local function add_internal(bindings, global)
 			local key, id = params_for(binding, bindings.group)
 			local flags = binding.repeatable and {repeatable = true} or nil
 
+			msg.trace("key add " .. id .. " " .. key)
 			add_fn(key, id, binding.action, flags)
 		end
 	end
@@ -56,6 +58,8 @@ local function remove_internal(bindings, global)
 	for _, binding in ipairs(bindings) do
 		if not not binding.global == global then
 			local _, id = params_for(binding, bindings.group)
+
+			msg.trace("key remove " .. id)
 			mp.remove_key_binding(id)
 		end
 	end

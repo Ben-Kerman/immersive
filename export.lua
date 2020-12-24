@@ -107,10 +107,12 @@ end
 local export = {}
 
 function export.verify_times(data, warn)
-	local start = data.times.start and data.times.start >= 0
-	local stop = data.times.stop and data.times.stop >= 0
+	local ts = helper.default_times(data.times)
 
-	if not data.times or not (start or stop) then
+	local start = ts.start >= 0 and ts.start or nil
+	local stop = ts.stop >= 0 and ts.stop or nil
+
+	if not (start or stop) then
 		if warn then msg.warn("Select subtitles or set times manually") end
 		return false
 	end
@@ -130,11 +132,7 @@ function export.verify(data, warn)
 end
 
 function export.resolve_times(data)
-	local ts = util.map_merge({
-		scrot = -1,
-		start = -1,
-		stop = -1
-	}, data.times)
+	local ts = helper.default_times(data.times)
 
 	local start = ts.start < 0 and data.subtitles[1]:real_start() or ts.start
 	local stop = ts.stop < 0 and util.list_max(data.subtitles, function(a, b)

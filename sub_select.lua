@@ -111,11 +111,7 @@ local function new_data()
 	return {
 		level = 1,
 		subtitles = {},
-		times = {
-			scrot = -1,
-			start = -1,
-			stop = -1
-		}
+		times = helper.default_times()
 	}
 end
 

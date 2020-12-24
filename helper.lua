@@ -1,6 +1,7 @@
 local cfg = require "config"
 local mpu = require "mp.utils"
 local msg = require "message"
+local util = require "util"
 
 local helper = {}
 
@@ -58,6 +59,14 @@ function helper.current_path_abs()
 	if working_dir and rel_path then
 		return mpu.join_path(working_dir, rel_path)
 	end
+end
+
+function helper.default_times(times)
+	return util.map_merge({
+		scrot = -1,
+		start = -1,
+		stop = -1
+	}, times)
 end
 
 return helper
