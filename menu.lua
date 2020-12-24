@@ -25,14 +25,14 @@ function Menu:show()
 		self.show_bindings = not self.show_bindings
 		self:redraw()
 	end)
-	kbds.add_bindings(self.bindings)
+	kbds.add(self.bindings)
 	self.enabled = true
 	self:redraw()
 end
 
 function Menu:hide()
 	mp.remove_key_binding("menu-show_help")
-	kbds.remove_bindings(self.bindings)
+	kbds.remove(self.bindings)
 	self.enabled = false
 	self:redraw()
 end

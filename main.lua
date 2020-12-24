@@ -210,6 +210,6 @@ local bindings = {
 
 menu = Menu:new{infos = infos,bindings = bindings}
 
-kbds.create_global_bindings(bindings)
+kbds.create_global(bindings)
 
 msg.end_startup()

@@ -18,7 +18,7 @@ function key_bindings.query_key(id, group)
 	if grp then return grp[id] end
 end
 
-local function params_for_binding(binding, group)
+local function params_for(binding, group)
 	local group = binding.global and "global" or group
 	local cfg_key = key_bindings.query_key(binding.id, group)
 	local key = cfg_key and cfg_key or binding.default
@@ -28,11 +28,11 @@ local function params_for_binding(binding, group)
 	return key, id
 end
 
-local function add_bindings_internal(bindings, global)
+local function add_internal(bindings, global)
 	for i, binding in ipairs(bindings) do
 		if not not binding.global == global then
 			local add_fn = binding.global and mp.add_key_binding or mp.add_forced_key_binding
-			local key, id = params_for_binding(binding, bindings.group)
+			local key, id = params_for(binding, bindings.group)
 			local flags = binding.repeatable and {repeatable = true} or nil
 
 			add_fn(key, id, binding.action, flags)
@@ -40,18 +40,18 @@ local function add_bindings_internal(bindings, global)
 	end
 end
 
-function key_bindings.create_global_bindings(bindings)
-	add_bindings_internal(bindings, true)
+function key_bindings.create_global(bindings)
+	add_internal(bindings, true)
 end
 
-function key_bindings.add_bindings(bindings)
-	add_bindings_internal(bindings, false)
+function key_bindings.add(bindings)
+	add_internal(bindings, false)
 end
 
-function key_bindings.remove_bindings(bindings)
+function key_bindings.remove(bindings)
 	for _, binding in ipairs(bindings) do
 		if not binding.global then
-			local _, id = params_for_binding(binding, bindings.group)
+			local _, id = params_for(binding, bindings.group)
 			mp.remove_key_binding(id)
 		end
 	end

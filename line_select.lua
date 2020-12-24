@@ -54,12 +54,12 @@ function LineSelect:new(lines, line_conv, sel_conv, update_handler, limit, init)
 end
 
 function LineSelect:show()
-	kbds.add_bindings(self.bindings)
+	kbds.add(self.bindings)
 	self:update()
 end
 
 function LineSelect:hide()
-	kbds.remove_bindings(self.bindings)
+	kbds.remove(self.bindings)
 	self._overlay:remove()
 end
 

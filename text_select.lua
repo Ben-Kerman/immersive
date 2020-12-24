@@ -167,12 +167,12 @@ function TextSelect:move_curs_word(dir, change_sel)
 end
 
 function TextSelect:show()
-	kbds.add_bindings(self.bindings)
+	kbds.add(self.bindings)
 	self:update(true)
 end
 
 function TextSelect:hide()
-	kbds.remove_bindings(self.bindings)
+	kbds.remove(self.bindings)
 	self:update(false)
 end
 
