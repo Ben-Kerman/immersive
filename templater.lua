@@ -169,10 +169,10 @@ function templater.render(template, values)
 			table.insert(strings, segment)
 		elseif seg_type == "table" then
 			local value = values[segment.id]
-			if not value then
+			if value == nil then
 				err_msg("substitution '" .. segment.id .. "' missing")
 				table.insert(strings, "|missing substitution|")
-			else
+			elseif value then
 				local data_type = type(value.data)
 				local is_map = data_type == "table"
 				               and value.data[1] == nil

@@ -41,29 +41,32 @@ local function replace_field_vars(field_def, data, audio_file, image_file, word_
 		start_seconds_ms = {data = string.format("%.3f", start)},
 		end_seconds_ms = {data = string.format("%.3f", stop)},
 		end_seconds_ms = {data = string.format("%.3f", stop)},
-		end_seconds_ms = {data = string.format("%.3f", stop)}
+		end_seconds_ms = {data = string.format("%.3f", stop)},
+		-- optional values --
+		word_audio_file = false,
+		word_audio = false,
+		sentences = false,
+		word = false,
+		definitions = false
 	}
 	if word_audio_filename then
 		template_data.word_audio_file = {data = word_audio_filename}
 		template_data.word_audio = {
 			data = anki_sound_tag(word_audio_filename)
 		}
-	else template_data.word_audio = {data = ""} end
+	end
 	if data.subtitles and #data.subtitles ~= 0 then
 		template_data.sentences = {
 			data = util.list_map(data.subtitles, function(sub) return sub.text end),
 			sep = "<br>"
 		}
-	else template_data.sentences = {data = "<i>placeholder</i>"} end
+	end
 	if data.definitions and #data.definitions ~= 0 then
 		template_data.word = data.definitions[1].word
 		template_data.definitions = {
 			data = util.list_map(data.definitions, function(def) return def.definition end),
 			sep = "<br>"
 		}
-	else
-		template_data.word = {data = ""}
-		template_data.definitions = {data = ""}
 	end
 	return templater.render(field_def, template_data)
 end
