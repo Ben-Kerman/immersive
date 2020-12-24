@@ -14,7 +14,7 @@ end
 
 local config = {
 	values = {
-		lazy_load_dicts = false,
+		lazy_load_dicts = true,
 		startup_dict_overlay = true,
 		max_targets = 1,
 		quick_def_template = "{{readings:::・}}{{variants:【:】:・}}: {{definitions:::; }}",
