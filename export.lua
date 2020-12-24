@@ -2,6 +2,7 @@ local anki = require "anki"
 local ankicon = require "ankiconnect"
 local cfg = require "config"
 local encoder = require "encoder"
+local helper = require "helper"
 local mpu = require "mp.utils"
 local msg = require "message"
 local series_id = require "series_id"
@@ -17,12 +18,33 @@ local function anki_image_tag(filename)
 	return string.format([[<img src="%s">]], filename)
 end
 
-local function replace_field_vars(field_def, data, audio_file, image_file, word_audio_filename)
+local function replace_field_vars(field_def, data, audio_file, image_file, word_audio_filename, start, stop)
+	local abs_path = helper.current_path_abs()
+	local _, filename = mpu.split_path(abs_path)
+
 	local template_data = {
+		-- exported files --
+		audio_file = {data = audio_file},
+		image_file = {data = image_file},
 		audio = {data = anki_sound_tag(audio_file)},
-		image = {data = anki_image_tag(image_file)}
+		image = {data = anki_image_tag(image_file)},
+		-- current file --
+		path = {data = abs_path},
+		filename = {data = filename},
+		-- times --
+		start = {data = helper.format_time(start, true)},
+		["end"] = {data = helper.format_time(stop, true)},
+		start_ms = {data = helper.format_time(start)},
+		end_ms = {data = helper.format_time(stop)},
+		start_seconds = {data = string.format("%.0f", math.floor(start))},
+		end_seconds = {data = string.format("%.0f", math.floor(stop))},
+		start_seconds_ms = {data = string.format("%.3f", start)},
+		end_seconds_ms = {data = string.format("%.3f", stop)},
+		end_seconds_ms = {data = string.format("%.3f", stop)},
+		end_seconds_ms = {data = string.format("%.3f", stop)}
 	}
 	if word_audio_filename then
+		template_data.word_audio_file = {data = word_audio_filename}
 		template_data.word_audio = {
 			data = anki_sound_tag(word_audio_filename)
 		}
@@ -134,7 +156,7 @@ function export.execute(data)
 
 	local fields = {}
 	for name, def in pairs(tgt_cfg.anki.fields) do
-		fields[name] = replace_field_vars(def, data, audio_filename, image_filename, word_audio_filename)
+		fields[name] = replace_field_vars(def, data, audio_filename, image_filename, word_audio_filename, start, stop)
 	end
 
 	ankicon.add_note(fields)
