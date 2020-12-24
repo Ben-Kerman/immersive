@@ -1,4 +1,5 @@
 local cfg = require "config"
+local util = require "util"
 
 local config = (function()
 	local config = {}
@@ -9,6 +10,8 @@ local config = (function()
 	config.global = raw_cfg.global
 	return config
 end)()
+
+local global_bindings = {}
 
 local key_bindings = {}
 
@@ -42,19 +45,32 @@ end
 
 function key_bindings.create_global(bindings)
 	add_internal(bindings, true)
+	util.list_append(global_bindings, bindings, true)
 end
 
 function key_bindings.add(bindings)
 	add_internal(bindings, false)
 end
 
-function key_bindings.remove(bindings)
+local function remove_internal(bindings, global)
 	for _, binding in ipairs(bindings) do
-		if not binding.global then
+		if not not binding.global == global then
 			local _, id = params_for(binding, bindings.group)
 			mp.remove_key_binding(id)
 		end
 	end
+end
+
+function key_bindings.disable_global()
+	remove_internal(global_bindings, true)
+end
+
+function key_bindings.enable_global()
+	add_internal(global_bindings, true)
+end
+
+function key_bindings.remove(bindings)
+	remove_internal(bindings, false)
 end
 
 return key_bindings
