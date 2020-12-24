@@ -188,20 +188,20 @@ local function pop_menus(data)
 end
 
 function export.execute(data)
-	pop_menus(data)
 	local fields = fill_first_field(prepare_fields(data))
 	if fields then
 		if ankicon.add_note(fields) then
+			pop_menus(data)
 			msg.info("note added successfully")
 		else msg.warn("note couldn't be added") end
 	end
 end
 
 function export.execute_gui(data)
-	pop_menus(data)
 	local fields = prepare_fields(data)
 	if fields then
 		if ankicon.gui_add_cards(fields) then
+			pop_menus(data)
 			msg.info("'Add' GUI opened")
 		else msg.warn("'Add' GUI couldn't be opened") end
 	end
@@ -226,13 +226,13 @@ local function combine_fields(note, fields, tgt)
 end
 
 function export.execute_add(data, note)
-	pop_menus(data)
 	local fields, tgt = prepare_fields(data)
 	local updated_note = ankicon.notes_info({note.noteId})[1]
 	if fields and updated_note then
 		local new_fields = fill_first_field(combine_fields(updated_note, fields, tgt), tgt, true)
 
 		if ankicon.update_note_fields(updated_note.noteId, new_fields) then
+			pop_menus(data)
 			msg.info("note updated successfully")
 		else msg.warn("note couldn't be updated") end
 	end
