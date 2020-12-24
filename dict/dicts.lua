@@ -1,5 +1,6 @@
 local BasicOverlay = require "basic_overlay"
 local cfg = require "config"
+local kbds = require "key_bindings"
 local menu_stack = require "menu_stack"
 local msg = require "message"
 local util = require "util"
@@ -18,6 +19,7 @@ local function load_dict(index, show_overlay)
 	local dict = dict_list[index]
 	if dict.table then return dict end
 
+	kbds.disable_global()
 	if show_overlay then
 		menu_stack.push(loading_overlay(dict.id))
 	end
@@ -31,6 +33,7 @@ local function load_dict(index, show_overlay)
 	if show_overlay then
 		menu_stack.pop()
 	end
+	kbds.enable_global()
 	return dict
 end
 
