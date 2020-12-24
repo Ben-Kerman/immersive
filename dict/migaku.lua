@@ -86,7 +86,7 @@ local function generate_dict_table(config, data)
 				id = id,
 				terms = entry.trms,
 				alts = entry.alts,
-				defs = {util.string_trim(entry.def:gsub("<br>", "\n"))}
+				defs = {util.string_trim((entry.def:gsub("<br>", "\n")))}
 			}
 		end)
 	end

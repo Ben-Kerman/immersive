@@ -4,6 +4,7 @@ local DefinitionSelect = require "definition_select"
 local export = require "export"
 local ExportMenu = require "export_menu"
 local Forvo = require "forvo"
+local helper = require "helper"
 local LineTextSelect = require "line_text_select"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
@@ -83,8 +84,8 @@ function TargetSelect:new(data, menu_lvl)
 	return ts
 end
 
-local function sel_conv(sub) return sub.text:gsub("\n", "⏎") end
-local function line_conv(sub) return sub:short() end
+local function sel_conv(sub) return (sub.text:gsub("\n", "\226\128\139")) end
+local function line_conv(sub) return helper.short_str(sub.text, 24, "\226\128\139") end
 function TargetSelect:start_tgt_sel(init_line)
 	self.tgt_word_sel = LineTextSelect:new(self.data.subtitles, line_conv, sel_conv, 9, init_line)
 	self.tgt_word_sel:show()

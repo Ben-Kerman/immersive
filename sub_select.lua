@@ -231,7 +231,7 @@ function SubSelect:new()
 		for _, sub in ipairs(data) do
 			table.insert(ssa_definition, {
 				newline = true,
-				sub:short()
+				helper.short_str(sub.text, 16, "⏎")
 			})
 		end
 	end, "selection_overlay")

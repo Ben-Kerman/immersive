@@ -1,6 +1,7 @@
 local cfg = require "config"
 local mpu = require "mp.utils"
 local msg = require "message"
+local utf_8 = require "utf_8"
 local util = require "util"
 
 local helper = {}
@@ -67,6 +68,17 @@ function helper.default_times(times)
 		start = -1,
 		stop = -1
 	}, times)
+end
+
+function helper.short_str(str, len, lf_sub)
+	if lf_sub then
+		str = str:gsub("\n", lf_sub)
+	end
+	local cps = utf_8.codepoints(str)
+
+	if #cps > len then
+		return utf_8.string(util.list_range(cps, 1, len - 1)) .. "…"
+	else return str end
 end
 
 return helper

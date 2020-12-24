@@ -166,7 +166,8 @@ local function inject_tag(list, data, closing, base)
 end
 
 local function escape(str)
-	return (str:gsub("\n", "\\N"))
+	return (str:gsub("\n", "\\N")
+	           :gsub("\226\128\139", "\\n")) -- zero width space
 end
 
 local ssa = {}

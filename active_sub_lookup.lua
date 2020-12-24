@@ -30,7 +30,7 @@ function ActiveSubLookup:new()
 	}
 
 	asl = setmetatable({
-		txt_sel = TextSelect:new(sub_text),
+		txt_sel = TextSelect:new((sub_text:gsub("\n", "\226\128\139"))),
 		menu = Menu:new{bindings = bindings}
 	}, ActiveSubLookup)
 	return asl
