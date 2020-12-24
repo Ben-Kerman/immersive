@@ -169,8 +169,17 @@ local function prepare_fields(data)
 	return fields, tgt
 end
 
+local function fill_first_field(fields, tgt, ignore_nil)
+	local field_names = ankicon.model_field_names(tgt.note_type)
+	local first_field = fields[field_names[1]]
+	if (not first_field and not ignore_nil) or (first_field and #first_field == 0) then
+		fields[field_names[1]] = "<i>placeholder</i>"
+	end
+	return fields
+end
+
 function export.execute(data)
-	local fields = prepare_fields(data)
+	local fields = fill_first_field(prepare_fields(data))
 	if fields then
 		if ankicon.add_note(fields) then
 			msg.info("note added successfully")
@@ -208,7 +217,7 @@ end
 function export.execute_add(data, note)
 	local fields, tgt = prepare_fields(data)
 	if fields then
-		local new_fields = combine_fields(note, fields, tgt)
+		local new_fields = fill_first_field(combine_fields(note, fields, tgt), tgt, true)
 
 		if ankicon.update_note_fields(note.noteId, new_fields) then
 			msg.info("note updated successfully")
