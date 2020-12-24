@@ -5,12 +5,12 @@ local function char(str, pos)
 	return str:sub(pos, pos)
 end
 
-local msg_fmt = "template error: %s; position: %d; template: %s"
+local msg_fmt = "template: %s; position: %d; template: %s"
 local function err_msg(msg_txt, pos, str)
 	local msg_str
 	if pos then
 		msg_str = string.format(msg_fmt, msg_txt, pos, str)
-	else msg_str = "template error: " .. msg_txt end
+	else msg_str = "template: " .. msg_txt end
 	msg.error(msg_str)
 end
 

@@ -82,7 +82,7 @@ local function export_word_audio(data)
 			local tgt_path = mpu.join_path(anki.media_dir(), full_fn)
 			if not mpu.file_info(tgt_path) then
 				action(tgt_path)
-			else msg.info("Word audio file " .. full_fn .. " already exists") end
+			else msg.info("word audio file " .. full_fn .. " already exists") end
 			return full_fn
 		end
 
@@ -113,12 +113,12 @@ function export.verify_times(data, warn)
 	local stop = ts.stop >= 0 and ts.stop or nil
 
 	if not (start or stop) then
-		if warn then msg.warn("Select subtitles or set times manually") end
+		if warn then msg.warn("select subtitles or set times manually") end
 		return false
 	end
 
 	if not (start and stop) then
-		if warn then msg.warn("Start or end time missing") end
+		if warn then msg.warn("start or end time missing") end
 		return false
 	end
 	return true

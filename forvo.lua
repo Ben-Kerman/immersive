@@ -49,7 +49,7 @@ local function audio_request(url, target_path, callback)
 	}
 	local function handle_http_res(res)
 		if res then return target_path
-		else msg.error("Failed to load Forvo audio") end
+		else msg.error("failed to load Forvo audio") end
 	end
 	return http.get_async(http_params, function(res)
 		callback(handle_http_res(res))
@@ -62,7 +62,7 @@ local function html_request(url, callback)
 		headers = html_headers
 	}, function(res)
 		if not res then
-			msg.error("Failed to load Forvo website")
+			msg.error("failed to load Forvo website")
 			return
 		end
 		callback(res)

@@ -21,7 +21,7 @@ function SubSelect:select_sub()
 	local sub_delay = mp.get_property_number("sub-delay")
 
 	if sub_text == nil or sub_text == "" then
-		msg.info("No active subtitle line, nothing selected")
+		msg.info("no active subtitle line, nothing selected")
 	else
 		local sub = Subtitle:new(sub_text, sub_start, sub_end, sub_delay)
 

@@ -50,7 +50,7 @@ function helper.check_active_sub()
 	local sub_text = mp.get_property("sub-text")
 	if sub_text and sub_text ~= "" then
 		return sub_text
-	else msg.info("No active subtitle line") end
+	else msg.info("no active subtitle line") end
 end
 
 function helper.current_path_abs()

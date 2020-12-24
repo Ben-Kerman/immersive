@@ -45,7 +45,7 @@ end
 
 local function handle_process_result(success, res, err)
 	if not res then
-		msg.error("Failed to run subprocess: '" .. err .. "'; arguments: " .. mpu.format_json(args))
+		msg.error("failed to run subprocess: '" .. err .. "'; arguments: " .. mpu.format_json(args))
 		return
 	end
 	return res.status, res.stdout, res.error_string, res.killed_by_us

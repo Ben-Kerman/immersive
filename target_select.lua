@@ -109,7 +109,7 @@ end
 function TargetSelect:clipboard_lookup()
 	local word = sys.clipboard_read()
 	if not word then
-		msg.error("Failed to get clipboard content")
+		msg.error("failed to get clipboard content")
 		return
 	end
 
@@ -118,7 +118,7 @@ end
 
 function TargetSelect:delete_line()
 	if #self.data.subtitles == 1 and not export.verify_times(self.data) then
-		msg.warn("Can't delete last sub if times aren't set")
+		msg.warn("can't delete last sub if times aren't set")
 	else self.tgt_word_sel:delete_sel() end
 end
 
@@ -126,7 +126,7 @@ function TargetSelect:add_word_audio()
 	if #self.data.definitions ~= 0 then
 		local word = self.data.definitions[#self.data.definitions].word
 		menu_stack.push(Forvo:new(self.data, word))
-	else msg.info("No target word selected") end
+	else msg.info("no target word selected") end
 end
 
 function TargetSelect:show()

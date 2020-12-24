@@ -14,7 +14,7 @@ function DefinitionSelect:new(word, prefix, data)
 	local result = (prefix and dict.look_up_start or dict.look_up_exact)(word)
 
 	if not result then
-		msg.info("No definitions found")
+		msg.info("no definitions found")
 		return
 	end
 

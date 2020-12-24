@@ -178,7 +178,7 @@ end
 
 function TextSelect:selection(force)
 	if force and self:sel_len() == 0 then
-		msg.info("No text selected")
+		msg.info("no text selected")
 		return nil
 	end
 	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
