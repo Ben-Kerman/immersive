@@ -25,14 +25,11 @@ local function update_overlay()
 		full_style = true
 	}
 	for _, msg in ipairs(messages) do
-		local _, index = util.list_find(levels, msg.level)
-		if index and index <= 4 then
-			table.insert(ssa_definition, {
-				style = {"messages", msg.level},
-				newline = true,
-				msg.text
-			})
-		end
+		table.insert(ssa_definition, {
+			style = {"messages", msg.level},
+			newline = true,
+			msg.text
+		})
 	end
 	overlay.data = ssa.generate(ssa_definition)
 	overlay:update()
@@ -56,11 +53,14 @@ local function add_msg(level, text, duration)
 		duration = duration and duration or durations[level],
 		text = text
 	}
-	table.insert(messages, msg)
 
-	if started then
-		add_msg_timeout(msg)
-		update_overlay()
+	local _, index = util.list_find(levels, msg.level)
+	if index and index <= 4 then
+		table.insert(messages, msg)
+		if started then
+			add_msg_timeout(msg)
+			update_overlay()
+		end
 	end
 end
 
