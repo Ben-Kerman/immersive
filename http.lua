@@ -1,3 +1,4 @@
+local mpu = require "mp.utils"
 local msg = require "message"
 local sys = require "system"
 
@@ -65,7 +66,7 @@ end
 
 function http.post_json(params)
 	params.data_type = "application/json; charset=UTF-8"
-	return http.post(params)
+	return mpu.parse_json(http.post(params))
 end
 
 function http.get(params)
