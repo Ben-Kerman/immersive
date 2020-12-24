@@ -163,7 +163,9 @@ function export.execute(data)
 	end
 
 	if ankicon.prepare_target(tgt) then
-		ankicon.add_note(fields)
+		if not ankicon.add_note(fields) then
+			msg.warn("note wasn't added")
+		end
 	end
 end
 

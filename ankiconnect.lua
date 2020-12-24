@@ -101,6 +101,7 @@ function ankiconnect.add_note(fields)
 end
 
 function ankiconnect.gui_add_cards(fields)
+	-- if closeAfterAdding == true, the note type isn't set correctly
 	return add_note_generic(fields, "guiAddCards", --[[{closeAfterAdding = true}]]nil, "open card GUI")
 end
 
