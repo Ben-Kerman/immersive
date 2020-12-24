@@ -73,10 +73,34 @@ function util.list_map(list, mapper)
 	return res
 end
 
+function util.list_flat_map(list, mapper)
+	if not mapper then
+		mapper = function(val) return val end
+	end
+
+	local res = {}
+	for i, elem in ipairs(list) do
+		for _, map_elem in ipairs(mapper(elem, i)) do
+			table.insert(res, map_elem)
+		end
+	end
+	return res
+end
+
 function util.list_reverse(list)
 	local res = {}
 	for i = #list, 1, -1 do
 		table.insert(res, list[i])
+	end
+	return res
+end
+
+function util.list_unique(list)
+	local res = {}
+	for _, elem in ipairs(list) do
+		if not util.list_find(res, elem) then
+			table.insert(res, elem)
+		end
 	end
 	return res
 end
