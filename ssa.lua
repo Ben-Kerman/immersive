@@ -83,19 +83,25 @@ local function get_defaults()
 		},
 		line_select = {
 			base = {},
-			selection = {bold = true}
+			selection = {
+				bold = true,
+				primary_color = "FFD0D0"
+			}
 		},
 		text_select = {
 			base = {},
-			selection = {underline = true}
+			selection = {primary_color = "FF8080"}
+		},
+		word_audio_select = {
+			unloaded = {primary_color = "808080"},
+			loading = {primary_color = "8080FF"},
+			loaded = {}
 		},
 		selection_overlay = {
 			base = {align = 3}
 		},
-		word_audio_select = {
-			unloaded = {primary_color = "808080"},
-			loading = {primary_color = "FFD0D0"},
-			loaded = {}
+		info_overlay = {
+			base = {align = 1}
 		}
 	}
 end

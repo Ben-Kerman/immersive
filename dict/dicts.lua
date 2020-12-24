@@ -12,7 +12,7 @@ end)
 local active_dict_index = 1
 
 local function loading_overlay(id)
-	return BasicOverlay:new("initializing dictionary (" .. id .. ")...", nil, "line_select")
+	return BasicOverlay:new("initializing dictionary (" .. id .. ")...", nil, "info_overlay")
 end
 
 local function load_dict(index, show_overlay)

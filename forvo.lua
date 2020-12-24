@@ -208,7 +208,7 @@ function Forvo:new(data, word)
 		data = data,
 		word = word,
 		prns = {},
-		loading_overlay = BasicOverlay:new("Loading Forvo data...", nil, "line_select"),
+		loading_overlay = BasicOverlay:new("Loading Forvo data...", nil, "info_overlay"),
 		menu = Menu:new{bindings = bindings}
 	}, Forvo)
 
