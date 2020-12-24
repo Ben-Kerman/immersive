@@ -35,19 +35,30 @@ local function display_bool(val)
 	else return "disabled" end
 end
 
+local function get_id_title(fn_name)
+	local value, custom = series_id[fn_name]()
+	if custom then return value
+	else
+		return {
+			style = {"menu_info", "unset"},
+			value and value or "unknown"
+		}
+	end
+end
+
 local infos = {
 	{
 		name = "Series ID",
-		value = {style = {"menu_info", "unset"}, "no file loaded"}
+		display = function() return get_id_title("id") end
 	},
 	{
 		name = "Title",
-		value = {style = {"menu_info", "unset"}, "no file loaded"}
+		display = function() return get_id_title("title") end
 	},
 	{
 		name = "Sub auto-copy",
 		value = autocopy,
-		display = display_bool
+		display = function() return display_bool(autocopy) end
 	},
 	{
 		name = "Anki target",
@@ -68,17 +79,6 @@ local infos = {
 }
 
 mp.register_event("file-loaded", function()
-	local function set_info(info, value, custom)
-		if custom then info.value = value
-		else
-			info.value = {
-				style = {"menu_info", "unset"},
-				value and value or "unknown"
-			}
-		end
-	end
-	set_info(infos[1], series_id.id())
-	set_info(infos[2], series_id.title())
 	menu:redraw()
 end)
 
@@ -98,7 +98,6 @@ local function toggle_autocopy()
 		mp.observe_property("sub-text", "none", copy_active_line)
 	end
 	autocopy = not autocopy
-	infos[3].value = autocopy
 	menu:redraw()
 end
 
