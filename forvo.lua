@@ -120,7 +120,7 @@ function Pronunciation:load_audio(callback)
 			callback()
 		end)
 		table.insert(self.menu.requests, req)
-	end
+	else callback() end
 end
 
 function Pronunciation:play()
