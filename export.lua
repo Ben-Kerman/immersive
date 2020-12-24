@@ -228,10 +228,11 @@ end
 function export.execute_add(data, note)
 	pop_menus(data)
 	local fields, tgt = prepare_fields(data)
-	if fields then
-		local new_fields = fill_first_field(combine_fields(note, fields, tgt), tgt, true)
+	local updated_note = ankicon.notes_info({note.noteId})[1]
+	if fields and updated_note then
+		local new_fields = fill_first_field(combine_fields(updated_note, fields, tgt), tgt, true)
 
-		if ankicon.update_note_fields(note.noteId, new_fields) then
+		if ankicon.update_note_fields(updated_note.noteId, new_fields) then
 			msg.info("note updated successfully")
 		else msg.warn("note couldn't be updated") end
 	end
