@@ -15,6 +15,7 @@ end
 local config = {
 	values = {
 		lazy_load_dicts = false,
+		startup_dict_overlay = true,
 		quick_def_template = "{{readings:::・}}{{variants:【:】:・}}: {{definitions:::; }}",
 		forvo_language = "ja",
 		forvo_preload_audio = false,

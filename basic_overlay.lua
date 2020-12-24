@@ -39,4 +39,8 @@ function BasicOverlay:hide()
 	self.overlay:remove()
 end
 
+function BasicOverlay:cancel()
+	self:hide()
+end
+
 return BasicOverlay

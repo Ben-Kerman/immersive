@@ -240,7 +240,7 @@ function yomichan.load(dict_id, config)
 		data = dict_util.parse_json_file(cache_path)
 	else data = import(dict_id, config.location) end
 
-	msg.debug(dict_id .. "(Yomichan): " .. mp.get_time() - start)
+	msg.debug(dict_id .. " (Yomichan): " .. mp.get_time() - start)
 	return generate_dict_table(config, data)
 end
 
