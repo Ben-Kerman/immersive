@@ -4,6 +4,8 @@ local msg = require "message"
 local sys = require "system"
 local util = require "util"
 
+local default_qdef_template = "{{readings:::・}}{{variants:【:】:・}}: {{definitions:::; }}"
+
 local function list_search_terms(entry)
 	local search_term_map = {}
 	for _, sub_entry in ipairs(entry) do
@@ -209,6 +211,7 @@ local function generate_dict_table(config, data)
 	end
 
 	return {
+		quick_def_template = config.quick_def_template and config.quick_def_template or default_qdef_template,
 		look_up_exact = function(term)
 			return export_entries(data.index[term])
 		end,

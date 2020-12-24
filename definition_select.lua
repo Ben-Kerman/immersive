@@ -6,14 +6,6 @@ local menu_stack = require "menu_stack"
 local msg = require "message"
 local templater = require "templater"
 
-local function def_conv(def)
-	return templater.render(cfg.values.quick_def_template, {
-		readings = {data = def.readings},
-		variants = {data = def.variants},
-		definitions = {data = def.defs}
-	})
-end
-
 local DefinitionSelect = {}
 DefinitionSelect.__index = DefinitionSelect
 
@@ -38,6 +30,14 @@ function DefinitionSelect:new(word, prefix, data)
 		}
 	}
 
+	local function def_conv(def)
+		return templater.render(dict.quick_def_template, {
+			readings = {data = def.readings},
+			variants = {data = def.variants},
+			definitions = {data = def.defs}
+		})
+	end
+
 	ds = setmetatable({
 		_line_select = LineSelect:new(result, def_conv, nil, nil, 5),
 		data = data,
@@ -51,7 +51,7 @@ end
 function DefinitionSelect:finish(word)
 	if self.data then
 		local dict = self.lookup_result.dict
-		local def = dict.get_definition(self._line_select:finish().id)
+		local def = dict.get_definition(self._line_select:selection().id)
 		table.insert(self.data.definitions, def)
 	end
 	menu_stack.pop()

@@ -3,6 +3,8 @@ local mpu = require "mp.utils"
 local msg = require "message"
 local util = require "util"
 
+local default_qdef_template = "{{definitions}}"
+
 local function list_search_terms(entry)
 	return util.list_append(entry.trms, entry.alts)
 end
@@ -89,6 +91,7 @@ local function generate_dict_table(config, data)
 	end
 
 	return {
+		quick_def_template = config.quick_def_template and config.quick_def_template or default_qdef_template,
 		look_up_exact = function(term)
 			return export_entries(data.index[term])
 		end,
