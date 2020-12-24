@@ -43,6 +43,7 @@ function ExportMenu:new(data)
 		})
 	end
 
+	data.level = data.level and (data.level + 1) or 1
 	em = setmetatable({
 		data = data,
 		menu = Menu:new{bindings = bindings}

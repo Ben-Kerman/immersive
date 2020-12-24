@@ -17,9 +17,12 @@ function menu_stack.push(menu)
 	exec_top("show")
 end
 
-function menu_stack.pop()
-	exec_top("cancel")
-	table.remove(stack)
+function menu_stack.pop(count)
+	if not count then count = 1 end
+	for i = 1, count do
+		exec_top("cancel")
+		table.remove(stack)
+	end
 	exec_top("show")
 end
 

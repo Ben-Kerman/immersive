@@ -9,8 +9,9 @@ local NotePicker = {}
 NotePicker.__index = NotePicker
 
 function NotePicker:new(data, notes)
-	local np
+	local ns
 
+	data.level = data.level and (data.level + 1) or 1
 	local bindings = {
 		group = "note_select",
 		{
@@ -18,7 +19,7 @@ function NotePicker:new(data, notes)
 			default = "ENTER",
 			desc = "Confirm selection and export",
 			action = function()
-				export.execute_add(np.data, (np.note_select:selection()))
+				export.execute_add(ns.data, (ns.note_select:selection()))
 			end
 		}
 	}
@@ -36,13 +37,13 @@ function NotePicker:new(data, notes)
 		return templater.render(tgt.note_template, data)
 	end
 
-	np = setmetatable({
+	ns = setmetatable({
 		data = data,
 		notes = notes,
 		note_select = LineSelect:new(notes, note_conv, nil, nil, 9),
 		menu = Menu:new{bindings = bindings}
 	}, NotePicker)
-	return np
+	return ns
 end
 
 function NotePicker:show()

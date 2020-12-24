@@ -3,6 +3,7 @@ local ankicon = require "ankiconnect"
 local cfg = require "config"
 local encoder = require "encoder"
 local helper = require "helper"
+local menu_stack = require "menu_stack"
 local mpu = require "mp.utils"
 local msg = require "message"
 local series_id = require "series_id"
@@ -178,7 +179,14 @@ local function fill_first_field(fields, tgt, ignore_nil)
 	return fields
 end
 
+local function pop_menus(data)
+	if data.level then
+		menu_stack.pop(data.level)
+	end
+end
+
 function export.execute(data)
+	pop_menus(data)
 	local fields = fill_first_field(prepare_fields(data))
 	if fields then
 		if ankicon.add_note(fields) then
@@ -188,6 +196,7 @@ function export.execute(data)
 end
 
 function export.execute_gui(data)
+	pop_menus(data)
 	local fields = prepare_fields(data)
 	if fields then
 		if ankicon.gui_add_cards(fields) then
@@ -215,6 +224,7 @@ local function combine_fields(note, fields, tgt)
 end
 
 function export.execute_add(data, note)
+	pop_menus(data)
 	local fields, tgt = prepare_fields(data)
 	if fields then
 		local new_fields = fill_first_field(combine_fields(note, fields, tgt), tgt, true)

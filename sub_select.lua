@@ -109,6 +109,7 @@ end
 
 local function new_data()
 	return {
+		level = 1,
 		subtitles = {},
 		times = {
 			scrot = -1,
@@ -132,7 +133,6 @@ function SubSelect:start_tgt_sel()
 end
 function SubSelect:start_export()
 	if export.verify(self.data, true) then
-		menu_stack.pop()
 		export.execute(self.data)
 	end
 end

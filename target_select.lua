@@ -65,6 +65,7 @@ function TargetSelect:new(data, menu_lvl)
 	if not data.definitions then
 		data.definitions = {}
 	end
+	data.level = data.level and (data.level + 1) or 1
 	ts = setmetatable({
 		data = data,
 		menu_lvl = menu_lvl and menu_lvl or 1,
@@ -149,9 +150,6 @@ function TargetSelect:cancel()
 end
 
 function TargetSelect:finish()
-	for i = 1, self.menu_lvl do
-		menu_stack.pop()
-	end
 	export.execute(self.data)
 end
 
