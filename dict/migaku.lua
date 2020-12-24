@@ -1,6 +1,7 @@
 local dict_util = require "dict.dict_util"
 local mpu = require "mp.utils"
 local msg = require "message"
+local templater = require "templater"
 local util = require "util"
 
 local default_qdef_template = "{{definitions}}"
@@ -83,15 +84,22 @@ local function generate_dict_table(config, data)
 			local entry = data.entries[id]
 			return {
 				id = id,
-				readings = entry.trms,
-				variants = entry.alts and entry.alts or {},
-				defs = {util.string_trim(entry.def:gsub("<br>", "\n") .. "            ")}
+				terms = entry.trms,
+				alts = entry.alts,
+				defs = {util.string_trim(entry.def:gsub("<br>", "\n"))}
 			}
 		end)
 	end
 
 	return {
-		quick_def_template = config.quick_def_template and config.quick_def_template or default_qdef_template,
+		format_quick_def = function(qdef)
+			local template = config.quick_def_template and config.quick_def_template or default_qdef_template
+			return templater.render(template, {
+				terms = {data = qdef.terms},
+				altterms = qdef.alts and {data = qdef.alts} or false,
+				definitions = {data = qdef.defs}
+			})
+		end,
 		look_up_exact = function(term)
 			return export_entries(data.index[term])
 		end,

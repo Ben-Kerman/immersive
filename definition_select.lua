@@ -30,16 +30,8 @@ function DefinitionSelect:new(word, prefix, data)
 		}
 	}
 
-	local function def_conv(def)
-		return templater.render(dict.quick_def_template, {
-			readings = {data = def.readings},
-			variants = {data = def.variants},
-			definitions = {data = def.defs}
-		})
-	end
-
 	ds = setmetatable({
-		_line_select = LineSelect:new(result, def_conv, nil, nil, 5),
+		_line_select = LineSelect:new(result, dict.format_quick_def, nil, nil, 5),
 		data = data,
 		bindings = bindings,
 		menu = Menu:new{bindings = bindings},

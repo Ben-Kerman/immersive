@@ -2,6 +2,7 @@ local dict_util = require "dict.dict_util"
 local mpu = require "mp.utils"
 local msg = require "message"
 local sys = require "system"
+local templater = require "templater"
 local util = require "util"
 
 local default_qdef_template = "{{readings:::・}}{{variants:【:】:・}}: {{definitions:::; }}"
@@ -211,7 +212,14 @@ local function generate_dict_table(config, data)
 	end
 
 	return {
-		quick_def_template = config.quick_def_template and config.quick_def_template or default_qdef_template,
+		format_quick_def = function(qdef)
+			local template = config.quick_def_template and config.quick_def_template or default_qdef_template
+			return templater.render(template, {
+				readings = {data = qdef.readings},
+				variants = {data = qdef.variants},
+				definitions = {data = qdef.defs}
+			})
+		end,
 		look_up_exact = function(term)
 			return export_entries(data.index[term])
 		end,
