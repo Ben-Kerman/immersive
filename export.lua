@@ -144,9 +144,13 @@ function export.resolve_times(data)
 	return start, stop, scrot
 end
 
-function export.execute(data)
+local function prepare_fields(data)
 	local tgt = anki.active_target("could not execute export")
 	if not tgt then return end
+
+	if not ankicon.prepare_target(tgt) then
+		return nil
+	end
 
 	local tgt_cfg = tgt.config
 	local start, stop, scrot = export.resolve_times(data)
@@ -162,10 +166,24 @@ function export.execute(data)
 		fields[name] = replace_field_vars(def, data, audio_filename, image_filename, word_audio_filename, start, stop)
 	end
 
-	if ankicon.prepare_target(tgt) then
-		if not ankicon.add_note(fields) then
-			msg.warn("note wasn't added")
-		end
+	return fields, tgt
+end
+
+function export.execute(data)
+	local fields = prepare_fields(data)
+	if fields then
+		if ankicon.add_note(fields) then
+			msg.info("note added successfully")
+		else msg.warn("note couldn't be added") end
+	end
+end
+
+function export.execute_gui(data)
+	local fields = prepare_fields(data)
+	if fields then
+		if ankicon.gui_add_cards(fields) then
+			msg.info("'Add' GUI opened")
+		else msg.warn("'Add' GUI couldn't be opened") end
 	end
 end
 
