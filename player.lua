@@ -6,7 +6,7 @@ local socket_name = (function()
 	if sys.platform == "lnx" then
 		return "/tmp/" .. filename
 	elseif sys.platform == "win" then
-		return [[\\.\socket\]] .. filename
+		return [[\\.\pipe\]] .. filename
 	elseif sys.platform == "mac" then
 		return "" -- TODO
 	end
