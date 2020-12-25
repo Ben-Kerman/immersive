@@ -82,8 +82,8 @@ mp.register_event("file-loaded", function()
 	menu:redraw()
 end)
 
-local function copy_active_line()
-	local sub_text = mp.get_property("sub-text")
+local function copy_active_line(_, sub_text)
+	if not sub_text then sub_text = mp.get_property("sub-text") end
 	if sub_text and sub_text ~= "" then
 		sys.clipboard_write(sub_text)
 	end
@@ -95,7 +95,7 @@ local function toggle_autocopy()
 		mp.unobserve_property(copy_active_line)
 	else
 		mp.osd_message("Subtitle auto-copy enabled")
-		mp.observe_property("sub-text", "none", copy_active_line)
+		mp.observe_property("sub-text", "string", copy_active_line)
 	end
 	autocopy = not autocopy
 	menu:redraw()
