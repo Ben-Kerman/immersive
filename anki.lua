@@ -4,31 +4,43 @@ local msg = require "message"
 local sys = require "system"
 local util = require "util"
 
-local function default_tgt_cfg()
+local function default_tgt(raw_tgt)
 	return {
-		audio = {
-			extension = "mka",
-			format = "matroska",
-			codec = "libopus",
-			bitrate = "64ki",
-			pad_start = 0.1,
-			pad_end = 0.1
-		},
-		image = {
-			extension = "jpg",
-			codec = "mjpeg",
-			max_width = -1,
-			max_height = -1,
-			jpeg = {
-				qscale = 5
+		name = raw_tgt.name,
+		profile = raw_tgt.entries.profile,
+		deck = raw_tgt.entries.deck,
+		note_type = raw_tgt.entries.note_type,
+		add_mode = "append",
+		note_template = "{{type}}: {{id}}",
+		media_directory = nil,
+		tags = {"immersive"},
+		substitutions = {},
+		fields = {},
+		config = {
+			audio = {
+				extension = "mka",
+				format = "matroska",
+				codec = "libopus",
+				bitrate = "64ki",
+				pad_start = 0.1,
+				pad_end = 0.1
 			},
-			webp = {
-				lossless = false,
-				quality = 90,
-				compression = 4
-			},
-			png = {
-				compression = 9
+			image = {
+				extension = "jpg",
+				codec = "mjpeg",
+				max_width = -1,
+				max_height = -1,
+				jpeg = {
+					qscale = 5
+				},
+				webp = {
+					lossless = false,
+					quality = 90,
+					compression = 4
+				},
+				png = {
+					compression = 9
+				}
 			}
 		}
 	}
@@ -45,27 +57,14 @@ local function load_tgt(raw_tgt)
 		return
 	end
 
-	local tgt_cfg = default_tgt_cfg()
-	local tgt = {
-		name = raw_tgt.name,
-		profile = raw_tgt.entries.profile,
-		deck = raw_tgt.entries.deck,
-		note_type = raw_tgt.entries.note_type,
-		add_mode = "append",
-		note_template = "{{type}}: {{id}}",
-		media_directory = nil,
-		tags = {"immersive"},
-		fields = {},
-		config = tgt_cfg
-	}
-
+	local tgt = default_tgt(raw_tgt)
 	for key, value in pairs(raw_tgt.entries) do
 		if util.string_starts(key, "field:") then
 			tgt.fields[key:sub(7)] = value
 		elseif key == "tags" then
 			tgt.tags = util.list_unique(util.string_split(value, " "))
 		elseif string.find(key, "/") then
-			cfg.insert_nested(tgt_cfg, util.string_split(key, "/"), value, true)
+			cfg.insert_nested(tgt.config, util.string_split(key, "/"), value, true)
 		elseif not util.list_find(required_opts, key) then
 			if key == "add_mode" then
 				if util.list_find({"prepend", "append", "overwrite"}, value) then
