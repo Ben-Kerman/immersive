@@ -98,15 +98,13 @@ function system.move_file(src_path, tgt_path)
 	system.subprocess{cmd, src_path, tgt_path}
 end
 
+local ps_clip_write_fmt = "Set-Clipboard ([Text.Encoding]::UTF8.GetString((%s)))"
 local function ps_clip_write(str)
-	local script = [[
-Add-Type -AssemblyName System.Windows.Forms
-[System.Windows.Forms.Clipboard]::SetText([string]::new((%s)))]]
-	local cdps = utf_8.codepoints(str)
-	local literals = util.list_map(cdps, function(cp)
-		return string.format("([char]0x%04x)", cp)
-	end)
-	return string.format(script, table.concat(literals, ","))
+	local bytes = {}
+	for i = 1, #str do
+		table.insert(bytes, (str:byte(i)))
+	end
+	return string.format(ps_clip_write_fmt, table.concat(bytes, ","))
 end
 
 local ps_clip_read = [[
@@ -146,10 +144,10 @@ function system.clipboard_write(str)
 	elseif system.platform == "win" then
 		if cfg.values.windows_clip_mode == "exact" then
 			msg.debug("exact copy " .. str)
-			system.subprocess{"powershell", "-NoProfile", "-Command", ps_clip_write(str)}
+			system.background_process{"powershell", "-NoProfile", "-Command", ps_clip_write(str)}
 		else
 			msg.debug("quick copy: " .. str)
-			mp.commandv("run", "cmd", "/d", "/c", "@echo off & chcp 65001 & echo " .. str:gsub("[\r\n]+", " ") .. " | clip")
+			mp.commandv("run", "cmd", "/d", "/c", "chcp 65001 & echo " .. str:gsub("[\r\n]+", " ") .. " | clip")
 		end
 	end
 end
