@@ -28,7 +28,8 @@ local config = {
 		forvo_codec = "libopus",
 		forvo_bitrate = "64ki",
 		ankiconnect_host = "localhost",
-		ankiconnect_port = 8765
+		ankiconnect_port = 8765,
+		windows_clip_mode = "quick"
 	}
 }
 
