@@ -44,7 +44,7 @@ local function warn_msg(msg_txt, file, line)
 	msg.warn(msg_str)
 end
 
-function config.load(path)
+function config.load(path, global_as_base)
 	if not check_file(path) then
 		msg.verbose("config file could not be loaded")
 		return {}
@@ -62,9 +62,13 @@ function config.load(path)
 	end
 
 	local function insert_section()
+		local entries
+		if global_as_base and result.global then
+			entries = util.map_merge(result.global, section_entries)
+		else entries = section_entries end
 		table.insert(result, {
 			name = section_name,
-			entries = section_entries
+			entries = entries
 		})
 	end
 
@@ -125,9 +129,9 @@ function config.check_required(cfg, opt_names)
 	return valid, missing
 end
 
-function config.load_subcfg(name)
+function config.load_subcfg(name, global_as_base)
 	local rel_path = string.format("script-opts/%s-%s.conf", script_name, name)
-	return config.load(mp.find_config_file(rel_path))
+	return config.load(mp.find_config_file(rel_path), global_as_base)
 end
 
 function config.convert_bool(str)
