@@ -71,7 +71,9 @@ function system.background_process(args, callback)
 		capture_stdout = true,
 		args = args
 	}, function(success, res, err)
-		callback(handle_process_result(success, res, err))
+		if callback then
+			callback(handle_process_result(success, res, err))
+		end
 	end)
 end
 
