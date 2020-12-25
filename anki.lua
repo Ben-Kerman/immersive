@@ -30,10 +30,6 @@ local function default_tgt_cfg()
 			png = {
 				compression = 9
 			}
-		},
-		anki = {
-			tags = {"immersive"},
-			fields = {}
 		}
 	}
 end
@@ -58,14 +54,16 @@ local function load_tgt(raw_tgt)
 		add_mode = "append",
 		note_template = "{{type}}: {{id}}",
 		media_directory = nil,
+		tags = {"immersive"},
+		fields = {},
 		config = tgt_cfg
 	}
 
 	for key, value in pairs(raw_tgt.entries) do
 		if util.string_starts(key, "field:") then
-			tgt_cfg.anki.fields[key:sub(7)] = value
-		elseif key == "anki/tags" then
-			tgt_cfg.anki.tags = util.string_split(value)
+			tgt.fields[key:sub(7)] = value
+		elseif key == "tags" then
+			tgt.tags = util.list_unique(util.string_split(value, " "))
 		elseif string.find(key, "/") then
 			cfg.insert_nested(tgt_cfg, util.string_split(key, "/"), value, true)
 		elseif not util.list_find(required_opts, key) then
@@ -81,7 +79,7 @@ local function load_tgt(raw_tgt)
 	table.insert(anki.targets, tgt)
 end
 
-for _, raw_tgt in ipairs(cfg.load_subcfg("targets")) do
+for _, raw_tgt in ipairs(cfg.load_subcfg("targets", true)) do
 	load_tgt(raw_tgt)
 end
 

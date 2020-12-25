@@ -163,7 +163,7 @@ local function prepare_fields(data)
 	local word_audio_filename = export_word_audio(data)
 
 	local fields = {}
-	for name, def in pairs(tgt_cfg.anki.fields) do
+	for name, def in pairs(tgt_cfg.fields) do
 		fields[name] = replace_field_vars(def, data, audio_filename, image_filename, word_audio_filename, start, stop)
 	end
 

@@ -113,7 +113,7 @@ local function generate_dict_table(config, data)
 
 			local exporter_id = config.exporter and config.exporter or "default"
 			local exporter = require("dict.migaku." .. exporter_id)
-			return {word = word, definition = exporter(entry, config, data.tags)}
+			return {word = word, definition = exporter(entry, config)}
 		end
 	}
 end
