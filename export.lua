@@ -7,6 +7,7 @@ local menu_stack = require "menu_stack"
 local mpu = require "mp.utils"
 local msg = require "message"
 local series_id = require "series_id"
+local series_id = require "series_id"
 local sys = require "system"
 local templater = require "templater"
 local util = require "util"
@@ -43,6 +44,9 @@ local function replace_field_vars(field_def, data, audio_file, image_file, word_
 		end_seconds_ms = {data = string.format("%.3f", stop)},
 		end_seconds_ms = {data = string.format("%.3f", stop)},
 		end_seconds_ms = {data = string.format("%.3f", stop)},
+		-- series --
+		series_id = {data = series_id.id()},
+		series_title = {data = series_id.title()},
 		-- optional values --
 		word_audio_file = false,
 		word_audio = false,
