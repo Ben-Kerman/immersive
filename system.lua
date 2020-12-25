@@ -1,6 +1,8 @@
 local cfg = require "config"
 local mpu = require "mp.utils"
 local msg = require "message"
+local utf_8 = require "utf_8"
+local util = require "util"
 
 local system = {}
 
@@ -96,22 +98,16 @@ function system.move_file(src_path, tgt_path)
 	system.subprocess{cmd, src_path, tgt_path}
 end
 
-local ps_clip_write_semi_exact = [[
-Add-Type -AssemblyName System.IO
+local function ps_clip_write(str)
+	local script = [[
 Add-Type -AssemblyName System.Windows.Forms
-$bytes = [IO.File]::ReadAllBytes("%s")
-$utf16_str = [Text.Encoding]::UTF8.GetString($bytes)
-[Windows.Forms.Clipboard]::SetText($utf16_str)]]
-
-local ps_clip_write_exact = require("base64").encode("\065\000\100\000\100\000\045\000\084\000\121\000\112\000\101\000\032\000\045\000\065\000\115\000\115\000\101\000\109\000\098\000\108\000\121\000\078\000\097\000\109\000\101\000\032\000\083\000\121\000\115\000\116\000\101\000\109\000\046\000\087\000\105\000\110\000\100\000\111\000\119\000\115\000\046\000\070\000\111\000\114\000\109\000\115\000\010\000\036\000\109\000\115\000\116\000\114\000\109\000\032\000\061\000\032\000\091\000\083\000\121\000\115\000\116\000\101\000\109\000\046\000\073\000\079\000\046\000\077\000\101\000\109\000\111\000\114\000\121\000\083\000\116\000\114\000\101\000\097\000\109\000\093\000\058\000\058\000\110\000\101\000\119\000\040\000\041\000\010\000\091\000\083\000\121\000\115\000\116\000\101\000\109\000\046\000\067\000\111\000\110\000\115\000\111\000\108\000\101\000\093\000\058\000\058\000\079\000\112\000\101\000\110\000\083\000\116\000\097\000\110\000\100\000\097\000\114\000\100\000\073\000\110\000\112\000\117\000\116\000\040\000\041\000\046\000\067\000\111\000\112\000\121\000\084\000\111\000\040\000\036\000\109\000\115\000\116\000\114\000\109\000\041\000\010\000\036\000\098\000\121\000\116\000\101\000\115\000\032\000\061\000\032\000\036\000\109\000\115\000\116\000\114\000\109\000\046\000\084\000\111\000\065\000\114\000\114\000\097\000\121\000\040\000\041\000\010\000\036\000\117\000\116\000\102\000\049\000\054\000\095\000\115\000\116\000\114\000\032\000\061\000\032\000\091\000\084\000\101\000\120\000\116\000\046\000\069\000\110\000\099\000\111\000\100\000\105\000\110\000\103\000\093\000\058\000\058\000\085\000\084\000\070\000\056\000\046\000\071\000\101\000\116\000\083\000\116\000\114\000\105\000\110\000\103\000\040\000\036\000\098\000\121\000\116\000\101\000\115\000\041\000\010\000\091\000\087\000\105\000\110\000\100\000\111\000\119\000\115\000\046\000\070\000\111\000\114\000\109\000\115\000\046\000\067\000\108\000\105\000\112\000\098\000\111\000\097\000\114\000\100\000\093\000\058\000\058\000\083\000\101\000\116\000\084\000\101\000\120\000\116\000\040\000\036\000\117\000\116\000\102\000\049\000\054\000\095\000\115\000\116\000\114\000\041\000")
---[[ unencoded:
-Add-Type -AssemblyName System.Windows.Forms
-$mstrm = [System.IO.MemoryStream]::new()
-[System.Console]::OpenStandardInput().CopyTo($mstrm)
-$bytes = $mstrm.ToArray()
-$utf16_str = [Text.Encoding]::UTF8.GetString($bytes)
-[Windows.Forms.Clipboard]::SetText($utf16_str)
-]]
+[System.Windows.Forms.Clipboard]::SetText([string]::new((%s)))]]
+	local cdps = utf_8.codepoints(str)
+	local literals = util.list_map(cdps, function(cp)
+		return string.format("([char]0x%04x)", cp)
+	end)
+	return string.format(script, table.concat(literals, ","))
+end
 
 local ps_clip_read = [[
 Add-Type -AssemblyName System.Windows.Forms
@@ -148,23 +144,11 @@ function system.clipboard_write(str)
 		pipe:write(str)
 		pipe:close()
 	elseif system.platform == "win" then
-		if cfg.windows_clip_mode == "exact" then
-			msg.debug("exact copy:", str)
-			local pipe = io.popen("powershell -NoProfile -EncodedCommand " .. ps_clip_write_exact, "w")
-			pipe:write(str)
-			pipe:close()
-		elseif cfg.windows_clip_mode == "semi-exact" then
-			msg.debug("semi-exact copy", str)
-			local tmp_file = system.tmp_file_name()
-			local fd = io.open(tmp_file, "w")
-			fd:write(str)
-			fd:close()
-
-			local ps_script = string.format(ps_clip_write_semi_exact, tmp_file)
-			system.subprocess{"powershell", "-NoProfile", "-Command", ps_script}
-			os.remove(tmp_file)
+		if cfg.values.windows_clip_mode == "exact" then
+			msg.debug("exact copy " .. str)
+			system.subprocess{"powershell", "-NoProfile", "-Command", ps_clip_write(str)}
 		else
-			msg.debug("quick copy", str)
+			msg.debug("quick copy: " .. str)
 			mp.commandv("run", "cmd", "/d", "/c", "@echo off & chcp 65001 & echo " .. str:gsub("[\r\n]+", " ") .. " | clip")
 		end
 	end
