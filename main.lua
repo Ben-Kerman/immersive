@@ -30,11 +30,6 @@ local menu
 
 local autocopy = false
 
-local function display_bool(val)
-	if val then return "enabled"
-	else return "disabled" end
-end
-
 local function get_id_title(fn_name)
 	local value, custom = series_id[fn_name]()
 	if custom then return value
@@ -58,7 +53,7 @@ local infos = {
 	{
 		name = "Sub auto-copy",
 		value = autocopy,
-		display = function() return display_bool(autocopy) end
+		display = function() return helper.display_bool(autocopy) end
 	},
 	{
 		name = "Anki target",

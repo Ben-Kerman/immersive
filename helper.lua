@@ -94,4 +94,9 @@ function helper.write_json_file(path, data)
 	file:close()
 end
 
+function helper.display_bool(val)
+	if val then return "enabled"
+	else return "disabled" end
+end
+
 return helper
