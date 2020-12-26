@@ -216,11 +216,21 @@ local function generate_dict_table(config, data)
 	return {
 		format_quick_def = function(qdef)
 			local template = config.quick_def_template and config.quick_def_template or default_qdef_template
-			return templater.render(template, {
+			local rendered = util.string_trim(templater.render(template, {
 				readings = {data = qdef.readings},
 				variants = {data = qdef.variants},
 				definitions = {data = qdef.defs}
-			})
+			}))
+			if config.insert_cjk_breaks then
+				rendered = (rendered:gsub("。", "。\226\128\139")
+				                    :gsub("、", "、\226\128\139")
+				                    :gsub("，", "，\226\128\139")
+				                    :gsub("！", "！\226\128\139")
+				                    :gsub("？", "？\226\128\139")
+				                    :gsub("；", "；\226\128\139")
+				                    :gsub("：", "：\226\128\139"))
+			end
+			return rendered
 		end,
 		look_up_exact = function(term)
 			return export_entries(data.index[term])
