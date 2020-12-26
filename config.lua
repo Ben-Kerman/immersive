@@ -29,7 +29,8 @@ local config = {
 		forvo_bitrate = "64ki",
 		ankiconnect_host = "localhost",
 		ankiconnect_port = 8765,
-		windows_clip_mode = "quick"
+		windows_clip_mode = "exact",
+		global_autoselect = true
 	}
 }
 

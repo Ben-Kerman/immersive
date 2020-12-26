@@ -1,4 +1,5 @@
 local BasicOverlay = require "basic_overlay"
+local cfg = require "config"
 local export = require "export"
 local helper = require "helper"
 local Menu = require "menu"
@@ -35,11 +36,24 @@ function SubSelect:select_sub()
 	end
 end
 
-function SubSelect:toggle_auto_select()
-	if self.autoselect.value then
+local autosel_active = false
+function SubSelect:get_autosel()
+	if cfg.values.global_autoselect then
+		return autosel_active
+	else return self.autosel_active end
+end
+
+function SubSelect:set_autosel(val)
+	if cfg.values.global_autoselect then
+		autosel_active = val
+	else self.autosel_active = val end
+end
+
+function SubSelect:toggle_autosel()
+	if self:get_autosel() then
 		self:unobserve_subs()
 	else self:observe_subs() end
-	self.autoselect.value = not self.autoselect.value
+	self:set_autosel(not self:get_autosel())
 	self.menu:redraw()
 end
 
@@ -136,11 +150,6 @@ end
 function SubSelect:new()
 	local ss
 
-	local autoselect = {
-		name = "Autoselect",
-		value = false,
-		display = function(val) return val and "on" or "off" end
-	}
 	local infos = {
 		{
 			name = "Screenshot",
@@ -154,7 +163,10 @@ function SubSelect:new()
 			name = "End",
 			display = function() return ss:display_time("stop") end
 		},
-		autoselect
+		{
+			name = "Autoselect",
+			display = function() return helper.display_bool(ss:get_autosel()) end
+		}
 	}
 	local bindings = {
 		group = "sub_select",
@@ -195,10 +207,10 @@ function SubSelect:new()
 			action = function() ss:select_sub() end
 		},
 		{
-			id = "toggle_auto_select",
+			id = "toggle_autoselect",
 			default = "A",
 			desc = "Toggle automatic selection",
-			action = function() ss:toggle_auto_select() end
+			action = function() ss:toggle_autosel() end
 		},
 		{
 			id = "preview_audio",
@@ -238,7 +250,7 @@ function SubSelect:new()
 
 	ss = setmetatable({
 		data = data,
-		autoselect = autoselect,
+		autosel = false,
 		infos = infos,
 		bindings = bindings,
 		sel_overlay = sel_overlay,
@@ -250,7 +262,7 @@ end
 -- COMMON FUNCTIONS --
 
 function SubSelect:show()
-	if self.autoselect.value then
+	if self:get_autosel() then
 		self:observe_subs()
 	end
 	self.menu:show()
@@ -258,7 +270,7 @@ function SubSelect:show()
 end
 
 function SubSelect:hide()
-	if self.autoselect.value then
+	if self:get_autosel() then
 		self:unobserve_subs()
 	end
 	self.menu:hide()
