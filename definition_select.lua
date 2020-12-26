@@ -1,5 +1,6 @@
 local cfg = require "config"
 local dicts = require "dict.dicts"
+local helper = require "helper"
 local LineSelect = require "line_select"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
@@ -30,8 +31,11 @@ function DefinitionSelect:new(word, prefix, data)
 		}
 	}
 
+	local function sel_conv(qdef) return dict.format_quick_def(qdef) end
+	local function line_conv(qdef) return helper.short_str(sel_conv(qdef), 40, "⏎") end
+
 	ds = setmetatable({
-		_line_select = LineSelect:new(result, dict.format_quick_def, nil, nil, 5),
+		line_select = LineSelect:new(result, line_conv, sel_conv, nil, 5),
 		data = data,
 		bindings = bindings,
 		menu = Menu:new{bindings = bindings},
@@ -43,7 +47,7 @@ end
 function DefinitionSelect:finish(word)
 	if self.data then
 		local dict = self.lookup_result.dict
-		local def = dict.get_definition(self._line_select:selection().id)
+		local def = dict.get_definition(self.line_select:selection().id)
 		table.insert(self.data.definitions, def)
 	end
 	menu_stack.pop()
@@ -51,11 +55,11 @@ end
 
 function DefinitionSelect:show()
 	self.menu:show()
-	self._line_select:show()
+	self.line_select:show()
 end
 
 function DefinitionSelect:hide()
-	self._line_select:hide()
+	self.line_select:hide()
 	self.menu:hide()
 end
 
