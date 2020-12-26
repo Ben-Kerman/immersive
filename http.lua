@@ -2,7 +2,23 @@ local mpu = require "mp.utils"
 local msg = require "message"
 local sys = require "system"
 
-local data_path = sys.tmp_file_name()
+local function escape_data(str)
+	if sys.platform ~= "win" then
+		return str
+	end
+
+	local utf_8 = require "utf_8"
+	local utf_16 = require "utf_16"
+	local cdpts = utf_16.surrogates(utf_8.codepoints(str))
+
+	local str_parts = {}
+	for _, cp in ipairs(cdpts) do
+		if cp < 0x20 or 0x7e < cp then
+			table.insert(str_parts, string.format("\\u%04x", cp))
+		else table.insert(str_parts, string.char(cp)) end
+	end
+	return table.concat(str_parts)
+end
 
 local function request(params, async, callback)
 	local args = {
@@ -13,13 +29,9 @@ local function request(params, async, callback)
 
 	if params.data then
 		table.insert(args, "--data-binary")
-		table.insert(args, "@" .. data_path)
+		table.insert(args, escape_data(params.data))
 		table.insert(args, "-H")
 		table.insert(args, "Content-Type: " .. params.data_type)
-
-		local data_file = io.open(data_path, "w")
-		data_file:write(params.data)
-		data_file:close()
 	end
 
 	if params.headers then

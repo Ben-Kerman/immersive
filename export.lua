@@ -21,12 +21,9 @@ local function anki_image_tag(filename)
 end
 
 local function apply_substitutions(str, substs)
-	print(str, substs)
 	local res = str
 	for _, subst in ipairs(substs) do
-		print(res, subst.pattern, subst.repl)
 		res = res:gsub(subst.pattern, subst.repl)
-		print(res)
 	end
 	return res
 end
