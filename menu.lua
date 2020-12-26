@@ -112,7 +112,8 @@ function Menu:redraw()
 			table.insert(ssa_lines, "\\h\\N" .. ssa.generate(ssa_definition))
 		end
 
-		if self.infos and not self:get_show_help() then
+		local show_infos = not cfg.values.hide_infos_if_help_active or not self:get_show_help()
+		if self.infos and show_infos then
 			local ssa_definition = {
 				style = "menu_info",
 				full_style = true

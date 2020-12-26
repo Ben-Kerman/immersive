@@ -33,7 +33,8 @@ local config = {
 		global_autoselect = true,
 		enable_autoselect = true,
 		global_help = true,
-		enable_help = false
+		enable_help = false,
+		hide_infos_if_help_active = false
 	}
 }
 
