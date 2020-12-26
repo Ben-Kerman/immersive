@@ -31,19 +31,16 @@ system.anki_base_dir = (function()
 	end
 end)()
 
-function system.tmp_file_name()
-	local path
+function system.tmp_dir()
 	if system.platform == "lnx" then
-		local mktemp = io.popen("mktemp")
-		path = mktemp:read()
-		mktemp:close()
+		local tmpdir_env = os.getenv("TMPDIR")
+		if tmpdir_env then return tmpdir_env
+		else return "/tmp" end
 	elseif system.platform == "win" then
-		path = os.getenv("TEMP") .. os.tmpname()
+		return os.getenv("TEMP")
 	elseif system.platform == "mac" then
 		-- TODO
 	end
-	mp.register_event("shutdown", function() os.remove(path) end)
-	return path
 end
 
 local function handle_process_result(success, res, err)

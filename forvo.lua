@@ -5,10 +5,14 @@ local http = require "http"
 local LineSelect = require "line_select"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
+local mpu = require "mp.utils"
 local msg = require "message"
 local player = require "player"
 local sys = require "system"
 local url = require "url"
+
+local cache_dir = mpu.join_path(sys.tmp_dir(), script_name .. "_forvo_cache")
+local audio_host = "https://audio00.forvo.com/"
 
 local function request_headers()
 	return {
@@ -41,9 +45,20 @@ local html_headers = (function()
 	return headers
 end)()
 
-local function audio_request(url, target_path, callback)
+local function audio_request(path, callback)
+	local target_path = mpu.join_path(cache_dir, path)
+	if not sys.create_dir((mpu.split_path(target_path))) then
+		msg.warn("could not create directory for Forvo audio")
+		return nil
+	end
+
+	if mpu.file_info(target_path) then
+		callback(target_path)
+		return nil
+	end
+
 	local http_params = {
-		url = url,
+		url = audio_host .. path,
 		headers = audio_headers,
 		target_path = target_path
 	}
@@ -78,15 +93,15 @@ function Pronunciation:new(menu, id, user, mp3_l, ogg_l, mp3_h, ogg_h)
 		id = tonumber(id),
 		user = user,
 		audio_l = {
-			mp3 = "https://audio00.forvo.com/mp3/" .. b64.decode(mp3_l),
-			ogg = "https://audio00.forvo.com/ogg/" .. b64.decode(ogg_l)
+			mp3 = "mp3/" .. b64.decode(mp3_l),
+			ogg = "ogg/" .. b64.decode(ogg_l)
 		},
 		loading = false
 	}
 	if mp3_h ~= "" and ogg_h ~= "" then
 		pr.audio_h = {
-			mp3 = "https://audio00.forvo.com/audios/mp3/" .. b64.decode(mp3_h),
-			ogg = "https://audio00.forvo.com/audios/ogg/" .. b64.decode(ogg_h)
+			mp3 = "audios/mp3/" .. b64.decode(mp3_h),
+			ogg = "audios/ogg/" .. b64.decode(ogg_h)
 		}
 	end
 	return setmetatable(pr, Pronunciation)
@@ -113,9 +128,8 @@ function Pronunciation:load_audio(callback)
 
 		local extension = cfg.values.forvo_prefer_mp3 and "mp3" or "ogg"
 		local src = self.audio_h and self.audio_h or self.audio_l
-		local audio_url = src[extension]
 
-		local req = audio_request(audio_url, sys.tmp_file_name(), function(res)
+		local req = audio_request(src[extension], function(res)
 			set_audio_file(res)
 			callback()
 		end)
