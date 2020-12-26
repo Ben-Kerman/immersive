@@ -15,7 +15,7 @@ local function default_tgt(raw_tgt)
 		note_template = "{{type}}: {{id}}",
 		media_directory = nil,
 		tags = {"immersive"},
-		substitutions = {
+		sentence_substitutions = {
 			{
 				pattern = "（.-%）",
 				repl = ""
@@ -25,6 +25,7 @@ local function default_tgt(raw_tgt)
 				repl = ""
 			}
 		},
+		definition_substitutions = {},
 		fields = {},
 		config = {
 			audio = {
@@ -92,9 +93,9 @@ local function load_tgt(raw_tgt)
 				else msg.warn("unkown Anki add mode ('" .. value .. "'), using 'append'") end
 			elseif key == "tags" then
 				tgt.tags = util.list_unique(util.string_split(value, " "))
-			elseif key == "substitutions" then
+			elseif key == "sentence_substitutions" or key == "definition_substitutions" then
 				local defs = util.string_split(value, "\n")
-				tgt.substitutions = util.list_map(defs, parse_substitution)
+				tgt[key] = util.list_map(defs, parse_substitution)
 			elseif util.list_find({"media_directory"}, key) then
 				tgt[key] = value
 			end
