@@ -83,7 +83,7 @@ function TargetSelect:new(data, menu_lvl)
 				})
 			end
 		end, "selection_overlay"),
-		blackout = cfg.values.screen_blackout and ScreenBlackout:new() or nil,
+		blackout = cfg.values.target_select_blackout and ScreenBlackout:new() or nil,
 		menu = Menu:new{bindings = bindings}
 	}, TargetSelect)
 	if ts.blackout then ts.blackout:show() end

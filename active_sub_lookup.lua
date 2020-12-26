@@ -1,7 +1,9 @@
+local cfg = require "config"
 local DefinitionSelect = require "definition_select"
 local helper = require "helper"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
+local ScreenBlackout = require "screen_blackout"
 local TextSelect = require "text_select"
 
 local ActiveSubLookup = {}
@@ -31,6 +33,7 @@ function ActiveSubLookup:new()
 
 	asl = setmetatable({
 		txt_sel = TextSelect:new((sub_text:gsub("\n", "\226\128\139"))),
+		blackout = cfg.values.active_sub_blackout and ScreenBlackout:new() or nil,
 		menu = Menu:new{bindings = bindings}
 	}, ActiveSubLookup)
 	return asl
@@ -44,13 +47,15 @@ function ActiveSubLookup:lookup(prefix)
 end
 
 function ActiveSubLookup:show()
-	self.txt_sel:show()
+	self.blackout:show()
 	self.menu:show()
+	self.txt_sel:show()
 end
 
 function ActiveSubLookup:hide()
 	self.txt_sel:hide()
 	self.menu:hide()
+	self.blackout:hide()
 end
 
 function ActiveSubLookup:cancel()
