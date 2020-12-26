@@ -86,6 +86,7 @@ function TargetSelect:new(data, menu_lvl)
 		blackout = cfg.values.screen_blackout and ScreenBlackout:new() or nil,
 		menu = Menu:new{bindings = bindings}
 	}, TargetSelect)
+	if ts.blackout then ts.blackout:show() end
 	return ts
 end
 

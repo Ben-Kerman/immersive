@@ -8,21 +8,8 @@ function ScreenBlackout:new()
 	local sb
 
 	local function observer()
-		local ol_fmt = [[{\an7\pos(0,0)\bord0\shad0\1c&H]] ..
-		               ssa.query{"blackout", "primary_color"} ..
-		               [[&\1c&H]] ..
-		               ssa.query{"blackout", "primary_alpha"} ..
-		               [[&\p1}m 0 0 l 0 720 %s 720 %s 0{\p0}]]
-
-		local _, _,aspect_ratio = mp.get_osd_size()
-		local ol_width = 720 * aspect_ratio
-
-		sb.overlay.data = string.format(ol_fmt, ol_width, ol_width)
-		sb.overlay:update()
+		sb:redraw()
 	end
-
-	mp.observe_property("osd-width", "number", observer)
-	mp.observe_property("osd-height", "number", observer)
 
 	sb = setmetatable({
 		observer = observer,
@@ -34,15 +21,33 @@ function ScreenBlackout:new()
 	return sb
 end
 
+function ScreenBlackout:redraw()
+	local ol_fmt = [[{\an7\pos(0,0)\bord0\shad0\1c&H]] ..
+	               ssa.query{"blackout", "primary_color"} ..
+	               [[&\1c&H]] ..
+	               ssa.query{"blackout", "primary_alpha"} ..
+	               [[&\p1}m 0 0 l 0 720 %s 720 %s 0{\p0}]]
+
+	local _, _,aspect_ratio = mp.get_osd_size()
+	local ol_width = 720 * aspect_ratio
+
+	self.overlay.data = string.format(ol_fmt, ol_width, ol_width)
+	self.overlay:update()
+end
+
 function ScreenBlackout:show()
+	self:redraw()
+	mp.observe_property("osd-width", "number", self.observer)
+	mp.observe_property("osd-height", "number", self.observer)
 end
 
 function ScreenBlackout:hide()
+	mp.unobserve_property(self.observer)
+	self.overlay:remove()
 end
 
 function ScreenBlackout:cancel()
-	mp.unobserve_property(self.observer)
-	self.overlay:remove()
+	self:hide()
 end
 
 return ScreenBlackout
