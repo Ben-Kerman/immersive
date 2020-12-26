@@ -10,8 +10,8 @@ local dict_util = {}
 function dict_util.cache_path(dict)
 	local config_dir =  mp.find_config_file("."):sub(1, -3)
 	local cache_dir = mpu.join_path(config_dir, script_name .. "-dict-cache")
-	if not mpu.file_info(cache_dir) then
-		sys.create_dir(cache_dir)
+	if not sys.create_dir(cache_dir) then
+		msg.error("failed to create dictionary cache directory")
 	end
 	return mpu.join_path(cache_dir, dict.id .. ".json")
 end

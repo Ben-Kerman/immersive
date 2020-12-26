@@ -82,12 +82,17 @@ function system.list_files(dir)
 end
 
 function system.create_dir(path)
+	local stat_res = mpu.file_info(path)
+	if stat_res then
+		return stat_res.is_dir
+	end
+
 	local args = {"mkdir"}
 	if system.platform == "lnx" or system.platform == "mac" then
 		table.insert(args, "-p")
 	end
 	table.insert(args, path)
-	system.subprocess(args)
+	return system.subprocess(args) == 0
 end
 
 function system.move_file(src_path, tgt_path)
@@ -97,7 +102,7 @@ function system.move_file(src_path, tgt_path)
 	elseif system.platform == "win" then
 		cmd = "move"
 	end
-	system.subprocess{cmd, src_path, tgt_path}
+	return system.subprocess{cmd, src_path, tgt_path} == 0
 end
 
 local ps_clip_write_fmt = "Set-Clipboard ([Text.Encoding]::UTF8.GetString((%s)))"
