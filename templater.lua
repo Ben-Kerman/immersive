@@ -110,10 +110,10 @@ local function parse_substitution(str, init_pos)
 		return nil, pos
 	end
 
-	if not subst.from and subst.to then
+	if not subst.from then
 		subst.from = 1
 	end
-	if subst.from and not subst.to then
+	if not subst.to then
 		subst.to = -1
 	end
 
@@ -184,7 +184,7 @@ function templater.render(template, values)
 					insert_str = transformed:sub(segment.from, segment.to)
 				elseif data_type == "table" then
 					local list = value.data
-					if segment.from then
+					if segment.from ~= 1 and segment.to ~= -1 then
 						list = util.list_range(list, segment.from, segment.to)
 					end
 
