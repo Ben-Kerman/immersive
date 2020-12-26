@@ -58,24 +58,6 @@ local function get_audio_file(path)
 	return not not mpu.file_info(target_path), target_path
 end
 
-local function get_word_for_file(path)
-	if mpu.file_info(word_cache_file) then
-		local map = helper.parse_json_file(word_cache_file)
-		if map then
-			return map[path]
-		end
-	end
-end
-
-local function cache_word_for_file(path, word)
-	local map = {}
-	if mpu.file_info(word_cache_file) then
-		map = helper.parse_json_file(word_cache_file)
-	end
-	map[path] = word
-	helper.write_json_file(word_cache_file, map)
-end
-
 local function audio_request(path, callback)
 	local exists, target_path = get_audio_file(path)
 	if exists then
@@ -132,13 +114,10 @@ function Pronunciation:new(menu, id, user, mp3_l, ogg_l, mp3_h, ogg_h)
 	local exists, target_path = get_audio_file(src[extension])
 	local audio_file
 	if exists then
-		local word = get_word_for_file(src[extension])
-		if word then
-			audio_file = {
-				word = word,
-				path = target_path
-			}
-		end
+		audio_file = {
+			word = menu.word,
+			path = target_path
+		}
 	end
 
 	return setmetatable({
@@ -167,7 +146,6 @@ function Pronunciation:load_audio(callback)
 				}
 				self.menu.prn_sel:update()
 				callback()
-				cache_word_for_file(self.source_path, self.menu.word)
 			end
 		end)
 		table.insert(self.menu.requests, req)
