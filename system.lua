@@ -7,6 +7,18 @@ local util = require "util"
 local system = {}
 
 system.platform = (function()
+	local ostype = os.getenv("OSTYPE")
+	if ostype and ostype == "linux-gnu" then
+		return "lnx"
+	end
+
+	local os_env = os.getenv("OS")
+	if os_env and os_env == "Windows_NT" then
+		return "win"
+	end
+
+	-- TODO macOS
+
 	-- taken from mpv's built-in console
 	local default = {}
 	if mp.get_property_native("options/vo-mmcss-profile", default) ~= default then
