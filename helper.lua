@@ -99,4 +99,48 @@ function helper.display_bool(val)
 	else return "disabled" end
 end
 
+local default_escape_table = {
+	[0x61] = 0x07, -- \a
+	[0x62] = 0x08, -- \b
+	[0x65] = 0x1B, -- \e
+	[0x66] = 0x0C, -- \f
+	[0x6e] = 0x0A, -- \n
+	[0x72] = 0x0D, -- \r
+	[0x74] = 0x09, -- \t
+	[0x76] = 0x0B  -- \v
+}
+function helper.parse_with_escape(str, escape_char, search_char, init, escape_table)
+	if not escape_char then escape_char = "\\" end
+	if not escape_table then escape_table = default_escape_table end
+
+	local escape_byte = escape_char:byte()
+	local search_byte
+	if search_char then
+		search_byte = search_char:byte()
+	end
+
+	local res = {}
+	local next_pos
+	local i = init and init or 1
+	while i <= #str do
+		local byte = str:byte(i)
+		if search_byte and byte == search_byte then
+			next_pos = i + 1
+			break
+		elseif byte == escape_byte then
+			local next_byte = str:byte(i + 1)
+			if escape_byte == next_byte then
+				table.insert(res, escape_byte)
+			elseif escape_table[next_byte] then
+				table.insert(res, escape_table[next_byte])
+			else table.insert(res, next_byte) end
+			i = i + 2
+		else
+			table.insert(res, str:byte(i))
+			i = i + 1
+		end
+	end
+	return string.char(table.unpack(res)), next_pos
+end
+
 return helper

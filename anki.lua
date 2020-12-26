@@ -1,4 +1,5 @@
 local cfg = require "config"
+local helper = require "helper"
 local mpu = require "mp.utils"
 local msg = require "message"
 local sys = require "system"
@@ -55,6 +56,18 @@ local function default_tgt(raw_tgt)
 	}
 end
 
+local function parse_substitution(def)
+	local repl, pat_start = helper.parse_with_escape(def, nil, "<")
+	if pat_start then
+		local pattern = helper.parse_with_escape(def, nil, nil, pat_start)
+		if pcall(string.find, "", pattern) then
+			return {pattern = pattern, repl = repl}
+		end
+	end
+	msg.warn("ignoring invalid substitution: " .. def)
+	return nil
+end
+
 local anki = {targets = {}}
 
 local required_opts = {"profile", "deck", "note_type"}
@@ -81,15 +94,7 @@ local function load_tgt(raw_tgt)
 				tgt.tags = util.list_unique(util.string_split(value, " "))
 			elseif key == "substitutions" then
 				local defs = util.string_split(value, "\n")
-				tgt.substitutions = util.list_map(defs, function(def)
-					local repl, pattern = def:match("^([^<]*)<(.*)$")
-					if repl then
-						return {pattern = pattern, repl = repl}
-					else
-						msg.warn("ignoring invalid substitution: " .. def)
-						return nil
-					end
-				end)
+				tgt.substitutions = util.list_map(defs, parse_substitution)
 			elseif util.list_find({"media_directory"}, key) then
 				tgt[key] = value
 			end
