@@ -14,6 +14,9 @@ local sys = require "system"
 local TargetSelect = {}
 TargetSelect.__index = TargetSelect
 
+local function sel_conv(sub) return (sub.text:gsub("\n", "\226\128\139")) end
+local function line_conv(sub) return helper.short_str(sub.text, 24, "\226\128\139") end
+
 function TargetSelect:new(data, menu_lvl)
 	local ts
 
@@ -70,6 +73,7 @@ function TargetSelect:new(data, menu_lvl)
 	ts = setmetatable({
 		data = data,
 		menu_lvl = menu_lvl and menu_lvl or 1,
+		tgt_word_sel = LineTextSelect:new(data.subtitles, line_conv, sel_conv, 9, init_line),
 		word_overlay = BasicOverlay:new(data.definitions, function(defs, ssa_def)
 			for _, def in ipairs(defs) do
 				table.insert(ssa_def, {
@@ -80,15 +84,7 @@ function TargetSelect:new(data, menu_lvl)
 		end, "selection_overlay"),
 		menu = Menu:new{bindings = bindings}
 	}, TargetSelect)
-	ts:start_tgt_sel()
 	return ts
-end
-
-local function sel_conv(sub) return (sub.text:gsub("\n", "\226\128\139")) end
-local function line_conv(sub) return helper.short_str(sub.text, 24, "\226\128\139") end
-function TargetSelect:start_tgt_sel(init_line)
-	self.tgt_word_sel = LineTextSelect:new(self.data.subtitles, line_conv, sel_conv, 9, init_line)
-	self.tgt_word_sel:show()
 end
 
 local function lookup(word, prefix, data)
@@ -131,17 +127,13 @@ function TargetSelect:add_word_audio()
 end
 
 function TargetSelect:show()
-	if self.tgt_word_sel then
-		self.tgt_word_sel:show()
-	end
+	self.tgt_word_sel:show()
 	self.word_overlay:show()
 	self.menu:show()
 end
 
 function TargetSelect:hide()
-	if self.tgt_word_sel then
-		self.tgt_word_sel:hide()
-	end
+	self.tgt_word_sel:hide()
 	self.word_overlay:hide()
 	self.menu:hide()
 end
