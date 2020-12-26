@@ -1,7 +1,7 @@
-local config = require "config"
-local templater = require "templater"
-local utf_8 = require "utf_8"
-local util = require "util"
+local config = require "systems.config"
+local templater = require "systems.templater"
+local utf_8 = require "utility.utf_8"
+local util = require "utility.extension"
 
 local default_template = [[{{terms[1]}}{{terms[2:] (:):, }}:<br>
 {{altterms::<br>:, }}{{pronunciations::<br>:, }}{{positions::<br>:, }}

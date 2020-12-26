@@ -1,10 +1,10 @@
-local BasicOverlay = require "basic_overlay"
-local cfg = require "config"
-local dict_util = require "dict.dict_util"
-local kbds = require "key_bindings"
-local menu_stack = require "menu_stack"
-local msg = require "message"
-local util = require "util"
+local BasicOverlay = require "interface.basic_overlay"
+local cfg = require "systems.config"
+local dict_util = require "dict.util"
+local kbds = require "systems.key_bindings"
+local menu_stack = require "interface.menu_stack"
+local msg = require "systems.message"
+local util = require "utility.extension"
 
 local dict_list = util.list_map(cfg.load_subcfg("dictionaries"), function(dict_cfg)
 	return {id = dict_cfg.name, config = dict_cfg.entries, table = nil}

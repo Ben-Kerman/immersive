@@ -1,9 +1,9 @@
-local dict_util = require "dict.dict_util"
-local helper = require "helper"
+local dict_util = require "dict.util"
+local helper = require "utility.helper"
 local mpu = require "mp.utils"
-local msg = require "message"
-local templater = require "templater"
-local util = require "util"
+local msg = require "systems.message"
+local templater = require "systems.templater"
+local util = require "utility.extension"
 
 local default_qdef_template = "{{definitions}}"
 

@@ -1,7 +1,7 @@
-local config = require "config"
-local templater = require "templater"
-local utf_8 = require "utf_8"
-local util = require "util"
+local config = require "systems.config"
+local templater = require "systems.templater"
+local utf_8 = require "utility.utf_8"
+local util = require "utility.extension"
 
 local function get_conf(config)
 	local default = {

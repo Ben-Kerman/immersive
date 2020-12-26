@@ -10,20 +10,20 @@ mp.set_property("msg-level", (function()
 	return new_msg_lvl
 end)())
 
-local ActiveSubLookup = require "active_sub_lookup"
-local anki = require "anki"
+local ActiveSubLookup = require "interface.active_sub_lookup"
+local anki = require "systems.anki"
 local dicts = require "dict.dicts"
-local export = require "export"
-local helper = require "helper"
-local kbds = require "key_bindings"
-local Menu = require "menu"
-local menu_stack = require "menu_stack"
-local series_id = require "series_id"
-local msg = require "message"
-local SubSelect = require "sub_select"
-local Subtitle = require "subtitle"
-local sys = require "system"
-local TargetSelect = require "target_select"
+local export = require "systems.export"
+local helper = require "utility.helper"
+local kbds = require "systems.key_bindings"
+local Menu = require "interface.menu"
+local menu_stack = require "interface.menu_stack"
+local series_id = require "utility.series_id"
+local msg = require "systems.message"
+local SubSelect = require "interface.sub_select"
+local Subtitle = require "systems.subtitle"
+local sys = require "systems.system"
+local TargetSelect = require "interface.target_select"
 
 -- forward declaration
 local menu
