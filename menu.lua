@@ -1,3 +1,4 @@
+local cfg = require "config"
 local kbds = require "key_bindings"
 local ssa = require "ssa"
 
@@ -15,14 +16,27 @@ function Menu:new(data, enabled)
 		bindings = data.bindings,
 		infos = data.infos,
 		enabled = enabled or false,
-		show_bindings = false
+		show_help = cfg.values.enable_help
 	}
 	return setmetatable(m, Menu)
 end
 
+local show_help = cfg.values.enable_help
+function Menu:get_show_help()
+	if cfg.values.global_help then
+		return show_help
+	else return self.show_help end
+end
+
+function Menu:set_show_help(val)
+	if cfg.values.global_help then
+		show_help = val
+	else self.show_help = val end
+end
+
 function Menu:show()
 	mp.add_forced_key_binding(help_key, "menu-show_help", function()
-		self.show_bindings = not self.show_bindings
+		self:set_show_help(not self:get_show_help())
 		self:redraw()
 	end)
 	kbds.add(self.bindings)
@@ -71,7 +85,7 @@ function Menu:redraw()
 				full_style = true
 			}
 
-			if self.show_bindings then
+			if self:get_show_help() then
 				table.insert(ssa_definition, help_hint_on)
 
 				for _, binding in ipairs(self.bindings) do
@@ -98,7 +112,7 @@ function Menu:redraw()
 			table.insert(ssa_lines, "\\h\\N" .. ssa.generate(ssa_definition))
 		end
 
-		if self.infos and not self.show_bindings then
+		if self.infos and not self:get_show_help() then
 			local ssa_definition = {
 				style = "menu_info",
 				full_style = true

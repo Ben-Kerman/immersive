@@ -31,7 +31,9 @@ local config = {
 		ankiconnect_port = 8765,
 		windows_clip_mode = "exact",
 		global_autoselect = true,
-		enable_autoselect = true
+		enable_autoselect = true,
+		global_help = true,
+		enable_help = false
 	}
 }
 
