@@ -2,7 +2,7 @@ local kbds = require "systems.key_bindings"
 local msg = require "systems.message"
 local ssa = require "systems.ssa"
 local utf_8 = require "utility.utf_8"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local overlay = mp.create_osd_overlay("ass-events")
 
@@ -100,7 +100,7 @@ local whitespace_cps = {
 	9, 32, 160, 5760, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8239, 8287, 12288
 }
 local function is_space(cp)
-	return not not util.list_find(whitespace_cps, cp)
+	return not not ext.list_find(whitespace_cps, cp)
 end
 
 local function classify_cp(cp)
@@ -181,7 +181,7 @@ function TextSelect:selection(force)
 		msg.info("no text selected")
 		return nil
 	end
-	return utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
+	return utf_8.string(ext.list_range(self.cdpts, self.sel.from, self.sel.to - 1))
 end
 
 function TextSelect:finish(force)
@@ -290,13 +290,13 @@ function TextSelect:update(visible)
 	local curs_pos
 	local has_sel = self:sel_len() ~= 0
 	if has_sel then
-		table.insert(segments, utf_8.string(util.list_range(self.cdpts, 1, self.sel.from - 1)))
-		table.insert(segments, utf_8.string(util.list_range(self.cdpts, self.sel.from, self.sel.to - 1)))
-		table.insert(segments, utf_8.string(util.list_range(self.cdpts, self.sel.to, #self.cdpts)))
+		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, 1, self.sel.from - 1)))
+		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, self.sel.from, self.sel.to - 1)))
+		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, self.sel.to, #self.cdpts)))
 		curs_pos = self.curs_pos == self.sel.from and -1 or 1
 	else
-		table.insert(segments, utf_8.string(util.list_range(self.cdpts, 1, self.curs_pos - 1)))
-		table.insert(segments, utf_8.string(util.list_range(self.cdpts, self.curs_pos, #self.cdpts)))
+		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, 1, self.curs_pos - 1)))
+		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, self.curs_pos, #self.cdpts)))
 		curs_pos = 0
 	end
 	self:update_handler(true, has_sel, curs_pos, segments)

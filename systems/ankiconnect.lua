@@ -3,7 +3,7 @@ local anki = require "systems.anki"
 local http = require "systems.http"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local ankiconnect_url = string.format("%s:%d", cfg.values.ankiconnect_host, cfg.values.ankiconnect_port)
 
@@ -140,7 +140,7 @@ function ankiconnect.prepare_target(tgt)
 	if not ankiconnect.check() then return false end
 
 	local profiles = ankiconnect.get_profiles()
-	if not profiles or not util.list_find(profiles, tgt.profile) then
+	if not profiles or not ext.list_find(profiles, tgt.profile) then
 		msg.error("Anki profile '" .. tgt.profile .. "' not found")
 		return false
 	end
@@ -151,13 +151,13 @@ function ankiconnect.prepare_target(tgt)
 	end
 
 	local decks = ankiconnect.deck_names()
-	if not decks or not util.list_find(decks, tgt.deck) then
+	if not decks or not ext.list_find(decks, tgt.deck) then
 		msg.error("deck '" .. tgt.deck .. "' not found")
 		return false
 	end
 
 	local note_types = ankiconnect.model_names()
-	if not note_types or not util.list_find(note_types, tgt.note_type) then
+	if not note_types or not ext.list_find(note_types, tgt.note_type) then
 		msg.error("note type '" .. tgt.note_type .. "' not found")
 		return false
 	end

@@ -3,7 +3,7 @@ local export = require "systems.export"
 local LineSelect = require "interface.line_select"
 local Menu = require "interface.menu"
 local templater = require "systems.templater"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local NotePicker = {}
 NotePicker.__index = NotePicker
@@ -27,7 +27,7 @@ function NotePicker:new(data, notes)
 	local tgt = anki.active_target("could not get note template")
 	if not tgt then return nil end
 	local function note_conv(note)
-		local data = util.map_map(note.fields, function(name, content)
+		local data = ext.map_map(note.fields, function(name, content)
 			return "field_" .. name, {data = content.value}
 		end)
 		data.type = {data = tostring(note.modelName)}

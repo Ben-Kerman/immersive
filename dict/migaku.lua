@@ -1,14 +1,14 @@
-local dict_util = require "dict.util"
+local util = require "dict.util"
 local helper = require "utility.helper"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
 local templater = require "systems.templater"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local default_qdef_template = "{{definitions}}"
 
 local function list_search_terms(entry)
-	return util.list_append(entry.trms, entry.alts)
+	return ext.list_append(entry.trms, entry.alts)
 end
 
 local function verify(file)
@@ -51,11 +51,11 @@ local function import(dict)
 	for def, raw_entries in pairs(entry_map) do
 		local terms, alts, prns, poss, examples = {}, {}, {}, {}, {}
 		for _, raw_entry in ipairs(raw_entries) do
-			util.list_insert_cond(terms, raw_entry.term)
-			util.list_insert_cond(alts, raw_entry.alt)
-			util.list_insert_cond(prns, raw_entry.prn)
-			util.list_insert_cond(poss, raw_entry.pos)
-			util.list_insert_cond(examples, raw_entry.exmp)
+			ext.list_insert_cond(terms, raw_entry.term)
+			ext.list_insert_cond(alts, raw_entry.alt)
+			ext.list_insert_cond(prns, raw_entry.prn)
+			ext.list_insert_cond(poss, raw_entry.pos)
+			ext.list_insert_cond(examples, raw_entry.exmp)
 		end
 		table.insert(entries, {
 			trms = terms,
@@ -67,13 +67,13 @@ local function import(dict)
 		})
 	end
 
-	local index, start_index = dict_util.create_index(entries, list_search_terms)
+	local index, start_index = util.create_index(entries, list_search_terms)
 	local data = {
 		entries = entries,
 		index = index,
 		start_index = start_index
 	}
-	helper.write_json_file(dict_util.cache_path(dict), data)
+	helper.write_json_file(util.cache_path(dict), data)
 	return data
 end
 
@@ -81,18 +81,18 @@ local function generate_dict_table(config, data)
 	local function export_entries(ids)
 		if not ids then return nil end
 
-		return util.list_map(ids, function(id)
+		return ext.list_map(ids, function(id)
 			local entry = data.entries[id]
 			return {
 				id = id,
 				terms = entry.trms,
 				alts = entry.alts,
-				defs = {util.string_trim((entry.def:gsub("<br>", "\n")))}
+				defs = {ext.string_trim((entry.def:gsub("<br>", "\n")))}
 			}
 		end)
 	end
 
-	local exporter = dict_util.load_exporter("migaku", config.exporter)
+	local exporter = util.load_exporter("migaku", config.exporter)
 	return {
 		format_quick_def = function(qdef)
 			local template = config.quick_def_template and config.quick_def_template or default_qdef_template
@@ -106,7 +106,7 @@ local function generate_dict_table(config, data)
 			return export_entries(data.index[term])
 		end,
 		look_up_start = function(term)
-			return export_entries(dict_util.find_start_matches(term, data, list_search_terms))
+			return export_entries(util.find_start_matches(term, data, list_search_terms))
 		end,
 		get_definition = function(id)
 			local entry = data.entries[id]
@@ -121,7 +121,7 @@ local migaku = {}
 
 function migaku.load(dict, force_import)
 	local start = mp.get_time()
-	local data = dict_util.generic_load(dict, import, force_import)
+	local data = util.generic_load(dict, import, force_import)
 	msg.debug(dict.id .. " (Migaku): " .. mp.get_time() - start)
 	return generate_dict_table(dict.config, data)
 end

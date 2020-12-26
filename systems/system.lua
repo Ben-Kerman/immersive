@@ -2,7 +2,7 @@ local cfg = require "systems.config"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
 local utf_8 = require "utility.utf_8"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local system = {}
 

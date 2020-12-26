@@ -8,7 +8,7 @@ local msg = require "systems.message"
 local player = require "systems.player"
 local Subtitle = require "systems.subtitle"
 local TargetSelect = require "interface.target_select"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local SubSelect = {}
 SubSelect.__index = SubSelect
@@ -28,7 +28,7 @@ function SubSelect:select_sub()
 
 		local subtitles = self.data.subtitles
 		-- check for end time, lines with identical start times get combined by mpv
-		if not util.list_find(subtitles, function(s) return s.stop == sub.stop end) then
+		if not ext.list_find(subtitles, function(s) return s.stop == sub.stop end) then
 			table.insert(subtitles, sub)
 			table.sort(subtitles)
 		end

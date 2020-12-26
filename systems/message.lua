@@ -1,4 +1,4 @@
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local overlay = mp.create_osd_overlay("ass-events")
 overlay.z = 127
@@ -38,7 +38,7 @@ end
 local function add_msg_timeout(msg)
 	if msg.duration ~= 0 then
 		mp.add_timeout(msg.duration, function()
-			local _, pos = util.list_find(messages, msg)
+			local _, pos = ext.list_find(messages, msg)
 			table.remove(messages, pos)
 			update_overlay()
 		end)
@@ -54,7 +54,7 @@ local function add_msg(level, text, duration)
 		text = text
 	}
 
-	local _, index = util.list_find(levels, msg.level)
+	local _, index = ext.list_find(levels, msg.level)
 	if index and index <= 4 then
 		table.insert(messages, msg)
 		if started then

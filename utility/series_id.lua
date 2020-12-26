@@ -1,13 +1,13 @@
 local cfg = require "systems.config"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
-local config = util.map_map(cfg.load_subcfg("series"), function(_, series)
+local config = ext.map_map(cfg.load_subcfg("series"), function(_, series)
 	if not cfg.check_required(series.entries, {"keywords"}) then
 		return nil
 	end
 	return series.name, {
 		title = series.entries.title,
-		keywords = util.string_split(series.entries.keywords:lower(), " ", true)
+		keywords = ext.string_split(series.entries.keywords:lower(), " ", true)
 	}
 end)
 

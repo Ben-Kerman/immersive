@@ -10,7 +10,7 @@ local series_id = require "utility.series_id"
 local series_id = require "utility.series_id"
 local sys = require "systems.system"
 local templater = require "systems.templater"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local function anki_sound_tag(filename)
 	return string.format("[sound:%s]", filename)
@@ -70,7 +70,7 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 	end
 	if data.subtitles and #data.subtitles ~= 0 then
 		template_data.sentences = {
-			data = util.list_map(data.subtitles, function(sub) return sub.text end),
+			data = ext.list_map(data.subtitles, function(sub) return sub.text end),
 			sep = "<br>",
 			transform = function(sub)
 				return apply_substitutions(sub, tgt.sentence_substitutions)
@@ -80,7 +80,7 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 	if data.definitions and #data.definitions ~= 0 then
 		template_data.word = data.definitions[1].word
 		template_data.definitions = {
-			data = util.list_map(data.definitions, function(def) return def.definition end),
+			data = ext.list_map(data.definitions, function(def) return def.definition end),
 			sep = "<br>",
 			transform = function(sub)
 				return apply_substitutions(sub, tgt.definition_substitutions)
@@ -154,7 +154,7 @@ function export.resolve_times(data)
 	local ts = helper.default_times(data.times)
 
 	local start = ts.start < 0 and data.subtitles[1]:real_start() or ts.start
-	local stop = ts.stop < 0 and util.list_max(data.subtitles, function(a, b)
+	local stop = ts.stop < 0 and ext.list_max(data.subtitles, function(a, b)
 		return a.stop < b.stop
 	end):real_stop() or ts.stop
 	local scrot = ts.scrot < 0 and mp.get_property_number("time-pos") or ts.scrot

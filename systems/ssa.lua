@@ -1,7 +1,7 @@
 local cfg = require "systems.config"
 local msg = require "systems.message"
 local tags = require "systems.ssa_tags"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local function convert_alpha(str)
 	return string.format("%02X", 0xff - tonumber(str, 16))
@@ -115,7 +115,7 @@ local function get_defaults()
 end
 
 local function verify_convert_value(key, value)
-	local tag = util.list_find(tags, function(tag)
+	local tag = ext.list_find(tags, function(tag)
 		return tag.id == key
 	end)
 	if tag then
@@ -150,7 +150,7 @@ local config = (function()
 		insert_values(config.base, cfg_data.global)
 	end
 	for _, section in ipairs(cfg_data) do
-		local path = util.string_split(section.name, "/")
+		local path = ext.string_split(section.name, "/")
 		style_tbl = cfg.get_nested(config, path)
 		if style_tbl then
 			insert_values(style_tbl, section.entries)
@@ -225,9 +225,9 @@ local function generate_rec(string_parts, definition, base_data)
 	elseif type(definition) == "table" then
 		local style_data = find_style(definition.style)
 		if not base_data then
-			base_data = util.map_merge(config.base, style_data)
+			base_data = ext.map_merge(config.base, style_data)
 		end
-		local next_base_data = util.map_merge(base_data, style_data)
+		local next_base_data = ext.map_merge(base_data, style_data)
 		local inj_data = definition.full_style and next_base_data or style_data
 
 		if inj_data then

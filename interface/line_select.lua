@@ -1,6 +1,6 @@
 local kbds = require "systems.key_bindings"
 local ssa = require "systems.ssa"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local function default_line_conv(line)
 	return line
@@ -18,7 +18,7 @@ end
 
 function LineSelect:delete_sel()
 	table.remove(self.lines, self.active)
-	self.active = util.num_limit(self.active, 1, #self.lines)
+	self.active = ext.num_limit(self.active, 1, #self.lines)
 	self:update()
 end
 
@@ -33,7 +33,7 @@ function LineSelect:new(lines, line_conv, sel_conv, update_handler, limit, init)
 		sel_conv = sel_conv,
 		update_handler = update_handler,
 		limit = limit,
-		active = util.num_limit(init, 1, #lines),
+		active = ext.num_limit(init, 1, #lines),
 		bindings = {
 			group = "line_select",
 			{

@@ -1,12 +1,12 @@
 local BasicOverlay = require "interface.basic_overlay"
 local cfg = require "systems.config"
-local dict_util = require "dict.util"
+local util = require "dict.util"
 local kbds = require "systems.key_bindings"
 local menu_stack = require "interface.menu_stack"
 local msg = require "systems.message"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
-local dict_list = util.list_map(cfg.load_subcfg("dictionaries"), function(dict_cfg)
+local dict_list = ext.list_map(cfg.load_subcfg("dictionaries"), function(dict_cfg)
 	return {id = dict_cfg.name, config = dict_cfg.entries, table = nil}
 end)
 local active_dict_index = 1
@@ -62,12 +62,12 @@ function dicts.active(block_loading)
 end
 
 function dicts.switch(dir)
-	active_dict_index = util.num_limit(active_dict_index + dir, 1, #dict_list)
+	active_dict_index = ext.num_limit(active_dict_index + dir, 1, #dict_list)
 end
 
 function dicts.reimport_all()
 	for _, dict in ipairs(dict_list) do
-		if dict_util.is_imported(dict) then
+		if util.is_imported(dict) then
 			load_dict(dict, true, true)
 		end
 	end

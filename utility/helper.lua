@@ -2,7 +2,7 @@ local cfg = require "systems.config"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
 local utf_8 = require "utility.utf_8"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local helper = {}
 
@@ -63,7 +63,7 @@ function helper.current_path_abs()
 end
 
 function helper.default_times(times)
-	return util.map_merge({
+	return ext.map_merge({
 		scrot = -1,
 		start = -1,
 		stop = -1
@@ -77,7 +77,7 @@ function helper.short_str(str, len, lf_sub)
 	local cps = utf_8.codepoints(str)
 
 	if #cps > len then
-		return utf_8.string(util.list_range(cps, 1, len - 1)) .. "…"
+		return utf_8.string(ext.list_range(cps, 1, len - 1)) .. "…"
 	else return str end
 end
 
@@ -124,7 +124,7 @@ function helper.parse_with_escape(str, escape_char, search, init, escape_table)
 	local i = init and init or 1
 	while i <= #str do
 		local byte = str:byte(i)
-		if search_bytes and util.list_find(search_bytes, byte) then
+		if search_bytes and ext.list_find(search_bytes, byte) then
 			found_pos = i
 			break
 		elseif byte == escape_byte then

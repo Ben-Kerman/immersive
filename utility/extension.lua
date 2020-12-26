@@ -1,6 +1,6 @@
-local util = {}
+local extension = {}
 
-function util.list_find(list, predicate)
+function extension.list_find(list, predicate)
 	local test = predicate
 	if type(predicate) ~= "function" then
 		test = function(val) return val == predicate end
@@ -10,7 +10,7 @@ function util.list_find(list, predicate)
 	end
 end
 
-function util.list_slice(list, start, length)
+function extension.list_slice(list, start, length)
 	local slice = {}
 	for i = start, start + length do
 		table.insert(slice, list[i])
@@ -18,13 +18,13 @@ function util.list_slice(list, start, length)
 	return slice
 end
 
-function util.list_range(list, from, to)
+function extension.list_range(list, from, to)
 	if not to then to = #list
 	elseif to < 0 then to = #list + to + 1 end
-	return util.list_slice(list, from, to - from)
+	return extension.list_slice(list, from, to - from)
 end
 
-function util.list_compare(list_a, list_b, cmp)
+function extension.list_compare(list_a, list_b, cmp)
 	if #list_a ~= #list_b then return false end
 
 	if not cmp then
@@ -39,7 +39,7 @@ function util.list_compare(list_a, list_b, cmp)
 	return true
 end
 
-function util.list_max(list, cmp)
+function extension.list_max(list, cmp)
 	if not cmp then
 		cmp = function(a ,b) return a < b end
 	end
@@ -51,7 +51,7 @@ function util.list_max(list, cmp)
 	return max
 end
 
-function util.list_filter(list, predicate)
+function extension.list_filter(list, predicate)
 	local res = {}
 	for _, val in ipairs(list) do
 		if predicate(val) then
@@ -61,7 +61,7 @@ function util.list_filter(list, predicate)
 	return res
 end
 
-function util.list_map(list, mapper)
+function extension.list_map(list, mapper)
 	if not mapper then
 		mapper = function(val) return val end
 	end
@@ -73,7 +73,7 @@ function util.list_map(list, mapper)
 	return res
 end
 
-function util.list_flat_map(list, mapper)
+function extension.list_flat_map(list, mapper)
 	if not mapper then
 		mapper = function(val) return val end
 	end
@@ -87,7 +87,7 @@ function util.list_flat_map(list, mapper)
 	return res
 end
 
-function util.list_reverse(list)
+function extension.list_reverse(list)
 	local res = {}
 	for i = #list, 1, -1 do
 		table.insert(res, list[i])
@@ -95,17 +95,17 @@ function util.list_reverse(list)
 	return res
 end
 
-function util.list_unique(list)
+function extension.list_unique(list)
 	local res = {}
 	for _, elem in ipairs(list) do
-		if not util.list_find(res, elem) then
+		if not extension.list_find(res, elem) then
 			table.insert(res, elem)
 		end
 	end
 	return res
 end
 
-function util.compact_list(list, init_len)
+function extension.compact_list(list, init_len)
 	local next_index = 1
 	for i = 1, init_len do
 		if list[i] then
@@ -118,7 +118,7 @@ function util.compact_list(list, init_len)
 	end
 end
 
-function util.list_append(tgt, src, inplace)
+function extension.list_append(tgt, src, inplace)
 	local res
 	if inplace then res = tgt
 	else
@@ -136,13 +136,13 @@ function util.list_append(tgt, src, inplace)
 	return res
 end
 
-function util.list_insert_cond(list, value)
-	if not util.list_find(list, value) then
+function extension.list_insert_cond(list, value)
+	if not extension.list_find(list, value) then
 		table.insert(list, value)
 	end
 end
 
-function util.map_filter_keys(map, predicate)
+function extension.map_filter_keys(map, predicate)
 	local res = {}
 	for key, val in pairs(map) do
 		if predicate(key, val) then
@@ -152,7 +152,7 @@ function util.map_filter_keys(map, predicate)
 	return res
 end
 
-function util.map_map(map, mapper)
+function extension.map_map(map, mapper)
 	local res = {}
 	for key, val in pairs(map) do
 		local mapped_key, mapped_val = mapper(key, val)
@@ -163,7 +163,7 @@ function util.map_map(map, mapper)
 	return res
 end
 
-function util.map_merge(target, source)
+function extension.map_merge(target, source)
 	local res = {}
 	for key, val in pairs(target) do
 		res[key] = val
@@ -176,16 +176,16 @@ function util.map_merge(target, source)
 	return res
 end
 
-function util.string_starts(str, prefix)
+function extension.string_starts(str, prefix)
 	return str:find(prefix, 1, true) == 1
 end
 
-function util.string_ends(str, suffix)
+function extension.string_ends(str, suffix)
 	local _, last_pos str:find(suffix, 1, true)
 	return last_pos == #str
 end
 
-function util.string_trim(str, where)
+function extension.string_trim(str, where)
 	local _, lead_end = str:find("^%s+")
 	local trail_start, _ = str:find("%s+$")
 
@@ -199,7 +199,7 @@ function util.string_trim(str, where)
 	return str:sub(first, last)
 end
 
-function util.string_split(str, pattern, filter_empty)
+function extension.string_split(str, pattern, filter_empty)
 	if type(str) ~= "string"
 	   or type(pattern) ~= "string"
 	   or #pattern == 0 then
@@ -222,7 +222,7 @@ function util.string_split(str, pattern, filter_empty)
 	return res
 end
 
-function util.num_limit(num, min, max)
+function extension.num_limit(num, min, max)
 	if not num then
 		return min and min or max
 	end
@@ -240,4 +240,4 @@ function util.num_limit(num, min, max)
 	else return num end
 end
 
-return util
+return extension

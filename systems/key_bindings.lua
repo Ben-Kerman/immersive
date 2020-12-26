@@ -1,6 +1,6 @@
 local cfg = require "systems.config"
 local msg = require "systems.message"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local config = (function()
 	local config = {}
@@ -47,7 +47,7 @@ end
 
 function key_bindings.create_global(bindings)
 	add_internal(bindings, true)
-	util.list_append(global_bindings, bindings, true)
+	ext.list_append(global_bindings, bindings, true)
 end
 
 function key_bindings.add(bindings)

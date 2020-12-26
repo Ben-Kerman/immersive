@@ -1,6 +1,6 @@
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
-local unreserved = util.list_map({
+local unreserved = ext.list_map({
 	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
 	"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
 	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
@@ -16,7 +16,7 @@ function url.encode(str)
 	for i = 1, #str do
 		local byte = str:byte(i)
 		local code
-		if util.list_find(unreserved, byte) then
+		if ext.list_find(unreserved, byte) then
 			code = string.char(byte)
 		else code = string.format("%%%02X", byte) end
 		table.insert(encoded, code)

@@ -1,6 +1,6 @@
 local helper = require "utility.helper"
 local msg = require "systems.message"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local function char(str, pos)
 	return str:sub(pos, pos)
@@ -196,12 +196,12 @@ function templater.render(template, values)
 				elseif data_type == "table" then
 					local list = value.data
 					if segment.from ~= 1 and segment.to ~= -1 then
-						list = util.list_range(list, segment.from, segment.to)
+						list = ext.list_range(list, segment.from, segment.to)
 					end
 
 					if #list ~= 0 then
 						if value.transform then
-							list = util.list_map(list, value.transform)
+							list = ext.list_map(list, value.transform)
 						end
 						local sep = segment.sep and segment.sep or value.sep
 						insert_str = table.concat(list, sep)

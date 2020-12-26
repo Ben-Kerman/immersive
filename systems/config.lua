@@ -1,7 +1,7 @@
 local mpo = require "mp.options"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local function check_file(path)
 	if not path then return false end
@@ -71,7 +71,7 @@ function config.load(path, global_as_base)
 	local function insert_section()
 		local entries
 		if global_as_base and result.global then
-			entries = util.map_merge(result.global, section_entries)
+			entries = ext.map_merge(result.global, section_entries)
 		else entries = section_entries end
 		table.insert(result, {
 			name = section_name,
@@ -82,14 +82,14 @@ function config.load(path, global_as_base)
 	local count = 1
 	for line in io.lines(path) do
 		if block_token then
-			if util.string_trim(line) == block_token then
+			if ext.string_trim(line) == block_token then
 				section_entries[block_key] = table.concat(block_value, "\n")
 				block_token, block_key, block_value = nil
 			else table.insert(block_value, line) end
 		else
-			local trimmed = util.string_trim(line, "start")
-			if #trimmed ~= 0 and not util.string_starts(trimmed, "#") then
-				if util.string_starts(trimmed, "[") then
+			local trimmed = ext.string_trim(line, "start")
+			if #trimmed ~= 0 and not ext.string_starts(trimmed, "#") then
+				if ext.string_starts(trimmed, "[") then
 					local new_section_name = line:match("%[([^%]]+)%]")
 					if new_section_name then
 						if section_name then insert_section()

@@ -1,5 +1,5 @@
 local utf_8 = require "utility.utf_8"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local Subtitle = {}
 Subtitle.__index = Subtitle

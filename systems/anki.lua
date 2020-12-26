@@ -3,7 +3,7 @@ local helper = require "utility.helper"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
 local sys = require "systems.system"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local function default_tgt(raw_tgt)
 	return {
@@ -82,21 +82,21 @@ local function load_tgt(raw_tgt)
 
 	local tgt = default_tgt(raw_tgt)
 	for key, value in pairs(raw_tgt.entries) do
-		if util.string_starts(key, "field:") then
+		if ext.string_starts(key, "field:") then
 			tgt.fields[key:sub(7)] = value
 		elseif string.find(key, "/") then
-			cfg.insert_nested(tgt.config, util.string_split(key, "/"), value, true)
-		elseif not util.list_find(required_opts, key) then
+			cfg.insert_nested(tgt.config, ext.string_split(key, "/"), value, true)
+		elseif not ext.list_find(required_opts, key) then
 			if key == "add_mode" then
-				if util.list_find({"prepend", "append", "overwrite"}, value) then
+				if ext.list_find({"prepend", "append", "overwrite"}, value) then
 					tgt.add_mode = value
 				else msg.warn("unkown Anki add mode ('" .. value .. "'), using 'append'") end
 			elseif key == "tags" then
-				tgt.tags = util.list_unique(util.string_split(value, " "))
+				tgt.tags = ext.list_unique(ext.string_split(value, " "))
 			elseif key == "sentence_substitutions" or key == "definition_substitutions" then
-				local defs = util.string_split(value, "\n")
-				tgt[key] = util.list_map(defs, parse_substitution)
-			elseif util.list_find({"media_directory"}, key) then
+				local defs = ext.string_split(value, "\n")
+				tgt[key] = ext.list_map(defs, parse_substitution)
+			elseif ext.list_find({"media_directory"}, key) then
 				tgt[key] = value
 			end
 		end
@@ -123,7 +123,7 @@ function anki.active_target(err_msg)
 end
 
 function anki.switch_target(dir)
-	active_tgt_index = util.num_limit(active_tgt_index + dir, 1, #anki.targets)
+	active_tgt_index = ext.num_limit(active_tgt_index + dir, 1, #anki.targets)
 end
 
 function anki.media_dir()
@@ -154,13 +154,13 @@ function anki.generate_filename(series_id, extension)
 	if not media_dir then return nil end
 
 	local files = sys.list_files(media_dir)
-	local existing = util.list_filter(files, function(file)
-		return util.string_starts(file, series_id) and file:match("%." .. extension .. "$")
+	local existing = ext.list_filter(files, function(file)
+		return ext.string_starts(file, series_id) and file:match("%." .. extension .. "$")
 	end)
 	local next_number
 	if #existing == 0 then next_number = 0
 	else
-		next_number = 1 + util.list_max(util.list_map(existing, function(file)
+		next_number = 1 + ext.list_max(ext.list_map(existing, function(file)
 			local _, id_end = file:find(series_id, 1, true)
 			return tonumber((file:match("%-(%d+)", id_end + 1)))
 		end))
@@ -186,7 +186,7 @@ function anki.add_candidates()
 		return card_a.due > card_b.due
 	end)
 
-	local note_ids = util.list_unique(util.list_map(cards, function(card)
+	local note_ids = ext.list_unique(ext.list_map(cards, function(card)
 		return card.note
 	end))
 	local notes = ankicon.notes_info(note_ids)

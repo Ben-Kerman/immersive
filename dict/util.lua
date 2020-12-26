@@ -3,11 +3,11 @@ local mpu = require "mp.utils"
 local msg require "systems.message"
 local sys = require "systems.system"
 local utf_8 = require "utility.utf_8"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
-local dict_util = {}
+local util = {}
 
-function dict_util.cache_path(dict)
+function util.cache_path(dict)
 	local config_dir =  mp.find_config_file("."):sub(1, -3)
 	local cache_dir = mpu.join_path(config_dir, script_name .. "-dict-cache")
 	if not sys.create_dir(cache_dir) then
@@ -16,18 +16,18 @@ function dict_util.cache_path(dict)
 	return mpu.join_path(cache_dir, dict.id .. ".json")
 end
 
-function dict_util.is_imported(dict)
-	return not not mpu.file_info(dict_util.cache_path(dict))
+function util.is_imported(dict)
+	return not not mpu.file_info(util.cache_path(dict))
 end
 
-function dict_util.generic_load(dict, import_fn, force_import)
-	if not force_import and dict_util.is_imported(dict) then
-		return helper.parse_json_file(dict_util.cache_path(dict))
+function util.generic_load(dict, import_fn, force_import)
+	if not force_import and util.is_imported(dict) then
+		return helper.parse_json_file(util.cache_path(dict))
 	end
 	return import_fn(dict)
 end
 
-function dict_util.create_index(entries, search_term_gen)
+function util.create_index(entries, search_term_gen)
 	local function index_insert(index, key, value)
 		if index[key] then table.insert(index[key], value)
 		else index[key] = {value} end
@@ -55,7 +55,7 @@ function dict_util.create_index(entries, search_term_gen)
 	return index, start_index
 end
 
-function dict_util.load_exporter(dict_type, exporter)
+function util.load_exporter(dict_type, exporter)
 	local exporter_id = exporter and exporter or "default"
 	local success, exporter = pcall(require, "dict." .. dict_type .. "." .. exporter_id)
 	if not success then
@@ -69,14 +69,14 @@ function dict_util.load_exporter(dict_type, exporter)
 	else return exporter end
 end
 
-function dict_util.find_start_matches(term, data, search_term_fn)
+function util.find_start_matches(term, data, search_term_fn)
 	local first_char = utf_8.string(utf_8.codepoints(term, 1, 1))
 	local start_matches = data.start_index[first_char]
-	return util.list_filter(start_matches, function(id)
-		if util.list_find(search_term_fn(data.entries[id]), function(search_term)
-			return util.string_starts(search_term, term)
+	return ext.list_filter(start_matches, function(id)
+		if ext.list_find(search_term_fn(data.entries[id]), function(search_term)
+			return ext.string_starts(search_term, term)
 		end) then return true end
 	end)
 end
 
-return dict_util
+return util

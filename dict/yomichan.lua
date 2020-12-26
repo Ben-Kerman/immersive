@@ -1,10 +1,10 @@
-local dict_util = require "dict.util"
+local util = require "dict.util"
 local helper = require "utility.helper"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
 local sys = require "systems.system"
 local templater = require "systems.templater"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local default_qdef_template = "{{readings:::・}}{{variants:【:】:・}}: {{definitions:::; }}"
 
@@ -38,7 +38,7 @@ local function verify(dir)
 	end
 
 	local files = sys.list_files(dir)
-	if not util.list_find(files, "index.json") then
+	if not ext.list_find(files, "index.json") then
 		return false, "no index found"
 	end
 
@@ -49,8 +49,8 @@ local function verify(dir)
 		return false, "only v3 Yomichan dictionaries are supported"
 	end
 
-	local term_banks = util.list_find(files, function(filename)
-		return util.string_starts(filename, "term_bank_")
+	local term_banks = ext.list_find(files, function(filename)
+		return ext.string_starts(filename, "term_bank_")
 	end)
 	if #term_banks == 0 then
 		return false, "no term banks found"
@@ -67,8 +67,8 @@ local function import(dict)
 	end
 
 	local function load_bank(prefix, action)
-		for _, bank in ipairs(util.list_filter(files_or_error, function(filename)
-			return util.string_starts(filename, prefix)
+		for _, bank in ipairs(ext.list_filter(files_or_error, function(filename)
+			return ext.string_starts(filename, prefix)
 		end)) do
 			local bank_data = helper.parse_json_file(mpu.join_path(dict.config.location, bank))
 			for _, entry in ipairs(bank_data) do
@@ -132,11 +132,11 @@ local function import(dict)
 
 				-- combine entries with the same definitions and group variants by reading
 				for k = i + 1, init_len do
-					if entry[k] and util.list_compare(sub_entry.defs, entry[k].defs) then
+					if entry[k] and ext.list_compare(sub_entry.defs, entry[k].defs) then
 						local other_rdng = entry[k].rdng and entry[k].rdng or entry[k].term
 						local other_var = entry[k].rdng and entry[k].term or nil
 
-						local reading = util.list_find(readings, function(reading)
+						local reading = ext.list_find(readings, function(reading)
 							return other_rdng == reading.rdng
 						end)
 
@@ -159,20 +159,20 @@ local function import(dict)
 				sub_entry.rdng = readings
 			end
 		end
-		util.compact_list(entry, init_len)
+		ext.compact_list(entry, init_len)
 
 		-- having entries as a list makes JSON import/export easier
 		table.insert(entries, entry)
 	end
 
-	local index, start_index = dict_util.create_index(entries, list_search_terms)
+	local index, start_index = util.create_index(entries, list_search_terms)
 	local data = {
 		tags = tag_map,
 		entries = entries,
 		index = index,
 		start_index = start_index
 	}
-	helper.write_json_file(dict_util.cache_path(dict), data)
+	helper.write_json_file(util.cache_path(dict), data)
 	return data
 end
 
@@ -181,10 +181,10 @@ local function generate_dict_table(config, data)
 		local readings, variants, defs = {}, {}, {}
 		for _, sub_entry in ipairs(entry) do
 			for _, reading in ipairs(sub_entry.rdng) do
-				util.list_insert_cond(readings, reading.rdng)
+				ext.list_insert_cond(readings, reading.rdng)
 				if reading.vars then
 					for i, var in ipairs(reading.vars) do
-						util.list_insert_cond(variants, var)
+						ext.list_insert_cond(variants, var)
 					end
 				end
 			end
@@ -199,24 +199,24 @@ local function generate_dict_table(config, data)
 	local function export_entries(ids)
 		if not ids then return nil end
 
-		local entries = util.list_map(ids, function(id)
+		local entries = ext.list_map(ids, function(id)
 			return {id = id, entry = data.entries[id]}
 		end)
 		table.sort(entries, function(entry_a, entry_b)
 			return entry_a.entry[1].scor > entry_b.entry[1].scor
 		end)
-		return util.list_map(entries, function(entry)
+		return ext.list_map(entries, function(entry)
 			local quick_def = get_quick_def(entry.entry)
 			quick_def.id = entry.id
 			return quick_def
 		end)
 	end
 
-	local exporter = dict_util.load_exporter("yomichan", config.exporter)
+	local exporter = util.load_exporter("yomichan", config.exporter)
 	return {
 		format_quick_def = function(qdef)
 			local template = config.quick_def_template and config.quick_def_template or default_qdef_template
-			local rendered = util.string_trim(templater.render(template, {
+			local rendered = ext.string_trim(templater.render(template, {
 				readings = {data = qdef.readings},
 				variants = {data = qdef.variants},
 				definitions = {data = qdef.defs}
@@ -236,7 +236,7 @@ local function generate_dict_table(config, data)
 			return export_entries(data.index[term])
 		end,
 		look_up_start = function(term)
-			return export_entries(dict_util.find_start_matches(term, data, list_search_terms))
+			return export_entries(util.find_start_matches(term, data, list_search_terms))
 		end,
 		get_definition = function(id)
 			local entry = data.entries[id]
@@ -254,7 +254,7 @@ local yomichan = {}
 
 function yomichan.load(dict, force_import)
 	local start = mp.get_time()
-	local data = dict_util.generic_load(dict, import, force_import)
+	local data = util.generic_load(dict, import, force_import)
 	msg.debug(dict.id .. " (Yomichan): " .. mp.get_time() - start)
 	return generate_dict_table(dict.config, data)
 end

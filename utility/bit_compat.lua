@@ -1,4 +1,4 @@
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local bit_conv = {}
 
@@ -29,7 +29,7 @@ function bit_conv.to_num(bits)
 end
 
 local function bitwise_combine(op, init, nums)
-	local numbers = util.list_map(nums, function(num)
+	local numbers = ext.list_map(nums, function(num)
 		return bit_conv.to_bits(num)
 	end)
 

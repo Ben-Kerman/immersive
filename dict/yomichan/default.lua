@@ -1,7 +1,7 @@
 local config = require "systems.config"
 local templater = require "systems.templater"
 local utf_8 = require "utility.utf_8"
-local util = require "utility.extension"
+local ext = require "utility.extension"
 
 local function get_conf(config)
 	local default = {
@@ -15,8 +15,8 @@ local function get_conf(config)
 		single_template = "{{header}} {{keywords:::; }}"
 	}
 
-	local filtered = util.map_filter_keys(config, function(key)
-		return util.string_starts(key, "export:")
+	local filtered = ext.map_filter_keys(config, function(key)
+		return ext.string_starts(key, "export:")
 	end)
 
 	for key, val in pairs(filtered) do
@@ -50,14 +50,14 @@ return function(entry, config, tag_map)
 	local readings = {}
 	for _, sub_entry in ipairs(entry) do
 		for _, reading in ipairs(sub_entry.rdng) do
-			local exst_rdng = util.list_find(readings, function(rdng)
+			local exst_rdng = ext.list_find(readings, function(rdng)
 				return rdng.rdng == reading.rdng
 			end)
 			if exst_rdng and reading.vars then
 				if not exst_rdng.vars then exst_rdng = reading.vars
 				else
 					for _, var in ipairs(reading.vars) do
-						if not util.list_find(exst_rdng.vars, var) then
+						if not ext.list_find(exst_rdng.vars, var) then
 							table.insert(reading.vars, var)
 						end
 					end
@@ -68,7 +68,7 @@ return function(entry, config, tag_map)
 		end
 	end
 
-	local reading_strs = util.list_map(readings, function(reading)
+	local reading_strs = ext.list_map(readings, function(reading)
 		local vars = reading.vars and reading.vars or {}
 		return templater.render(cfg.reading_template, {
 			reading = {data = reading.rdng},
@@ -77,11 +77,11 @@ return function(entry, config, tag_map)
 	end)
 
 	local last_tags
-	local definitions = util.list_map(entry, function(sub_entry, i)
+	local definitions = ext.list_map(entry, function(sub_entry, i)
 		local tag_list = ""
 
 		if last_tags ~= sub_entry.dtgs then
-			local tags = util.string_split(sub_entry.dtgs, " ")
+			local tags = ext.string_split(sub_entry.dtgs, " ")
 
 			tag_list = templater.render(cfg.tag_template, {
 				tags = {
