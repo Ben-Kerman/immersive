@@ -1,3 +1,4 @@
+local helper = require "helper"
 local msg = require "message"
 local util = require "util"
 
@@ -17,7 +18,7 @@ end
 local function number_conv(str)
 	local res = tonumber(str)
 	if not res then
-		err_msg("invalid number ('" .. str .. "'')")
+		err_msg("invalid number ('" .. str .. "')")
 	end
 	return res
 end
@@ -39,7 +40,7 @@ local function parse_indexing(str, init_pos, subst)
 			subst.from = index
 			subst.to = index
 		end
-		return end_pos
+		return end_pos + 1
 	else
 		err_msg("error parsing index", init_pos, str)
 		return nil
@@ -50,64 +51,78 @@ local function parse_affixes(str, init_pos, subst)
 	local affix_num = 1
 	local affix_names = {"prefix", "suffix", "sep"}
 
-	local affix_tbl = {}
+	local pos = init_pos
+	local affix
+
 	local function insert()
 		if affix_num > #affix_names then
-			err_msg("too many affix definitions (" .. affix_num .. ")", init_pos, str)
-		elseif #affix_tbl ~= 0 then
-			subst[affix_names[affix_num]] = table.concat(affix_tbl)
-			affix_tbl = {}
+			err_msg("too many affix definitions (" .. affix_num .. ")", pos, str)
+		elseif #affix ~= 0 then
+			subst[affix_names[affix_num]] = affix
 		end
 		affix_num = affix_num + 1
 	end
 
-	local pos = init_pos
-	while pos <= #str do
-		if char(str, pos) == ":" then
+	while true do
+		local mpos, match
+		affix, mpos, match = helper.parse_with_escape(str, nil, ":}", pos)
+		if mpos then pos = mpos
+		else break end
+
+		if match == ":" then
 			insert()
-		elseif char(str, pos) == "}" and char(str, pos + 1) == "}" then
-			insert()
-			return true, pos + 1
-		else
-			if char(str, pos) == "\\" then pos = pos + 1 end
-			table.insert(affix_tbl, char(str, pos))
-		end
-		pos = pos + 1
+			pos = pos + 1
+		elseif match == "}" then
+			if char(str, pos + 1) == "}" then
+				insert()
+				return pos + 2
+			end
+		else break end
 	end
-	return false, pos
+	err_msg("string ended while parsing substitution", pos, str)
+	return pos
 end
 
 local function parse_substitution(str, init_pos)
 	local subst = {}
 	local id_tbl = {}
 
-	local affix_mode, end_reached = false, false
 	local pos = init_pos
-	while pos <= #str and not (affix_mode or end_reached) do
-		if char(str, pos) == "[" then
-			local new_pos = parse_indexing(str, pos, subst)
-			if new_pos then pos = new_pos
-			else return nil, pos end
-			affix_mode = true
-		elseif char(str, pos) == ":" then
-			affix_mode = true
-		elseif char(str, pos) == "}" and char(str, pos + 1) == "}" then
-			end_reached = true
-		else
-			if char(str, pos) == "\\" then pos = pos + 1 end
-			table.insert(id_tbl, char(str, pos))
+	local id_parts = {}
+	local affixes_left = false
+	while true do
+		local id_part, mpos, match = helper.parse_with_escape(str, nil, "[:}", pos)
+		if #id_part ~= 0 then
+			table.insert(id_parts, id_part)
 		end
-		pos = pos + 1
-	end
-	subst.id = table.concat(id_tbl)
 
-	if not end_reached and affix_mode then
-		end_reached, pos = parse_affixes(str, pos, subst)
+		if match == "[" then
+			local new_pos = parse_indexing(str, mpos, subst)
+			if new_pos then pos = new_pos
+			else return nil, mpos end
+			affixes_left = true
+			break
+		elseif match == ":" then
+			pos = mpos + 1
+			affixes_left = true
+			break
+		elseif match == "}" then
+			if char(str, mpos + 1) == "}" then
+				pos = mpos + 2
+				break
+			else
+				table.insert(id_parts, "}")
+				pos = mpos + 1
+			end
+		else
+			err_msg("template ended while parsing substitution", pos, str)
+			break
+		end
 	end
+	subst.id = table.concat(id_parts)
 
-	if not end_reached then
-		err_msg("unexpected characters", pos, str)
-		return nil, pos
+	if affixes_left then
+		pos = parse_affixes(str, pos, subst)
 	end
 
 	if not subst.from then
@@ -122,32 +137,28 @@ end
 
 local function segment_str(str)
 	local segments = {}
-	local current_segment = {}
-	local function insert_segment()
-		if #current_segment ~= 0 then
-			table.insert(segments, table.concat(current_segment))
-			current_segment = {}
-		end
-	end
 
 	local pos = 1
-	while pos <= #str do
-		if char(str, pos) == "{" and char(str, pos + 1) == "{" then
-			insert_segment()
-			local subst, err
-			subst, pos = parse_substitution(str, pos + 2)
-
-			if subst then table.insert(segments, subst)
-			else
-				table.insert(segments, "|template error|")
-			end
-		else
-			if char(str, pos) == "\\" then pos = pos + 1 end
-			table.insert(current_segment, char(str, pos))
+	while pos do
+		local escaped, match
+		escaped, pos, match = helper.parse_with_escape(str, nil, "{", pos)
+		if #escaped ~= 0 then
+			table.insert(segments, escaped)
 		end
-		pos = pos + 1
+		if pos and match == "{"then
+			if char(str, pos + 1) == "{" then
+				local subst
+				subst, pos = parse_substitution(str, pos + 2)
+
+				if subst then
+					table.insert(segments, subst)
+				else table.insert(segments, "|template error|") end
+			else
+				table.insert(segments, "{")
+				pos = pos + 1
+			end
+		end
 	end
-	insert_segment()
 
 	return segments
 end
