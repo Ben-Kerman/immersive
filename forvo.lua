@@ -11,6 +11,7 @@ local player = require "player"
 local sys = require "system"
 local url = require "url"
 
+local html_cache = {}
 local cache_dir = mpu.join_path(sys.tmp_dir(), script_name .. "_forvo_cache")
 local audio_host = "https://audio00.forvo.com/"
 
@@ -72,6 +73,11 @@ local function audio_request(path, callback)
 end
 
 local function html_request(url, callback)
+	if html_cache[url] then
+		callback(html_cache[url])
+		return nil
+	end
+
 	return http.get_async({
 		url = url,
 		headers = html_headers
@@ -80,6 +86,7 @@ local function html_request(url, callback)
 			msg.error("failed to load Forvo website")
 			return
 		end
+		html_cache[url] = res
 		callback(res)
 	end)
 end
