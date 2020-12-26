@@ -4,6 +4,7 @@ local helper = require "helper"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
 local ScreenBlackout = require "screen_blackout"
+local sys = require "system"
 local TextSelect = require "text_select"
 
 local ActiveSubLookup = {}
@@ -28,6 +29,17 @@ function ActiveSubLookup:new()
 			default = "Shift+ENTER",
 			desc = "Look up words starting with selection",
 			action = function() asl:lookup(true) end
+		},
+		{
+			id = "copy",
+			default = "c",
+			desc = "Copy selection to clipboard",
+			action = function()
+				local selection = asl.txt_sel:selection(true)
+				if not selection then return end
+
+				sys.clipboard_write(selection)
+			end
 		}
 	}
 
