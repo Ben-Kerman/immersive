@@ -32,7 +32,11 @@ local function load_dict(dict, show_overlay, force_import)
 	if show_overlay then
 		menu_stack.pop()
 	end
-	kbds.enable_global()
+	-- kind of hacky, a custom event handler
+	-- could be a better solution
+	mp.add_timeout(0.2, function()
+		kbds.enable_global()
+	end)
 	return dict
 end
 
