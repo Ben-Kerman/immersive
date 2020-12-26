@@ -75,10 +75,16 @@ end
 
 -- TIME DISPLAY --
 
-function SubSelect:display_time(var_name)
+function SubSelect:display_time(var_name, default)
 	local value = self.data.times[var_name]
-	if value >= 0 then return tostring(value)
-	else return "{\\i1}auto{\\i0}" end
+	if value >= 0 then
+		return helper.format_time(value)
+	else
+		return {
+			style = {"menu_info", "unset"},
+			default
+		}
+	end
 end
 
 local function set_time(self, var_name, value)
@@ -131,7 +137,7 @@ end
 
 function SubSelect:reset()
 	self.data = new_data()
-	self.sel_overlay.selection = self.data.subtitles
+	self.sel_overlay.data = self.data.subtitles
 	self.sel_overlay:redraw()
 	self.menu:redraw()
 end
@@ -153,15 +159,15 @@ function SubSelect:new()
 	local infos = {
 		{
 			name = "Screenshot",
-			display = function() return ss:display_time("scrot") end
+			display = function() return ss:display_time("scrot", "current frame") end
 		},
 		{
 			name = "Start",
-			display = function() return ss:display_time("start") end
+			display = function() return ss:display_time("start", "selection start") end
 		},
 		{
 			name = "End",
-			display = function() return ss:display_time("stop") end
+			display = function() return ss:display_time("stop", "selection end") end
 		},
 		{
 			name = "Autoselect",
