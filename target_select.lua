@@ -9,6 +9,7 @@ local LineTextSelect = require "line_text_select"
 local Menu = require "menu"
 local menu_stack = require "menu_stack"
 local msg = require "message"
+local ScreenBlackout = require "screen_blackout"
 local sys = require "system"
 
 local TargetSelect = {}
@@ -82,6 +83,7 @@ function TargetSelect:new(data, menu_lvl)
 				})
 			end
 		end, "selection_overlay"),
+		blackout = cfg.values.screen_blackout and ScreenBlackout:new() or nil,
 		menu = Menu:new{bindings = bindings}
 	}, TargetSelect)
 	return ts
@@ -139,6 +141,7 @@ function TargetSelect:hide()
 end
 
 function TargetSelect:cancel()
+	if self.blackout then self.blackout:cancel() end
 	self:hide()
 end
 

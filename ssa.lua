@@ -28,6 +28,8 @@ local function get_defaults()
 	local text_col, text_alpha = convert_mpv_color(p.str("osd-color"))
 	local bord_col, bord_alpha = convert_mpv_color(p.str("osd-border-color"))
 	local shad_col, shad_alpha = convert_mpv_color(p.str("osd-shadow-color"))
+	local back_col, back_alpha = convert_mpv_color(p.str("background"))
+
 	local bord_size = p.num("osd-border-size")
 	local shad_size = p.num("osd-shadow-offset")
 
@@ -102,6 +104,12 @@ local function get_defaults()
 		},
 		info_overlay = {
 			base = {align = 1}
+		},
+		blackout = {
+			base = {
+				primary_color = back_col,
+				primary_alpha = back_alpha
+			}
 		}
 	}
 end

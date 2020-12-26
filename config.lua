@@ -18,6 +18,7 @@ local config = {
 		startup_dict_overlay = true,
 		max_targets = 1,
 		always_show_minutes = true,
+		screen_blackout = true,
 		forvo_language = "ja",
 		forvo_preload_audio = false,
 		forvo_prefer_mp3 = false,
