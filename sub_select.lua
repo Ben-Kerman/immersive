@@ -36,7 +36,7 @@ function SubSelect:select_sub()
 	end
 end
 
-local autosel_active = false
+local autosel_active = cfg.values.enable_autoselect
 function SubSelect:get_autosel()
 	if cfg.values.global_autoselect then
 		return autosel_active
@@ -250,7 +250,7 @@ function SubSelect:new()
 
 	ss = setmetatable({
 		data = data,
-		autosel = false,
+		autosel = cfg.values.enable_autoselect,
 		infos = infos,
 		bindings = bindings,
 		sel_overlay = sel_overlay,
