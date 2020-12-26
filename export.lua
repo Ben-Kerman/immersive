@@ -20,7 +20,7 @@ local function anki_image_tag(filename)
 	return string.format([[<img src="%s">]], filename)
 end
 
-local function replace_field_vars(field_def, data, audio_file, image_file, word_audio_filename, start, stop)
+local function replace_field_vars(field_def, data, tgt, audio_file, image_file, word_audio_filename, start, stop)
 	local abs_path = helper.current_path_abs()
 	local _, filename = mpu.split_path(abs_path)
 
@@ -63,7 +63,14 @@ local function replace_field_vars(field_def, data, audio_file, image_file, word_
 	if data.subtitles and #data.subtitles ~= 0 then
 		template_data.sentences = {
 			data = util.list_map(data.subtitles, function(sub) return sub.text end),
-			sep = "<br>"
+			sep = "<br>",
+			transform = function(sub)
+				local res = sub
+				for _, subst in ipairs(tgt.substitutions) do
+					res = res:gsub(subst.pattern, subst.repl)
+				end
+				return res
+			end
 		}
 	end
 	if data.definitions and #data.definitions ~= 0 then
@@ -167,8 +174,8 @@ local function prepare_fields(data)
 	local word_audio_filename = export_word_audio(data)
 
 	local fields = {}
-	for name, def in pairs(tgt_cfg.fields) do
-		fields[name] = replace_field_vars(def, data, audio_filename, image_filename, word_audio_filename, start, stop)
+	for name, def in pairs(tgt.fields) do
+		fields[name] = replace_field_vars(def, data, tgt, audio_filename, image_filename, word_audio_filename, start, stop)
 	end
 
 	return fields, tgt

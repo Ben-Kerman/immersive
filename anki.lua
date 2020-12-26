@@ -14,7 +14,16 @@ local function default_tgt(raw_tgt)
 		note_template = "{{type}}: {{id}}",
 		media_directory = nil,
 		tags = {"immersive"},
-		substitutions = {},
+		substitutions = {
+			{
+				pattern = "（.-%）",
+				repl = ""
+			},
+			{
+				pattern = "%(.-%)",
+				repl = ""
+			}
+		},
 		fields = {},
 		config = {
 			audio = {
@@ -61,8 +70,6 @@ local function load_tgt(raw_tgt)
 	for key, value in pairs(raw_tgt.entries) do
 		if util.string_starts(key, "field:") then
 			tgt.fields[key:sub(7)] = value
-		elseif key == "tags" then
-			tgt.tags = util.list_unique(util.string_split(value, " "))
 		elseif string.find(key, "/") then
 			cfg.insert_nested(tgt.config, util.string_split(key, "/"), value, true)
 		elseif not util.list_find(required_opts, key) then
@@ -70,6 +77,19 @@ local function load_tgt(raw_tgt)
 				if util.list_find({"prepend", "append", "overwrite"}, value) then
 					tgt.add_mode = value
 				else msg.warn("unkown Anki add mode ('" .. value .. "'), using 'append'") end
+			elseif key == "tags" then
+				tgt.tags = util.list_unique(util.string_split(value, " "))
+			elseif key == "substitutions" then
+				local defs = util.string_split(value, "\n")
+				tgt.substitutions = util.list_map(defs, function(def)
+					local repl, pattern = def:match("^([^<]*)<(.*)$")
+					if repl then
+						return {pattern = pattern, repl = repl}
+					else
+						msg.warn("ignoring invalid substitution: " .. def)
+						return nil
+					end
+				end)
 			elseif util.list_find({"media_directory"}, key) then
 				tgt[key] = value
 			end
