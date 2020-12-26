@@ -1,5 +1,6 @@
 local helper = require "helper"
 local mpu = require "mp.utils"
+local msg require "message"
 local sys = require "system"
 local utf_8 = require "utf_8"
 local util = require "util"
@@ -52,6 +53,20 @@ function dict_util.create_index(entries, search_term_gen)
 	end
 
 	return index, start_index
+end
+
+function dict_util.load_exporter(dict_type, exporter)
+	local exporter_id = exporter and exporter or "default"
+	local success, exporter = pcall(require, "dict." .. dict_type .. "." .. exporter_id)
+	if not success then
+		local err_msg = "could not load exportert '" ..
+		                exporter_id ..
+		                "' for dictionary type '" ..
+		                dict_type ..
+		                "', falling back to default"
+		msg.error(err_msg)
+		return require("dict." .. dict_type .. ".default")
+	else return exporter end
 end
 
 function dict_util.find_start_matches(term, data, search_term_fn)

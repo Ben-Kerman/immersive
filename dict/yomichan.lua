@@ -212,6 +212,7 @@ local function generate_dict_table(config, data)
 		end)
 	end
 
+	local exporter = dict_util.load_exporter("yomichan", config.exporter)
 	return {
 		format_quick_def = function(qdef)
 			local template = config.quick_def_template and config.quick_def_template or default_qdef_template
@@ -234,8 +235,6 @@ local function generate_dict_table(config, data)
 				word = entry[1].rdng[1].vars[1]
 			else word = entry[1].rdng[1].rdng end
 
-			local exporter_id = config.exporter and config.exporter or "default"
-			local exporter = require("dict.yomichan." .. exporter_id)
 			return {word = word, definition = exporter(entry, config, data.tags)}
 		end
 	}

@@ -92,6 +92,7 @@ local function generate_dict_table(config, data)
 		end)
 	end
 
+	local exporter = dict_util.load_exporter("migaku", config.exporter)
 	return {
 		format_quick_def = function(qdef)
 			local template = config.quick_def_template and config.quick_def_template or default_qdef_template
@@ -111,8 +112,6 @@ local function generate_dict_table(config, data)
 			local entry = data.entries[id]
 			local word = entry.trms[1]
 
-			local exporter_id = config.exporter and config.exporter or "default"
-			local exporter = require("dict.migaku." .. exporter_id)
 			return {word = word, definition = exporter(entry, config)}
 		end
 	}
