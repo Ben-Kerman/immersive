@@ -58,9 +58,9 @@ local function default_tgt(raw_tgt)
 end
 
 local function parse_substitution(def)
-	local repl, pat_start = helper.parse_with_escape(def, nil, "<")
-	if pat_start then
-		local pattern = helper.parse_with_escape(def, nil, nil, pat_start)
+	local repl, lt_pos = helper.parse_with_escape(def, nil, "<")
+	if lt_pos then
+		local pattern = helper.parse_with_escape(def, nil, nil, lt_pos + 1)
 		if pcall(string.find, "", pattern) then
 			return {pattern = pattern, repl = repl}
 		end

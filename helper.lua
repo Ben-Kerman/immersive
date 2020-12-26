@@ -109,23 +109,23 @@ local default_escape_table = {
 	[0x74] = 0x09, -- \t
 	[0x76] = 0x0B  -- \v
 }
-function helper.parse_with_escape(str, escape_char, search_char, init, escape_table)
+function helper.parse_with_escape(str, escape_char, search, init, escape_table)
 	if not escape_char then escape_char = "\\" end
 	if not escape_table then escape_table = default_escape_table end
 
 	local escape_byte = escape_char:byte()
-	local search_byte
-	if search_char then
-		search_byte = search_char:byte()
+	local search_bytes
+	if search then
+		search_bytes = table.pack(search:byte(1, #search))
 	end
 
 	local res = {}
-	local next_pos
+	local found_pos
 	local i = init and init or 1
 	while i <= #str do
 		local byte = str:byte(i)
-		if search_byte and byte == search_byte then
-			next_pos = i + 1
+		if search_bytes and util.list_find(search_bytes, byte) then
+			found_pos = i
 			break
 		elseif byte == escape_byte then
 			local next_byte = str:byte(i + 1)
@@ -140,7 +140,8 @@ function helper.parse_with_escape(str, escape_char, search_char, init, escape_ta
 			i = i + 1
 		end
 	end
-	return string.char(table.unpack(res)), next_pos
+	local escaped_str = string.char(table.unpack(res))
+	return escaped_str, found_pos and found_pos, found_pos and string.char(str:byte(found_pos))
 end
 
 return helper
