@@ -1,6 +1,7 @@
 local b64 = require "base64"
 local BasicOverlay = require "basic_overlay"
 local cfg = require "config"
+local helper = require "helper"
 local http = require "http"
 local LineSelect = require "line_select"
 local Menu = require "menu"
@@ -13,6 +14,7 @@ local url = require "url"
 
 local html_cache = {}
 local cache_dir = mpu.join_path(sys.tmp_dir(), script_name .. "_forvo_cache")
+local word_cache_file = mpu.join_path(cache_dir, "words.json")
 local audio_host = "https://audio00.forvo.com/"
 
 local function request_headers()
@@ -46,14 +48,37 @@ local html_headers = (function()
 	return headers
 end)()
 
-local function audio_request(path, callback)
+local function get_audio_file(path)
 	local target_path = mpu.join_path(cache_dir, path)
 	if not sys.create_dir((mpu.split_path(target_path))) then
 		msg.warn("could not create directory for Forvo audio")
 		return nil
 	end
 
-	if mpu.file_info(target_path) then
+	return not not mpu.file_info(target_path), target_path
+end
+
+local function get_word_for_file(path)
+	if mpu.file_info(word_cache_file) then
+		local map = helper.parse_json_file(word_cache_file)
+		if map then
+			return map[path]
+		end
+	end
+end
+
+local function cache_word_for_file(path, word)
+	local map = {}
+	if mpu.file_info(word_cache_file) then
+		map = helper.parse_json_file(word_cache_file)
+	end
+	map[path] = word
+	helper.write_json_file(word_cache_file, map)
+end
+
+local function audio_request(path, callback)
+	local exists, target_path = get_audio_file(path)
+	if exists then
 		callback(target_path)
 		return nil
 	end
@@ -95,50 +120,55 @@ local Pronunciation = {}
 Pronunciation.__index = Pronunciation
 
 function Pronunciation:new(menu, id, user, mp3_l, ogg_l, mp3_h, ogg_h)
-	local pr = {
-		menu = menu,
-		id = tonumber(id),
-		user = user,
-		audio_l = {
-			mp3 = "mp3/" .. b64.decode(mp3_l),
-			ogg = "ogg/" .. b64.decode(ogg_l)
-		},
-		loading = false
+	local extension = cfg.values.forvo_prefer_mp3 and "mp3" or "ogg"
+	local src = mp3_h ~= "" and ogg_h ~= "" and {
+		mp3 = "audios/mp3/" .. b64.decode(mp3_h),
+		ogg = "audios/ogg/" .. b64.decode(ogg_h)
+	} or {
+		mp3 = "mp3/" .. b64.decode(mp3_l),
+		ogg = "ogg/" .. b64.decode(ogg_l)
 	}
-	if mp3_h ~= "" and ogg_h ~= "" then
-		pr.audio_h = {
-			mp3 = "audios/mp3/" .. b64.decode(mp3_h),
-			ogg = "audios/ogg/" .. b64.decode(ogg_h)
-		}
-	end
-	return setmetatable(pr, Pronunciation)
-end
 
-function Pronunciation:load_audio(callback)
-	local function set_audio_file(res)
-		if res then
-			self.loading = false
-			self.audio_file = {
-				word = self.menu.word,
-				extension = extension,
-				path = res
+	local exists, target_path = get_audio_file(src[extension])
+	local audio_file
+	if exists then
+		local word = get_word_for_file(src[extension])
+		if word then
+			audio_file = {
+				word = word,
+				path = target_path
 			}
-			self.menu.prn_sel:update()
 		end
 	end
 
+	return setmetatable({
+		menu = menu,
+		id = tonumber(id),
+		user = user,
+		source_path = src[extension],
+		audio_file = audio_file,
+		loading = false
+	}, Pronunciation)
+end
+
+function Pronunciation:load_audio(callback)
 	if not self.audio_file then
 		self.loading = true
 		if self.menu.prn_sel then
 			self.menu.prn_sel:update()
 		end
 
-		local extension = cfg.values.forvo_prefer_mp3 and "mp3" or "ogg"
-		local src = self.audio_h and self.audio_h or self.audio_l
-
-		local req = audio_request(src[extension], function(res)
-			set_audio_file(res)
-			callback()
+		local req = audio_request(self.source_path, function(res)
+			if res then
+				self.loading = false
+				self.audio_file = {
+					word = self.menu.word,
+					path = res
+				}
+				self.menu.prn_sel:update()
+				callback()
+				cache_word_for_file(self.source_path, self.menu.word)
+			end
 		end)
 		table.insert(self.menu.requests, req)
 	else callback() end
