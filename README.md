@@ -85,7 +85,7 @@ subtitles or if a word can't be found.
 5. Export to Anki using `f`.
 
 The card creation process is highly customizable. For further information see
-[here](doc/card-export.md).
+[here](doc/note-export.md).
 
 ### Looking up Words in mpv
 
