@@ -50,8 +50,6 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 		end_seconds = {data = string.format("%.0f", math.floor(stop))},
 		start_seconds_ms = {data = string.format("%.3f", start)},
 		end_seconds_ms = {data = string.format("%.3f", stop)},
-		end_seconds_ms = {data = string.format("%.3f", stop)},
-		end_seconds_ms = {data = string.format("%.3f", stop)},
 		-- series --
 		series_id = {data = series_id.id()},
 		series_title = {data = series_id.title()},
@@ -70,10 +68,10 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 	end
 	if data.subtitles and #data.subtitles ~= 0 then
 		template_data.sentences = {
-			data = ext.list_map(data.subtitles, function(sub) return sub.text end),
+			data = data.subtitles,
 			sep = "<br>",
 			transform = function(sub)
-				return apply_substitutions(sub, tgt.sentence_substitutions)
+				return apply_substitutions(sub.text, tgt.sentence_substitutions)
 			end
 		}
 	end

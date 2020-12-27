@@ -17,7 +17,7 @@ local function default_tgt(raw_tgt)
 		tags = {"immersive"},
 		sentence_substitutions = {
 			{
-				pattern = "（.-%）",
+				pattern = "（.-）",
 				repl = ""
 			},
 			{
