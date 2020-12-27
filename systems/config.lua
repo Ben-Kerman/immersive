@@ -107,6 +107,7 @@ function config.load(path, global_as_base)
 
 					local key, value = trimmed:match("^([^=]+)=(.*)$")
 					if key then
+						key = ext.string_trim(key)
 						local block_token_match = value:match("%[([^%[]*)%[")
 						if block_token_match then
 							block_token = "]" .. block_token_match .. "]"
