@@ -9,7 +9,7 @@ style for the text selection interface, so if text_select is set to be bold,
 the selection will also be. The section name is a `/`-separated path to the
 style being configured by it.
 
-Styling is done through Advanced Substation Alpha (SSA/ASS) tags internal.
+Styling is done through Advanced Substation Alpha (SSA/ASS) tags internally.
 The tags corresponding to each entry are listed below.
 
 
@@ -23,8 +23,8 @@ Every entry is of a certain type:
 - `color`: Six-digit hexadecimal RGB color (RRGGBB), as in HTML/CSS
 - `alpha`: Two-digit hexadecimal alpha (opacity). `00` is transparent and `FF` is opaque
 
-"OSD pixels" below refers to mpv pixels at 720p resolution. Even if the video
-"resolution is different, OSD pixels are always scaled as if the player window
+"OSD pixels" below refers to pixels at 720p resolution. Even if the video
+resolution is different, OSD pixels are always scaled as if the player window
 was 720 pixels tall.
 
 
@@ -190,6 +190,7 @@ primary_color8080FF
 [word_audio_select/loaded]
 # none
 
+# --------------------
 
 # overlay of selected subtitles
 # during subtitle selection

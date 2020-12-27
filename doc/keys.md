@@ -6,10 +6,10 @@ groups, with each specific to one menu.
 
 ## Global Bindings
 
-Always accessible, no matter what menu is open, unless there is a binding in
+Always available no matter which menu is open, unless there is a binding in
 that menu with the same key, in which case that one takes precedence.
 
-| id                           | key         | action                                                |
+| ID                           | Key         | Action                                                |
 | ---------------------------- | ----------- | ----------------------------------------------------- |
 | `begin_sub_select`           | `a`         | Start line selection                                  |
 | `open_global_menu`           | `Ctrl+a`    | Open the global menu                                  |
@@ -27,7 +27,7 @@ that menu with the same key, in which case that one takes precedence.
 
 Available from the global menu. (`Ctrl+a`)
 
-| id               | key        | action                             |
+| ID               | Key        | Action                             |
 | ---------------- | ---------- | ---------------------------------- |
 | `prev_target`    | `Ctrl+UP`  | Switch to the previous Anki target |
 | `next_target`    | `Ctrl+DOWN`| Switch to the next Anki target     |
@@ -41,7 +41,7 @@ Available from the global menu. (`Ctrl+a`)
 
 Available after opening the active line menu with `k`.
 
-| id        | key           | action                                |
+| ID        | Key           | Action                                |
 | --------- | ------------- | ------------------------------------- |
 | `exact`   | `ENTER`       | Look up selected word                 |
 | `partial` | `Shift+ENTER` | Look up words starting with selection |
@@ -54,7 +54,7 @@ Available after opening the active line menu with `k`.
 
 Available while selecting a definition after a dictionary search.
 
-| id         | key      | action                  |
+| ID         | Key      | Action                  |
 | ---------- | -------- | ----------------------- |
 | `confirm`  | `ENTER`  | Use selected definition |
 
@@ -64,14 +64,14 @@ Available while selecting a definition after a dictionary search.
 
 Available in the export menu.
 
-| id           | key | action                     |
+| ID           | Key | Action                     |
 | ------------ | --- | -------------------------- |
 | `export`     | `f` | Export                     |
 | `export_gui` | `g` | Export using the 'Add' GUI |
 
 If there are cards to add to in Anki the following bindings become available:
 
-| id                 | key | action                                  |
+| ID                 | Key | Action                                  |
 | ------------------ | --- | --------------------------------------- |
 | export_add         | a   | Export to existing note, choose which   |
 | export_add_to_last | s   | Export to existing note, use last added |
@@ -82,7 +82,7 @@ If there are cards to add to in Anki the following bindings become available:
 
 Available during Forvo audio selection.
 
-| id     | key   | action                                                    |
+| ID     | Key   | Action                                                    |
 | ------ | ----- | --------------------------------------------------------- |
 | play   | SPACE | Play currently highlighted audio, fetch if not yet loaded |
 | select | ENTER | Confirm selection                                         |
@@ -93,7 +93,7 @@ Available during Forvo audio selection.
 
 Available in any menu, also shown at the top left of the screen.
 
-| id          | key | action                     |
+| ID          | Key | Action                     |
 | ----------- | --- | -------------------------- |
 | `show_help` | `h` | Show help for current menu |
 
@@ -103,7 +103,7 @@ Available in any menu, also shown at the top left of the screen.
 
 Available when selecting an existing note to export to.
 
-| id       | key     | action                       |
+| ID       | Key     | Action                       |
 | ---------| ------- | ---------------------------- |
 | `confirm`| `ENTER` | Confirm selection and export |
 
@@ -113,7 +113,7 @@ Available when selecting an existing note to export to.
 
 Available during subtitle/timing selection.
 
-| id                    | key | action                                        |
+| ID                    | Key | Action                                        |
 | --------------------- | --- | --------------------------------------------- |
 | `set_start_sub`       | `q` | Force start to start of active line           |
 | `set_end_sub`         | `e` | Force end to end of active line               |
@@ -133,7 +133,7 @@ Available during subtitle/timing selection.
 
 Available during target selection.
 
-| id                 | key           | action                                       |
+| ID                 | Key           | Action                                       |
 | ------------------ | ------------- | -------------------------------------------- |
 | `lookup_exact`     | `ENTER`       | Look up selected word                        |
 | `lookup_partial`   | `Shift+ENTER` | Look up words starting with selection        |
@@ -150,7 +150,7 @@ Available during target selection.
 Available when there is a choice between multiple option, e.g. during target
 selection or when picking Forvo audio.
 
-| id     | key    | action                    |
+| ID     | Key    | Action                    |
 | ------ | ------ | ------------------------- |
 | `prev` | `UP`   | Select line above current |
 | `next` | `DOWN` | Select line below current |
@@ -161,7 +161,7 @@ selection or when picking Forvo audio.
 
 Available whenever text is selectable.
 
-| id              | key                | action                                              |
+| ID              | Key                | Action                                              |
 | --------------- | ------------------ | --------------------------------------------------- |
 | `prev_char`     | `LEFT`             | Move one character to the left                      |
 | `next_char`     | `RIGHT`            | Move one character to the right                     |

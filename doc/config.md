@@ -8,7 +8,7 @@ trimmed, so the key of `    key=value` is is `key`, not `    key
 anything before the `=` becomes the key, anything after it becomes the value.
 In particular, quotation marks do too, so the value in `key="value"` is
 `"value"` and not `value`. Any whitespace after the key is also stripped, but
-this is not the case for the value. So for the following entry is parsed as
+this is not the case for the value. So the following entry is parsed as
 `key` and `   value   `: `  key  =   value   `. For example:
 
 ```

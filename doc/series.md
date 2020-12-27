@@ -3,7 +3,7 @@
 Immersive generates the filenames for the screenshot and audio clip based on a
 series ID. This is generally automatically generated, however sometimes the
 generation algorithm results in garbage. In that case, or if you want to
-change the ID of your series for other reasons you can configure them in
+change the ID of your series for other reasons, you can configure them in
 `immersive-series.conf`.
 
 Each section in the series config represents a series. The section name is
