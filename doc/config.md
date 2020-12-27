@@ -23,6 +23,9 @@ Key I=Value B
 Any entries before the first section are considered to be global to that
 config file. How these are interpreted depends on what is being configured.
 
+If there are multiple entries with the same name in a section the value will
+be that of the last one.
+
 By setting the value to `[[`, the entries value can span across multiple
 lines. In this case leading and trailing spaces are removed from the opening
 token (`[[`). The multiline entry's value continues until the closing token
@@ -52,6 +55,8 @@ these are part of the value:
 
 Any line starting with a `#` is a comment and will be ignored, unless it is
 part of a multiline entry.
+
+---
 
 A more complete example config:
 

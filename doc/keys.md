@@ -187,6 +187,8 @@ same syntax as mpv's `input.conf` and are passed to the player as-is.
 Initialization of invalid bindings silently fails, though it's possible to see
 an error message in the console (`ˋ`).
 
+---
+
 Example config file:
 
 ```
