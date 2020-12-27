@@ -195,7 +195,7 @@ function templater.render(template, values)
 					insert_str = transformed:sub(segment.from, segment.to)
 				elseif data_type == "table" then
 					local list = value.data
-					if segment.from ~= 1 and segment.to ~= -1 then
+					if segment.from ~= 1 or segment.to ~= -1 then
 						list = ext.list_range(list, segment.from, segment.to)
 					end
 
