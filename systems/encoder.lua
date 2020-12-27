@@ -74,7 +74,7 @@ function encoder.image(path, time)
 		table.insert(args, "--ovcopts-add=qmin=" .. tgt_cfg.jpeg.qscale)
 		table.insert(args, "--ovcopts-add=qmax=" .. tgt_cfg.jpeg.qscale)
 	elseif codec == "libwebp" then
-		table.insert(args, "--ovcopts-add=lossless=" .. tgt_cfg.webp.lossless)
+		table.insert(args, "--ovcopts-add=lossless=" .. tgt_cfg.webp.lossless and 1 or 0)
 		table.insert(args, "--ovcopts-add=compression_level=" .. tgt_cfg.webp.compression)
 		table.insert(args, "--ovcopts-add=quality=" .. tgt_cfg.webp.quality)
 	elseif codec == "png" then
