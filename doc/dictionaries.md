@@ -111,7 +111,7 @@ Template overview:
 		<th>Description</th>
 	</tr>
 	<tr>
-		<th colspan="3">reading_template</th>
+		<th colspan="3"><code>reading_template</code></th>
 	</tr>
 	<tr>
 		<td><code>reading</code></td>
@@ -124,7 +124,7 @@ Template overview:
 		<td>All variants of writing the word with this reading.</td>
 	</tr>
 	<tr>
-		<th colspan="3">definition_template</th>
+		<th colspan="3"><code>definition_template</code></th>
 	</tr>
 	<tr>
 		<td><code>tags</code></td>
@@ -139,7 +139,7 @@ Template overview:
 		<td><code>list</code></td>
 		<td>The keywords for the definition.</td>
 	<tr>
-		<th colspan="3">template</th>
+		<th colspan="3"><code>template</code></th>
 	</tr>
 	<tr>
 		<td><code>readings</code></td>
@@ -152,7 +152,7 @@ Template overview:
 		<td>Definitions of all target words as generated from <code>definition_template</code>.</td>
 	</tr>
 	<tr>
-		<th colspan="3">single_template</th>
+		<th colspan="3"><code>single_template</code></th>
 	</tr>
 	<tr>
 		<td><code>readings</code></td>
@@ -187,7 +187,7 @@ the dictionary data.
 		<th>Description</th>
 	</tr>
 	<tr>
-		<th colspan="3">template</th>
+		<th colspan="3"><code>template</code></th>
 	</tr>
 	<tr>
 		<td><code>terms</code></td>

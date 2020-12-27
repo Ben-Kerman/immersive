@@ -101,6 +101,7 @@ definitions, these config files need to be present:
 - [`immersive-dictionaries.conf`](doc/dictionaries.md): which dictionaries to use
 
 The following config files are optional:
+- [`immersive.conf`](doc/script-config.md): general configuration of the script
 - [`immersive-keys.conf`](doc/keys.md): reassign menu key bindings
 - [`immersive-series.conf`](doc/series.md): use custom series IDs and titles
 - [`immersive-style.conf`](doc/style.md): change the appearance of the interface

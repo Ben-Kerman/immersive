@@ -51,7 +51,7 @@ comments:
 # --------------------
 
 # substitutions to apply to the {{sentences}} field
-# for more information, see doc/note-export.md
+# for more information, see doc/card-export.md
 #sentence_substitutions=[[
 <（.-%）
 <(.-%)
