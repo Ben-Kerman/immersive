@@ -14,7 +14,7 @@ end
 
 local config = {
 	values = {
-		lazy_load_dicts = true,
+		preload_dicts = false,
 		startup_dict_overlay = true,
 		max_targets = 1,
 		always_show_minutes = true,

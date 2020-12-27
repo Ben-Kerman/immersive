@@ -40,7 +40,7 @@ local function load_dict(dict, show_overlay, force_import)
 	return dict
 end
 
-if not cfg.values.lazy_load_dicts then
+if cfg.values.preload_dicts then
 	mp.register_event("start-file", function()
 		for _, dict in ipairs(dict_list) do
 			load_dict(dict, cfg.values.startup_dict_overlay)
