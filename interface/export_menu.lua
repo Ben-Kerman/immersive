@@ -2,7 +2,7 @@ local anki = require "systems.anki"
 local export = require "systems.export"
 local Menu = require "interface.menu"
 local menu_stack = require "interface.menu_stack"
-local NotePicker = require "interface.note_select"
+local NoteSelect = require "interface.note_select"
 
 local ExportMenu = {}
 ExportMenu.__index = ExportMenu
@@ -32,7 +32,7 @@ function ExportMenu:new(data)
 			default = "a",
 			desc = "Export to existing note, choose which",
 			action = function()
-				menu_stack.push(NotePicker:new(em.data, candidates))
+				menu_stack.push(NoteSelect:new(em.data, candidates))
 			end
 		})
 		table.insert(bindings, {

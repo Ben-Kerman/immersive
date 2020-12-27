@@ -5,10 +5,10 @@ local Menu = require "interface.menu"
 local templater = require "systems.templater"
 local ext = require "utility.extension"
 
-local NotePicker = {}
-NotePicker.__index = NotePicker
+local NoteSelect = {}
+NoteSelect.__index = NoteSelect
 
-function NotePicker:new(data, notes)
+function NoteSelect:new(data, notes)
 	local ns
 
 	data.level = data.level and (data.level + 1) or 1
@@ -42,22 +42,22 @@ function NotePicker:new(data, notes)
 		notes = notes,
 		note_select = LineSelect:new(notes, note_conv, nil, nil, 9),
 		menu = Menu:new{bindings = bindings}
-	}, NotePicker)
+	}, NoteSelect)
 	return ns
 end
 
-function NotePicker:show()
+function NoteSelect:show()
 	self.menu:show()
 	self.note_select:show()
 end
 
-function NotePicker:hide()
+function NoteSelect:hide()
 	self.note_select:hide()
 	self.menu:hide()
 end
 
-function NotePicker:cancel()
+function NoteSelect:cancel()
 	self:hide()
 end
 
-return NotePicker
+return NoteSelect
