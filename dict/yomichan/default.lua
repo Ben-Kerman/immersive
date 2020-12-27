@@ -43,7 +43,7 @@ local function format_number(num, digit_str)
 end
 
 return function(entry, config, tag_map)
-	local cfg = get_conf(config)
+	local exp_cfg = get_conf(config)
 
 	local readings = {}
 	for _, sub_entry in ipairs(entry) do
@@ -66,14 +66,6 @@ return function(entry, config, tag_map)
 		end
 	end
 
-	local reading_strs = ext.list_map(readings, function(reading)
-		local vars = reading.vars and reading.vars or {}
-		return templater.render(cfg.reading_template, {
-			reading = {data = reading.rdng},
-			variants = {data = vars}
-		})
-	end)
-
 	local last_tag_ids
 	local definitions = ext.list_map(entry, function(sub_entry, i)
 		local tag_template_data
@@ -93,24 +85,34 @@ return function(entry, config, tag_map)
 			tags = tag_template_data and tag_template_data or false,
 			num = {
 				data = i,
-				transform = function(num) return format_number(num, cfg.digits) end
+				transform = function(num) return format_number(num, exp_cfg.digits) end
 			},
 			keywords = {data = sub_entry.defs}
 		}
 	end)
 
-	if #definitions == 1 and cfg.use_single_template then
-		return templater.render(cfg.single_template, {
-			readings = {data = reading_strs},
+	local reading_data = {
+		data = readings,
+		transform = function(reading)
+			return templater.render(exp_cfg.reading_template, {
+				reading = {data = reading.rdng},
+				variants = {data = reading.vars and reading.vars or {}}
+			})
+		end
+	}
+
+	if #definitions == 1 and exp_cfg.use_single_template then
+		return templater.render(exp_cfg.single_template, {
+			readings = reading_data,
 			keywords = definitions[1].keywords
 		})
 	else
-		return templater.render(cfg.template, {
-			readings = {data = reading_strs},
+		return templater.render(exp_cfg.template, {
+			readings = reading_data,
 			definitions = {
 				data = definitions,
-				transform = function(def_data)
-					return templater.render(cfg.definition_template, def_data)
+				transform = function(definition)
+					return templater.render(exp_cfg.definition_template, definition)
 				end
 			}
 		})
