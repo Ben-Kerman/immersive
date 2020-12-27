@@ -25,6 +25,10 @@ function extension.list_range(list, from, to)
 end
 
 function extension.list_compare(list_a, list_b, cmp)
+	if list_a == list_b then return true end
+	if not list_a ~= not list_b then
+		return false
+	end
 	if #list_a ~= #list_b then return false end
 
 	if not cmp then
