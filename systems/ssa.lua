@@ -95,6 +95,7 @@ local function get_defaults()
 			selection = {primary_color = "FF8080"}
 		},
 		word_audio_select = {
+			base = {},
 			unloaded = {primary_color = "808080"},
 			loading = {primary_color = "8080FF"},
 			loaded = {}
