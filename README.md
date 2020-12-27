@@ -6,6 +6,7 @@ dictionary definition of the target word, an audio clip of the sentence, a
 screenshot of a frame from the source video, and pronunciation audio from
 Forvo. The script is highly configurable and supports many possible workflows.
 
+
 ## Requirements
 
 The currently supported platforms are Linux and Windows. If you would like to
@@ -46,7 +47,7 @@ assist in adding macOS support please contact me.
 
 ## Feature Overview
 
-### Automatic Card Creation
+### Fully Integrated Card Creation
 
 The basic process for creating cards is as follows:
 
@@ -54,8 +55,8 @@ The basic process for creating cards is as follows:
 2. Select the subtitles that should be on the card using `a` or the autoselect
 (toggle with `A`). If there are no subtitles or if they are badly timed, set
 the start/end time for the audio export manually using `Q` and `E`. If you
-wish to take a screenshot at a specific time, set it using `s`, otherwise the
-current frame will be used.
+wish to take a screenshot at a specific time instead of the current frame, set
+it using `s`.
 3. Enter target word selection mode using `d`. Select the target word with
 (`Ctrl`+)`⇧`+`←`/`→` and confirm it using (`⇧`+)`⏎`. It's possible to search
 for an external word from the clipboard using `v` if there are no text
@@ -63,15 +64,15 @@ subtitles or if a word can't be found.
 4. Optionally add Forvo audio by pressing `a` after adding a target word.
 5. Export to Anki using `f`.
 
-The card creation process is highly customizable. For further information see
-[here](doc/note-export.md).
+The card creation process is highly customizable. For further information read
+[this](doc/note-export.md).
 
-### Looking up Words in mpv
+### Dictionary Lookup in mpv
 
 You can look up words in your configured dictionaries. Bring up the word
 selection menu by pressing `k` and search for the selection using (`⇧`+)`⏎`.
 
-### Copying Subtitles
+### Subtitle Copying
 
 Immersive can copy subtitles to the clipboard. Use `c` to manually copy the
 active line at any time, or toggle automatic copying with `C`. You can copy a
@@ -110,14 +111,14 @@ The following config files are optional:
 
 Download the latest release from [here](https://github.com/Ben-Kerman/mpv-immersive/releases).
 
-Unzip it's contents into your mpv config directory. Make sure that you are not
+Unzip its contents into your mpv config directory. Make sure that you are not
 overwriting any older config files. Open `immersive-targets.conf` in
 `script-opts` with a text editor of your choice (like Notepad++, Sublime Text
 or vim), and change the values of `profile`, `deck`, and `note_type` so that
 they match your Anki setup. Then open `immersive-dictionaries.conf` and set up
 your dictionaries as explained [here](doc/dictionaries.md). If you are
 learning Japanese and using the Yomichan version of JMdict, you will most
-likely only have to change `location` so it contains the path of a directory
+likely only have to change `location` so it is set to the path of a directory
 containing the unzipped contents of `jmdict_english.zip`.
 
 Your mpv config directory should contain the following files at this point:
