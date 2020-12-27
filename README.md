@@ -55,15 +55,59 @@ page. Simply extract the contents of the file into your mpv scripts folder and
 remove the branch name (most likely `-master`) from the name of the extracted
 directory.
 
-The script is configured in several different files. For a description of the
-general syntax, see [this document](doc/config.md). In order to use the main
-feature of generating Anki cards with included definitions, these config files
-need to be present: [`targets.conf`](doc/targets.md) (how to export to Anki),
-[`dictionaries.conf`](doc/dictionaries.md) (which dictionaries to use). The
-following config files are optional: [`keys.conf`](doc/keys.md) (for
-reassigning menu key bindings), [`series.conf`](doc/series.md) (for using
-custom series IDs and titles), [`style.conf`](doc/style.md) (for changing the
-appearance of the interface).
+The script is configured in several different files. These need to be placed
+in a directory called `script-opts` that is located next to your `mpv.conf`
+and scripts folder. For a description of the general config syntax, see [this
+document](doc/config.md).
+
+In order to use the main feature of generating Anki cards with included
+definitions, these config files need to be present:
+- [`immersive-targets.conf`](doc/targets.md): how to export to Anki
+- [`immersive-dictionaries.conf`](doc/dictionaries.md): which dictionaries to use
+
+The following config files are optional:
+- [`immersive-keys.conf`](doc/keys.md): reassign menu key bindings
+- [`immersive-series.conf`](doc/series.md): use custom series IDs and titles
+- [`immersive-style.conf`](doc/style.md): change the appearance of the interface
+
+### Quick Start Guide
+
+Download the latest release from [here](https://github.com/Ben-Kerman/mpv-immersive/releases).
+
+Unzip it's contents into your mpv config directory. Make sure that you are not
+overwriting any older config files. Open `immersive-targets.conf` in
+`script-opts` with a text editor of your choice (like Notepad++, Sublime Text
+or vim), and change the values of `profile`, `deck`, and `note_type` so that
+they match your Anki setup. Then open `immersive-dictionaries.conf` and set up
+your dictionaries as explained [here](doc/dictionaries.md). If you are
+learning Japanese and using the Yomichan version of JMdict, you will most
+likely only have to change `location` so it contains the path of a directory
+containing the unzipped contents of `jmdict_english.zip`.
+
+Your mpv config directory should contain the following files at this point:
+
+```
+scripts
+    immersive
+        main.lua
+        dict
+        doc
+        interface
+        systems
+        utility
+        main.lua
+        README.md
+script-opts
+    immersive-dictionaries.conf
+    immersive-keys.conf
+    immersive-series.conf
+    immersive-style.conf
+    immersive-targets.conf
+    immersive.conf
+```
+
+You can now start mpv and open the main menu of Immersive using `Ctrl+a`.
+
 
 ## Feature Overview
 
@@ -94,13 +138,13 @@ selection menu by pressing `k` and search for the selection using (`⇧`+)`⏎`.
 
 ### Copying Subtitles
 
-Immersive can copy subtitles to clipboard. Use `c` to manually copy the active
-line at any time, or toggle automatic copying with `C`. You can copy a line
-partially in the menu for selecting text from the active line.
+Immersive can copy subtitles to the clipboard. Use `c` to manually copy the
+active line at any time, or toggle automatic copying with `C`. You can copy a
+line partially in the menu for selecting text from the active line.
 
 ## Troubleshooting
 
 If Immersive crashes at any point (when this happens, the interface suddenly
-disappears and all keybindings stop working), open the console using `ˋ`/`~`
-and take a screenshot of it and report the issue to me. If you started mpv
-from the command line the output there is preferable.
+disappears and all keybindings stop working), open the console using `ˋ`/`~`,
+take a screenshot of it and report the issue to me. If you started mpv from
+the command line the output there is preferable.
