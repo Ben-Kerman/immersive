@@ -7,12 +7,10 @@ local function get_conf(config)
 	local default = {
 		digits = nil,
 		reading_template = "{{reading}}{{variants:【:】:・}}",
-		header_template = "{{readings[1]::　}}:{{readings[2:] (:):　}}",
-		tag_template = "<span style=\"font-size: 0.8em\">{{tags:::, }}</span><br>\n",
-		def_template = "{{tag_list}}{{num}}. {{keywords:::; }}",
-		template = "{{header}}<br>\n{{definitions:::<br>\n}}",
+		definition_template = "{{tags:<span style=\"font-size\\: 0.8em\">:</span><br>:, }}{{num}}. {{keywords:::; }}",
+		template = "{{readings[1]}}:{{readings[2:] (:):　}}<br>{{definitions:::<br>}}",
 		use_single_template = true,
-		single_template = "{{header}} {{keywords:::; }}"
+		single_template = "{{readings[1]::　}}:{{readings[2:] (:):　}} {{keywords:::; }}"
 	}
 
 	local filtered = ext.map_filter_keys(config, function(key)
@@ -76,27 +74,23 @@ return function(entry, config, tag_map)
 		})
 	end)
 
-	local last_tags
+	local last_tag_ids
 	local definitions = ext.list_map(entry, function(sub_entry, i)
-		local tag_list = ""
-
-		if last_tags ~= sub_entry.dtgs then
-			local tags = ext.string_split(sub_entry.dtgs, " ")
-
-			tag_list = templater.render(cfg.tag_template, {
-				tags = {
-					data = tags,
-					transform = function(tag_id)
-						local tag_data = tag_map[tag_id]
-						return tag_data and tag_data.desc or "UNKNOWN TAG"
-					end
-				}
-			})
-			last_tags = sub_entry.dtgs
+		local tag_template_data
+		local tag_ids =  ext.string_split(sub_entry.dtgs, " ")
+		if not ext.list_compare(last_tag_ids, tag_ids) then
+			tag_template_data = {
+				data = tag_ids,
+				transform = function(tag_id)
+					local tag_data = tag_map[tag_id]
+					return tag_data and tag_data.desc or "(UNKNOWN TAG)"
+				end
+			}
+			last_tag_ids = tag_ids
 		end
 
 		return {
-			tag_list = {data = tag_list},
+			tags = tag_template_data and tag_template_data or false,
 			num = {
 				data = i,
 				transform = function(num) return format_number(num, cfg.digits) end
@@ -105,22 +99,18 @@ return function(entry, config, tag_map)
 		}
 	end)
 
-	local header = templater.render(cfg.header_template, {
-		readings = {data = reading_strs}
-	})
-
 	if #definitions == 1 and cfg.use_single_template then
 		return templater.render(cfg.single_template, {
-			header = {data = header},
+			readings = {data = reading_strs},
 			keywords = definitions[1].keywords
 		})
 	else
 		return templater.render(cfg.template, {
-			header = {data = header},
+			readings = {data = reading_strs},
 			definitions = {
 				data = definitions,
 				transform = function(def_data)
-					return templater.render(cfg.def_template, def_data)
+					return templater.render(cfg.definition_template, def_data)
 				end
 			}
 		})
