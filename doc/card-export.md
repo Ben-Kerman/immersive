@@ -72,6 +72,12 @@ playing. If you want to load all audio files automatically set
 Once you have selected a pronunciation that you are happy with, confirm it
 using `⏎`.
 
+If your target language is not Japanese you will have to change `forvo_language`
+in the script config. The language code can be found on the Forvo website, for
+example on [this page](https://forvo.com/word/%E6%97%A5%E6%9C%AC/) at the right of:
+
+> 日本 pronunciation in Japanese **\[ja\]**
+
 
 ## Export Menu
 
