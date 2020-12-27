@@ -118,3 +118,173 @@ are displayed, you can use the target config entry `note_template`:
 		</td>
 	</tr>
 </table>
+
+
+## Exporting
+
+Once you initiate the export, Immersive will first validate your Anki target
+config and only proceed if that is successful. After that, the audio clip and
+screenshot are encoded, as is the Forvo audio if there is any and it is
+configured to be.
+
+Then the following template is applied to each field of the target note type,
+as configured by the `field:...` entries of the target config:
+
+<table>
+	<tr>
+		<th>Variable</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<th colspan="3"><code>field:&lt;field name&gt;</code></th>
+	</tr>
+	<tr>
+		<td><code>word</code></td>
+		<td><code>single</code></td>
+		<td>the first target word</td>
+	</tr>
+	<tr>
+		<td><code>sentences</code></td>
+		<td><code>list</code></td>
+		<td>the subtitles selected for export</td>
+	</tr>
+	<tr>
+		<td><code>definitions</code></td>
+		<td><code>single</code></td>
+		<td>the target word definitions as exported by the dictionary</td>
+	</tr>
+	<tr>
+		<td><code>audio</code></td>
+		<td><code>single</code></td>
+		<td>the audio file as an Anki sound tag</td>
+	</tr>
+	<tr>
+		<td><code>image</code></td>
+		<td><code>single</code></td>
+		<td>the audio file as an Anki/HTML image tag</td>
+	</tr>
+	<tr>
+		<td><code>word_audio</code></td>
+		<td><code>single</code></td>
+		<td>the pronunciation audio file as an Anki sound tag</td>
+	</tr>
+	<tr>
+		<td><code>audio_file</code></td>
+		<td><code>single</code></td>
+		<td>the filename of the audio file</td>
+	</tr>
+	<tr>
+		<td><code>image_file</code></td>
+		<td><code>single</code></td>
+		<td>the filename of the image file</td>
+	</tr>
+	<tr>
+		<td><code>word_audio_file</code></td>
+		<td><code>single</code></td>
+		<td>the filename of the pronunciation audio file</td>
+	</tr>
+	<tr>
+		<td><code>path</code></td>
+		<td><code>single</code></td>
+		<td>The path of the file mpv is currently playing (excluding the filename)</td>
+	</tr>
+	<tr>
+		<td><code>filename</code></td>
+		<td><code>single</code></td>
+		<td>The filename of the file mpv is currently playing</td>
+	</tr>
+	<tr>
+		<td><code>start</code></td>
+		<td><code>single</code></td>
+		<td>The start time of the audio formatted as [HH:][MM:]SS</td>
+	</tr>
+	<tr>
+		<td><code>end</code></td>
+		<td><code>single</code></td>
+		<td>The end time of the audio formatted as [HH:][MM:]SS</td>
+	</tr>
+	<tr>
+		<td><code>start_ms</code></td>
+		<td><code>single</code></td>
+		<td>The start time of the audio formatted as [HH:][MM:]SS.mmm</td>
+	</tr>
+	<tr>
+		<td><code>end_ms</code></td>
+		<td><code>single</code></td>
+		<td>The end time of the audio formatted as [HH:][MM:]SS.mmm</td>
+	</tr>
+	<tr>
+		<td><code>start_seconds</code></td>
+		<td><code>single</code></td>
+		<td>The start time of the audio in seconds</td>
+	</tr>
+	<tr>
+		<td><code>end_seconds</code></td>
+		<td><code>single</code></td>
+		<td>The end time of the audio in seconds</td>
+	</tr>
+	<tr>
+		<td><code>start_seconds_ms</code></td>
+		<td><code>single</code></td>
+		<td>The start time of the audio in seconds and milliseconds</td>
+	</tr>
+	<tr>
+		<td><code>end_seconds_ms</code></td>
+		<td><code>single</code></td>
+		<td>The end time of the audio in seconds and milliseconds</td>
+	</tr>
+	<tr>
+		<td><code>series_id</code></td>
+		<td><code>single</code></td>
+		<td>The series ID as explained <a href="doc/series.md">here</a></td>
+	</tr>
+	<tr>
+		<td><code>series_title</code></td>
+		<td><code>single</code></td>
+		<td>The series title as explained <a href="doc/series.md">here</a></td>
+	</tr>
+</table>
+
+The card is exported with the resulting fields, as well as the tags configured
+for the target.
+
+### Substitutions
+
+The variables `definitions` and `sentences` can be filtered through
+substitutions before being exported. These are defined in the entries
+`definition_substitutions` and `sentence_substitutions` of the target config.
+
+Both those entries expect a multiline value, with each line representing a
+substitution, e.g. this is what the default value of `sentence_substitutions`
+would look like in a config file:
+
+```
+sentence_substitutions=[[
+<（.-）
+<%(.-%)
+]]
+```
+
+Each line is split at the first `<`. Everything to the left of it becomes the
+replacement and everything to the right becomes the pattern. If you want to
+use a `<` in the replacement string, you can escape it as `\<`. Other common
+escapes like `\n` or `\t` work as well, both in the replacement and pattern.
+
+The pattern is a [Lua pattern](https://www.lua.org/manual/5.1/manual.html#5.4.1),
+which means that the following characters need to be escaped by placing a `%`
+before them if you want to use them literally: `^$()%.[]*+-?`.
+
+All occurrences of the pattern are replaced by the replacement string, or
+deleted if the string is empty (i.e. the `<` is the first character of the
+substitution definition). The patterns are applied one after the other in the
+order they are defined in.
+
+The default value of `sentence_substitutions` contains the patterns `（.-）` and
+`%(.-%)`, both with an empty replacement. They delete character names and
+kanji readings from Japanese subtitles. If you want to disable them simply put
+this line in the global section of `immersive-targets.conf`:
+
+```
+sentence_substitutions=
+```
