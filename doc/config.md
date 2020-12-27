@@ -1,3 +1,5 @@
+# Configuration Syntax
+
 Immersive's config files are composed of sections. Each section begins with a
 header consisting of a name enclosed in `[` and `]`. A section contains
 entries in the form of key-value pairs, one per line. The format is
