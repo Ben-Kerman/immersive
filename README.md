@@ -43,6 +43,41 @@ assist in adding macOS support please contact me.
 	</tr>
 </table>
 
+
+## Feature Overview
+
+### Automatic Card Creation
+
+The basic process for creating cards is as follows:
+
+1. Bring up the subtitle selection menu (`a`)
+2. Select the subtitles that should be on the card using `a` or the autoselect
+(toggle with `A`). If there are no subtitles or if they are badly timed, set
+the start/end time for the audio export manually using `Q` and `E`. If you
+wish to take a screenshot at a specific time, set it using `s`, otherwise the
+current frame will be used.
+3. Enter target word selection mode using `d`. Select the target word with
+(`Ctrl`+)`⇧`+`←`/`→` and confirm it using (`⇧`+)`⏎`. It's possible to search
+for an external word from the clipboard using `v` if there are no text
+subtitles or if a word can't be found.
+4. Optionally add Forvo audio by pressing `a` after adding a target word.
+5. Export to Anki using `f`.
+
+The card creation process is highly customizable. For further information see
+[here](doc/note-export.md).
+
+### Looking up Words in mpv
+
+You can look up words in your configured dictionaries. Bring up the word
+selection menu by pressing `k` and search for the selection using (`⇧`+)`⏎`.
+
+### Copying Subtitles
+
+Immersive can copy subtitles to the clipboard. Use `c` to manually copy the
+active line at any time, or toggle automatic copying with `C`. You can copy a
+line partially in the menu for selecting text from the active line.
+
+
 ## Installation & Setup
 
 Immersive can be installed by placing the contents of this repository in a
@@ -108,39 +143,6 @@ script-opts
 
 You can now start mpv and open the main menu of Immersive using `Ctrl+a`.
 
-
-## Feature Overview
-
-### Automatic Card Creation
-
-The basic process for creating cards is as follows:
-
-1. Bring up the subtitle selection menu (`a`)
-2. Select the subtitles that should be on the card using `a` or the autoselect
-(toggle with `A`). If there are no subtitles or if they are badly timed, set
-the start/end time for the audio export manually using `Q` and `E`. If you
-wish to take a screenshot at a specific time, set it using `s`, otherwise the
-current frame will be used.
-3. Enter target word selection mode using `d`. Select the target word with
-(`Ctrl`+)`⇧`+`←`/`→` and confirm it using (`⇧`+)`⏎`. It's possible to search
-for an external word from the clipboard using `v` if there are no text
-subtitles or if a word can't be found.
-4. Optionally add Forvo audio by pressing `a` after adding a target word.
-5. Export to Anki using `f`.
-
-The card creation process is highly customizable. For further information see
-[here](doc/note-export.md).
-
-### Looking up Words in mpv
-
-You can look up words in your configured dictionaries. Bring up the word
-selection menu by pressing `k` and search for the selection using (`⇧`+)`⏎`.
-
-### Copying Subtitles
-
-Immersive can copy subtitles to the clipboard. Use `c` to manually copy the
-active line at any time, or toggle automatic copying with `C`. You can copy a
-line partially in the menu for selecting text from the active line.
 
 ## Troubleshooting
 
