@@ -69,7 +69,7 @@ appearance of the interface).
 
 ### Automatic Card Creation
 
-The process for creating cards is as follows:
+The basic process for creating cards is as follows:
 
 1. Bring up the subtitle selection menu (`a`)
 2. Select the subtitles that should be on the card using `a` or the autoselect
