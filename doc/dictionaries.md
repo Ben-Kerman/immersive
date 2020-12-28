@@ -32,6 +32,7 @@ the config file, e.g. `export:template`. Exporters make heavy use of
 - `exporter`: The exporter used for generating the `{{definitions}}` template
   field on the Anki card. Currently only `default` is available for either
   dictionary type, which is also used if `exporter` is not set.
+- `quick_def_template`: template used for rendering the definitions shown in mpv
 - `export:<exporter option>`: Config entries used by the exporter.
 
 
@@ -44,6 +45,44 @@ your home directory, the location entry should look something like this:
 `location=/home/<user name>/jmdict_english` (Unix) or `location=C:\Users\<user
 name>\jmdict_english` (Windows), with `jmdict_english` being the folder that
 contains the file `index.json` and the term/tag banks of the dictionary.
+
+The dictionary config entry `insert_cjk_breaks` inserts a soft line break
+after each of the following fullwidth characters before rendering the
+definition that is shown inside mpv: `。、，！？；：`. This can be useful for
+monolingual Japanese dictionaries that have definitions which otherwise
+wouldn't fit on the screen.
+
+`quick_def_template` for Yomichan has the following template variables:
+
+<table>
+	<tr>
+		<th>Variable</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<th colspan="3"><code>quick_def_template</code></th>
+	</tr>
+	<tr>
+		<td><code>readings</code></td>
+		<td><code>list</code></td>
+		<td>all readings of the dictionary entry</td>
+	<tr>
+		<td><code>variants</code></td>
+		<td><code>list</code></td>
+		<td>all variants of writing the word</td>
+	<tr>
+		<td><code>definitions</code></td>
+		<td><code>list</code></td>
+		<td>all definitions of the entry</td>
+	</tr>
+</table>
+
+Its default value is:
+
+```
+{{readings:::・}}{{variants:【:】:・}}: {{definitions:::; }}
+```
 
 ### Exporter
 
@@ -173,6 +212,38 @@ For Migaku dictionaries `location` is simply the path of the dictionary's JSON
 file, so something like this: `location=/home/<user
 name>/Migaku_Dictionary.json` (Unix) or `location=C:\Users/<user
 name>\Migaku_Dictionary.json` (Windows).
+
+`quick_def_template` for Migaku has the following template variables:
+
+<table>
+	<tr>
+		<th>Variable</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<th colspan="3"><code>quick_def_template</code></th>
+	</tr>
+	<tr>
+		<td><code>terms</code></td>
+		<td><code>list</code></td>
+		<td>all terms associated with the definition</td>
+	<tr>
+		<td><code>altterms</code></td>
+		<td><code>list</code></td>
+		<td>alternative versions of the terms above</td>
+	<tr>
+		<td><code>definitions</code></td>
+		<td><code>list</code></td>
+		<td>all definitions of the entry</td>
+	</tr>
+</table>
+
+Its default value is:
+
+```
+{{definitions}}
+```
 
 ### Exporter
 
