@@ -33,6 +33,15 @@ deck=<must be set manually>
 # note type the target will use
 note_type=<must be set manually>
 
+# example field definitions
+# uncomment and change so they fit your note type:
+#field:Front={{sentences}}
+#field:Back={{definitions}}
+#field:Word={{word}}
+#field:Audio={{audio}}
+#field:Pronunciation={{word_audio}}
+#field:Image={{image}}
+
 # how export data will be added to existing notes
 # allowed values: 'append', 'prepend', 'overwrite'
 # overwrite replaces fields (but cf. template variable {{prev_content}})
