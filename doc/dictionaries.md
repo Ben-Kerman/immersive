@@ -41,10 +41,9 @@ Yomichan dictionaries need to be unzipped into a directory first, which is
 then used as the value of `location`. For example, if you downloaded
 `jmdict_english.zip` from the Yomichan website and extracted it to a folder in
 your home directory, the location entry should look something like this:
-`location=/home/<user name>/jmdict_english` (Unix) or `location=C:\Users/<user
+`location=/home/<user name>/jmdict_english` (Unix) or `location=C:\Users\<user
 name>\jmdict_english` (Windows), with `jmdict_english` being the folder that
-contains the file `index.json` and the various term/tag banks of the
-dictionary.
+contains the file `index.json` and the term/tag banks of the dictionary.
 
 ### Exporter
 
@@ -150,7 +149,7 @@ Template overview:
 	<tr>
 		<td><code>definitions</code></td>
 		<td><code>list</code></td>
-		<td>all readings as generated from <code>definition_template</code>></td>
+		<td>all readings as generated from <code>definition_template</code></td>
 	</tr>
 	<tr>
 		<th colspan="3"><code>single_template</code></th>

@@ -20,22 +20,20 @@ Some general config options are located in `immersive.conf`:
 # black out the screen during and after target selection
 #target_select_blackout=yes
 
-# black out the screen when looking up words
-# from the active subtitle
+# black out the screen when looking up words from the active subtitle
 #active_sub_blackout=yes
 
 # language code to use when searching Forvo audio
 #forvo_language=ja
 
-# Automatically load Forvo audio instead of
-# waiting until attempting to play it.
+# Automatically load Forvo audio instead of waiting until attempting to play it.
 #forvo_preload_audio=no
 
 # download mp3 files from Forvo instead of Ogg/Vorbis
 #forvo_prefer_mp3=no
 
 # prefix for Forvo filenames in the Anki media directory
-# Files will be named '<prefix>-<word>.<extension>''
+# Files will be named '<prefix>-<word>.<extension>'.
 #forvo_prefix=word_audio
 
 # reencode Forvo audio files since they are unnecessarily large
@@ -60,8 +58,8 @@ Some general config options are located in `immersive.conf`:
 # The method used by "quick" is also a dirty hack.
 #windows_copy_mode=exact
 
-# make subtitle autoselect toggle global instead
-# of being tied to each subtitle select menu
+# make subtitle autoselect toggle global instead of
+# being tied to each subtitle select menu
 #global_autoselect=yes
 
 # enable subtitle autoselect by default

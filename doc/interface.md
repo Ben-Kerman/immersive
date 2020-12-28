@@ -22,20 +22,20 @@ relevant to the menu at the bottom left.
 
 The global menu can always be opened using `Ctrl+a`. It contains an overview
 of Immersive's global key bindings, as well as information on the series
-ID/title and the autocopy and screenshot state.
+ID/title and on whether autocopy and screenshots are enabled.
 
 
 ## Dictionary/Target Menu
 
 This menu can be opened with `Ctrl+A`. It allows switching between
 dictionaries and Anki targets and also shows which one is currently active for
-both. If you have selected the wrong dictionary/target it's possible to change it here
-even if you are about to look up a word/export a card.
+both. If you have selected the wrong dictionary/target, it's possible to
+change it here even if you are about to look up a word/export a card.
 
 
 ## Active Subtitle Lookup
 
-By pressing `k`, you can bring up a menu that allows looking up words in the
+By pressing `k`, you can bring up a menu that allows looking up words from the
 current line outside of the card creation process. It functions identically to
 the target word selection menu.
 

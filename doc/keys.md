@@ -9,10 +9,12 @@ groups, with each group specific to one menu.
 Always available no matter which menu is open, unless there is a binding in
 that menu with the same key, in which case that one takes precedence.
 
+
 | ID                           | Key         | Action                                                |
 | ---------------------------- | ----------- | ----------------------------------------------------- |
 | `begin_sub_select`           | `a`         | start line selection                                  |
 | `open_global_menu`           | `Ctrl+a`    | open the global menu                                  |
+| `show_dict_target`           | `Ctrl+A`    | show dictionary/target menu                           |
 | `copy_active_line`           | `c`         | copy current subtitle to clipboard                    |
 | `toggle_autocopy`            | `C`         | toggle subtitle auto-copy                             |
 | `lookup_word`                | `k`         | select and look up word from active subtitle          |
@@ -81,10 +83,10 @@ Available in the export menu.
 
 If there are cards to add to in Anki the following bindings become available:
 
-| ID                 | Key | Action                                  |
-| ------------------ | --- | --------------------------------------- |
-| export_add         | a   | export to existing note, choose which   |
-| export_add_to_last | s   | export to existing note, use last added |
+| ID                   | Key | Action                                  |
+| -------------------- | --- | --------------------------------------- |
+| `export_add`         | `a` | export to existing note, choose which   |
+| `export_add_to_last` | `s` | export to existing note, use last added |
 
 ---
 
@@ -92,10 +94,10 @@ If there are cards to add to in Anki the following bindings become available:
 
 Available during Forvo audio selection.
 
-| ID     | Key   | Action                                                    |
-| ------ | ----- | --------------------------------------------------------- |
-| play   | SPACE | play currently highlighted audio, fetch if not yet loaded |
-| select | ENTER | confirm selection                                         |
+| ID       | Key     | Action                                                    |
+| -------- | ------- | --------------------------------------------------------- |
+| `play`   | `SPACE` | play currently highlighted audio, fetch if not yet loaded |
+| `select` | `ENTER` | confirm selection                                         |
 
 ---
 

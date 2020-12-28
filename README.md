@@ -1,16 +1,17 @@
 # Immersive
 
 Immersive is an mpv script for improving language immersion, with a special
-focus on sentence mining. It can be used to create Anki cards including a
-dictionary definition of the target word, an audio clip of the sentence, a
-screenshot of a frame from the source video, and pronunciation audio from
-Forvo. The script is highly configurable and supports many possible workflows.
+focus on sentence mining. It can automatically generate Anki cards including a
+dictionary definition of the target word, an audio clip of the sentence(s), a
+screenshot of the video, and pronunciation audio from
+[Forvo](https://forvo.com/). The script is highly configurable and supports
+many possible workflows.
 
 
 ## Requirements
 
 The currently supported platforms are Linux and Windows. If you would like to
-assist in adding macOS support please contact me.
+assist in adding macOS support, please contact me.
 
 <table>
 	<tr>
@@ -120,7 +121,7 @@ Make sure your mpv installation is version 0.33. or newer. Download the latest
 release of Immersive from [here](https://github.com/Ben-Kerman/immersive/releases).
 
 Unzip its contents into your mpv config directory. Make sure that you are not
-overwriting any older config files. Open `immersive-targets.conf` in
+overwriting any existing config files. Open `immersive-targets.conf` in
 `script-opts` with a text editor of your choice (like Notepad++, Sublime Text
 or vim), and change the values of `profile`, `deck`, and `note_type` so that
 they match your Anki setup. Then open `immersive-dictionaries.conf` and set up

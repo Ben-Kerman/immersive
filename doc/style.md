@@ -15,13 +15,13 @@ The tags corresponding to each entry are listed below.
 
 ## Types
 
-Every entry is of a certain type:
+All entries are one of these types:
 
-- `number`: A number. Decimal places are generally allowed
-- `string`: A sequence of multiple characters
-- `boolean`: A true/false value. Allowed values are `yes`/`true` and `no`/`false`
-- `color`: Six-digit hexadecimal RGB color (RRGGBB), as in HTML/CSS
-- `alpha`: Two-digit hexadecimal alpha (opacity). `00` is transparent and `FF` is opaque
+- `number`: number value; decimal places are generally allowed
+- `string`: sequence of multiple characters
+- `boolean`: true/false value; allowed values are `yes`/`true` and `no`/`false`
+- `color`: six-digit hexadecimal RGB color (RRGGBB), as in HTML/CSS
+- `alpha`: two-digit hexadecimal alpha (opacity); `00` is transparent and `FF` is opaque
 
 "OSD pixels" below refers to pixels at 720p resolution. Even if the video
 resolution is different, OSD pixels are always scaled as if the player window

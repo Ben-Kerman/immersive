@@ -4,7 +4,7 @@
 
 The card creation process can be started at any time by pressing `a`, which
 brings up a menu for selecting subtitles to include on the card. Once the sub
-selection menu is active, the selected subtitles are show at the bottom right
+selection menu is active, the selected subtitles are shown at the bottom right
 of the screen. Information on timing is at the bottom left, and a help menu
 listing all available key bindings is at the top left.
 
@@ -17,8 +17,9 @@ to the start or end of the currently visible subtitle. `Q` and `E` do the same
 but using the current playback time instead. `s` sets the screenshot time to
 the current frame. Pressing the timing keys again while a time is set resets
 the corresponding time if the keypress would have set it to the same value.
-E.g. if the screenshot time is set to `15:00.000` and the current timestamp in
-the video is also `15:00.000`, pressing `s` will unset the screenshot time.
+For example, if the screenshot time is set to `15:00.000` and the current
+timestamp in the video is also `15:00.000`, pressing `s` will unset the
+screenshot time.
 
 If no times are set, the clip will begin at the start of the first subtitle
 and end at the end of the last subtitle. The screenshot will be the frame
@@ -43,22 +44,24 @@ including an audio clip and screenshot.
 ## Target Word Selection
 
 In this part of the export process you can select one or more target words. By
-default you are limited to one in accordance with AJATT/MIA/Refold practices,
+default you are limited to one (in accordance with AJATT/MIA/Refold practices),
 but it's possible to increase this limit (or remove it entirely) in the
 [script config](/doc/script-config.md).
 
 The word can be selected with the usual key combinations for selecting text:
 (`Ctrl+`)(`⇧+`)`←`/`→`. `↑` and `↓` switch between subtitles and `DEL` removes
-the current one from the selection. Once you have chosen some text you can
+the current one from the selection. Once you have chosen some text, you can
 look up any dictionary entries that match it exactly using `⏎` and any entries
-starting with it using `⇧+⏎`. If the search has any results, a new menu will
-open that allows you to choose one of them with `↑`/`↓` and `⏎`.
+starting with it using `⇧+⏎`. ASCII whitespace characters at before or after
+the word are automatically removed before searching. If the search has any
+results, a new menu will open that allows you to choose one of them with
+`↑`/`↓` and `⏎`.
 
 After selecting a definition, the word will be shown at the bottom right of
 the screen. If you want, you can then add pronunciation audio from
 Forvo using `a` (see below).
 
-When you are ready to export the card you can do so using `f`, or `F` if you
+When you are ready to export the card, you can do so using `f`, or `F` if you
 want to open the export menu first.
 
 
@@ -67,7 +70,7 @@ want to open the export menu first.
 If you hit `a` after selecting a target word, Immersive will load a list of
 pronunciations of that word from [Forvo](https://forvo.com/). You will then be
 able to choose one using `↑`/`↓`. To play the audio of a pronunciation press
-`SPACE`. If it isn't loaded yet it might take a few seconds before it starts
+`SPACE`. If it isn't loaded yet it might take a moment before it starts
 playing. If you want to load all audio files automatically set
 `forvo_preload_audio` to `yes` in the [script config](script-config.md).
 Once you have selected a pronunciation that you are happy with, confirm it
@@ -89,7 +92,7 @@ The candidates for adding are found using the following query: `"deck:<target
 deck>" "note:<target note type>" is:new`, so all new cards of the target note
 type from the target deck.
 
-`A` exports by adding to the most recently added candidate. `a` allows
+`s` exports by adding to the most recently added candidate. `a` allows
 selecting a note from the list of candidates first. You can pick a note with
 `↑`/`↓` and `⏎`. If you want to change how notes are displayed, you can use
 the target config entry `note_template`:
@@ -121,10 +124,7 @@ the target config entry `note_template`:
 	<tr>
 		<td><code>field_&lt;field name&gt;</code></td>
 		<td><code>single</code></td>
-		<td>
-			One such variable is provided for each field of the note and will
-			be rendered as the content of that field
-		</td>
+		<td>Contents of the field <code>field name</code></td>
 	</tr>
 </table>
 
@@ -212,6 +212,11 @@ as configured by the `field:...` entries of the target config:
 		<td><code>series_title</code></td>
 		<td><code>single</code></td>
 		<td>series title as explained <a href="doc/series.md">here</a></td>
+	</tr>
+	<tr>
+		<td><code>prev_content</code></td>
+		<td><code>single</code></td>
+		<td>previous content of the field when adding to an existing note</td>
 	</tr>
 	<tr>
 		<td><code>start</code></td>

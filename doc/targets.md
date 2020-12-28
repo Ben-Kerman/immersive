@@ -62,7 +62,7 @@ note_type=<must be set manually>
 
 # --------------------
 
-# file extension to use for audio clips
+# audio clip file extension
 # unrelated to the format used, but should match it (especially on Windows)
 #audio/extension=mka
 
