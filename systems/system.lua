@@ -98,11 +98,12 @@ function system.create_dir(path)
 		return stat_res.is_dir
 	end
 
-	local args = {"mkdir"}
+	local args
 	if system.platform == "lnx" or system.platform == "mac" then
-		table.insert(args, "-p")
+		args = {"mkdir", "-p", path}
+	elseif system.platform == "win" then
+		args = {"cmd", "/d", "/c", "mkdir", (path:gsub("/", "\""))}
 	end
-	table.insert(args, path)
 	return system.subprocess(args) == 0
 end
 
