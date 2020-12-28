@@ -95,67 +95,67 @@ as comments:
 # --------------------
 
 # message log at the top right
-[messages]
+#[messages]
 #align=9
 
-[messages/fatal]
+#[messages/fatal]
 #bold=yes
 #primary_color=5791F9
 
-[messages/error]
+#[messages/error]
 #primary_color=7A77F2
 
-[messages/warn]
+#[messages/warn]
 #primary_color=66CCFF
 
-[messages/info]
+#[messages/info]
 # none
 
-[messages/verbose]
+#[messages/verbose]
 #primary_color=99CC99
 
-[messages/debug]
+#[messages/debug]
 #primary_color=A09F93
 
-[messages/trace]
+#[messages/trace]
 # none
 
 # --------------------
 
 # menu help ("Press h to show key bindings")
-[menu_help]
+#[menu_help]
 #align=7
 
 # key bindings
-[menu_help/key]
+#[menu_help/key]
 #bold=yes
 
 # top line of the menu help
-[menu_help/hint]
+#[menu_help/hint]
 #italic=yes
 
 # --------------------
 
 # menu info (timings, active target, etc.)
-[menu_info]
+#[menu_info]
 #align=1
 
 # description of an info item
-[menu_info/key]
+#[menu_info/key]
 #bold=yes
 
 # unset/unknown/automatically generated values
-[menu_info/unset]
+#[menu_info/unset]
 #italic=yes
 
 # --------------------
 
 # line selection
-[line_select]
+#[line_select]
 # none
 
 # actively selected line
-[line_select/selection]
+#[line_select/selection]
 #bold=yes
 #primary_color=FFD0D0
 
@@ -163,47 +163,47 @@ as comments:
 
 # text selection
 # applied on top of line_select during target selection
-[text_select]
+#[text_select]
 # none
 
 # selected text
-[text_select/selection]
+#[text_select/selection]
 #primary_color=FF8080
 
 # --------------------
 
 # Forvo audio selection
 # applied on top of line_select
-[word_audio_select]
+#[word_audio_select]
 # none
 
 # pronunciations that have not been loaded yet
-[word_audio_select/unloaded]
+#[word_audio_select/unloaded]
 primary_color808080
 
 # pronunciations that are currently loading
-[word_audio_select/loading]
+#[word_audio_select/loading]
 primary_color8080FF
 
 # pronunciations that are ready to play
-[word_audio_select/loaded]
+#[word_audio_select/loaded]
 # none
 
 # --------------------
 
 # overlay of selected subtitles during subtitle selection
-[selection_overlay]
+#[selection_overlay]
 #align=3
 
 # --------------------
 
 # overlay shown when Immersive is blocked, e.g. while importing dictionaries
-[info_overlay]
+#[info_overlay]
 #align=1
 
 
 # overlay for hiding the video during and after target selection
-[blackout]
+#[blackout]
 #primary_color=<from mpv property 'background'>
 #primary_alpha=<from mpv property 'background'>
 ```
