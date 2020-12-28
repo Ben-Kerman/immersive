@@ -36,11 +36,13 @@ local config = {
 		enable_autoselect = true,
 		global_help = true,
 		enable_help = false,
+		take_screenshots = true,
 		hide_infos_if_help_active = false
 	}
 }
 
 mpo.read_options(config.values)
+config.take_scrot = config.values.take_screenshots
 
 local msg_fmt = "config: %s; %s:%d"
 local function warn_msg(msg_txt, file, line)

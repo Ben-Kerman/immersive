@@ -12,6 +12,7 @@ end)())
 
 local ActiveSubLookup = require "interface.active_sub_lookup"
 local anki = require "systems.anki"
+local cfg = require "systems.config"
 local dicts = require "dict.dicts"
 local export = require "systems.export"
 local helper = require "utility.helper"
@@ -52,8 +53,11 @@ local infos = {
 	},
 	{
 		name = "Sub auto-copy",
-		value = autocopy,
 		display = function() return helper.display_bool(autocopy) end
+	},
+	{
+		name = "Screenshots",
+		display = function() return helper.display_bool(cfg.take_scrot) end
 	},
 	{
 		name = "Anki target",
@@ -141,6 +145,12 @@ local bindings = {
 		desc = "Toggle subtitle auto-copy",
 		action = toggle_autocopy,
 		global = true
+	},
+	{
+		id = "toggle_scrot",
+		default = "S",
+		desc = "Toggle screenshots on/off",
+		action = function() cfg.take_scrot = not cfg.take_scrot; menu:redraw() end
 	},
 	{
 		id = "lookup_word",

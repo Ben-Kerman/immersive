@@ -71,6 +71,9 @@ enable_autoselect=yes
 global_help=yes
 enable_help=no
 
+# enable screenshots by default
+take_screenshots=yes
+
 # Hide the menu info at the bottom left if the help overlay is active.
 # Useful if the two collide due to large font sizes.
 hide_infos_if_help_active=no

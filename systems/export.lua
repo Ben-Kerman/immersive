@@ -36,9 +36,9 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 	local template_data = {
 		-- exported files --
 		audio_file = {data = audio_file},
-		image_file = {data = image_file},
+		image_file = false,
 		audio = {data = anki_sound_tag(audio_file)},
-		image = {data = anki_image_tag(image_file)},
+		image = false,
 		-- current file --
 		path = {data = abs_path},
 		filename = {data = filename},
@@ -63,6 +63,10 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 		-- previous field value when adding to card --
 		prev_content = false
 	}
+	if image_file then
+		template_data.image_file = {data = image_file}
+		template_data.image = {data = anki_image_tag(image_file)}
+	end
 	if word_audio_filename then
 		template_data.word_audio_file = {data = word_audio_filename}
 		template_data.word_audio = {
@@ -179,9 +183,12 @@ local function prepare_fields(data, prev_contents)
 	local start, stop, scrot = export.resolve_times(data)
 
 	local audio_filename = anki.generate_filename(series_id.id(), tgt_cfg.audio.extension)
-	local image_filename = anki.generate_filename(series_id.id(), tgt_cfg.image.extension)
 	encoder.audio(mpu.join_path(media_dir, audio_filename), start, stop)
-	encoder.image(mpu.join_path(media_dir, image_filename), scrot)
+	local image_filename
+	if cfg.take_scrot then
+		image_filename = anki.generate_filename(series_id.id(), tgt_cfg.image.extension)
+		encoder.image(mpu.join_path(media_dir, image_filename), scrot)
+	end
 	local word_audio_filename = export_word_audio(data)
 
 	local fields = {}
