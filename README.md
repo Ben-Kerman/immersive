@@ -65,7 +65,7 @@ subtitles or if a word can't be found.
 5. Export to Anki using `f`.
 
 The card creation process is highly customizable. For further information read
-[this](doc/card-export.md).
+[this](/doc/card-export.md).
 
 ### Dictionary Lookup in mpv
 
@@ -94,18 +94,18 @@ directory.
 The script is configured in several different files. These need to be placed
 in a directory called `script-opts` that is located next to your `mpv.conf`
 and scripts folder. For a description of the general config syntax, see [this
-document](doc/config.md).
+document](/doc/config.md).
 
 In order to use the main feature of generating Anki cards with included
 definitions, these config files need to be present:
-- [`immersive-targets.conf`](doc/targets.md): how to export to Anki
-- [`immersive-dictionaries.conf`](doc/dictionaries.md): which dictionaries to use
+- [`immersive-targets.conf`](/doc/targets.md): how to export to Anki
+- [`immersive-dictionaries.conf`](/doc/dictionaries.md): which dictionaries to use
 
 The following config files are optional:
-- [`immersive.conf`](doc/script-config.md): general configuration of the script
-- [`immersive-keys.conf`](doc/keys.md): reassign menu key bindings
-- [`immersive-series.conf`](doc/series.md): use custom series IDs and titles
-- [`immersive-style.conf`](doc/style.md): change the appearance of the interface
+- [`immersive.conf`](/doc/script-config.md): general configuration of the script
+- [`immersive-keys.conf`](/doc/keys.md): reassign menu key bindings
+- [`immersive-series.conf`](/doc/series.md): use custom series IDs and titles
+- [`immersive-style.conf`](/doc/style.md): change the appearance of the interface
 
 Documentation that is not about specific config files:
 - [Config](config.md)
@@ -116,14 +116,14 @@ Documentation that is not about specific config files:
 ### Quick Start Guide
 
 Make sure your mpv installation is version 0.33. or newer. Download the latest
-release of Immersive from [here](https://github.com/Ben-Kerman/mpv-immersive/releases).
+release of Immersive from [here](https://github.com/Ben-Kerman/immersive/releases).
 
 Unzip its contents into your mpv config directory. Make sure that you are not
 overwriting any older config files. Open `immersive-targets.conf` in
 `script-opts` with a text editor of your choice (like Notepad++, Sublime Text
 or vim), and change the values of `profile`, `deck`, and `note_type` so that
 they match your Anki setup. Then open `immersive-dictionaries.conf` and set up
-your dictionaries as explained [here](doc/dictionaries.md). If you are
+your dictionaries as explained [here](/doc/dictionaries.md). If you are
 learning Japanese and using the Yomichan version of JMdict, you will most
 likely only have to change `location` so it is set to the path of a directory
 containing the unzipped contents of `jmdict_english.zip`.

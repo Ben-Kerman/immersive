@@ -44,7 +44,7 @@ including an audio clip and screenshot.
 In this part of the export process you can select one or more target words. By
 default you are limited to one in accordance with AJATT/MIA/Refold practices,
 but it's possible to increase this limit (or remove it entirely) in the
-[script config](doc/script-config.md).
+[script config](/doc/script-config.md).
 
 The word can be selected with the usual key combinations for selecting text:
 (`Ctrl+`)(`⇧+`)`←`/`→`. `↑` and `↓` switch between subtitles and `DEL` removes

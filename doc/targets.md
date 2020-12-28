@@ -11,7 +11,7 @@ In addition to the entries listed below, each target can include entries with
 keys like `field:<field name>`, where `<field name>` is the name of a field of
 the target's note type. These determine what the contents of the fields of the
 exported notes will be. Their values are interpreted as
-[templates](doc/templates.md).
+[templates](/doc/templates.md).
 
 ---
 

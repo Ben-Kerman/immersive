@@ -9,7 +9,7 @@ The first time it is accessed, the dictionary is imported, which can take some
 time. After that it is loaded into memory until the active mpv instance is
 closed. New instances of Immersive can load a cached version of the dictionary
 from disk which will take less time. By default, dictionaries are only loaded
-once they are used, however setting the [script config](doc/script-config.md)
+once they are used, however setting the [script config](/doc/script-config.md)
 option `preload_dictionaries` to `yes`/`true` will load all dictionaries every
 time mpv is started. This will cause Immersive (but not mpv) to be
 unresponsive for several seconds on startup.
@@ -18,7 +18,7 @@ Every dictionary has its own config section. Each one also has an exporter,
 which is responsible for turning its data into a format that is usable by
 Anki. Options that configure the exporter must be prefixed with `export:` in
 the config file, e.g. `export:template`. Exporters make heavy use of
-[templates](doc/templates.md).
+[templates](/doc/templates.md).
 
 ## Common Options
 
