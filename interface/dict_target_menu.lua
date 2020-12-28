@@ -53,6 +53,12 @@ function DictTargetMenu:new()
 			default = "Alt+DOWN",
 			desc = "Switch to the next dictionary",
 			action = function() dicts.switch(1); dtm.menu:redraw() end
+		},
+		{
+			id = "reimport_dicts",
+			default = "r",
+			desc = "Reimport all imported dictionaries",
+			action = function() dicts.reimport_all() end
 		}
 	}
 
