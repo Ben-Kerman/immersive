@@ -2,7 +2,7 @@
 
 local helper = require "utility.helper"
 local mpu = require "mp.utils"
-local msg require "systems.message"
+local msg = require "systems.message"
 local sys = require "systems.system"
 local utf_8 = require "utility.utf_8"
 local ext = require "utility.extension"
@@ -14,12 +14,16 @@ function util.cache_path(dict)
 	local cache_dir = mpu.join_path(config_dir, script_name .. "-dict-cache")
 	if not sys.create_dir(cache_dir) then
 		msg.error("failed to create dictionary cache directory")
+		return
 	end
 	return mpu.join_path(cache_dir, dict.id .. ".json")
 end
 
 function util.is_imported(dict)
-	return not not mpu.file_info(util.cache_path(dict))
+	local cache_path = util.cache_path(dict)
+	if cache_path then
+		return not not mpu.file_info(cache_path)
+	end
 end
 
 function util.generic_load(dict, import_fn, force_import)

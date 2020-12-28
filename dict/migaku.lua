@@ -75,7 +75,11 @@ local function import(dict)
 		index = index,
 		start_index = start_index
 	}
-	helper.write_json_file(util.cache_path(dict), data)
+
+	local cache_path = util.cache_path(dict)
+	if cache_path then
+		helper.write_json_file(cache_path, data)
+	end
 	return data
 end
 
