@@ -160,12 +160,12 @@ function system.clipboard_write(str)
 		pipe:write(str)
 		pipe:close()
 	elseif system.platform == "win" then
-		if cfg.values.windows_clip_mode == "exact" then
-			msg.debug("exact copy " .. str)
-			system.background_process{"powershell", "-NoProfile", "-Command", ps_clip_write(str)}
-		else
+		if cfg.values.windows_clip_mode == "quick" then
 			msg.debug("quick copy: " .. str)
 			mp.commandv("run", "cmd", "/d", "/c", "chcp 65001 & echo " .. str:gsub("[\r\n]+", " ") .. " | clip")
+		else
+			msg.debug("exact copy: " .. str)
+			system.background_process{"powershell", "-NoProfile", "-Command", ps_clip_write(str)}
 		end
 	end
 end
