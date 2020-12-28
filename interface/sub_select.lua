@@ -164,7 +164,16 @@ function SubSelect:new()
 	local infos = {
 		{
 			name = "Screenshot",
-			display = function() return ss:display_time("scrot", "current frame") end
+			display = function()
+				if cfg.take_scrot then
+					return ss:display_time("scrot", "current frame")
+				else
+					return {
+						style = {"menu_info", "unset"},
+						"disabled"
+					}
+				end
+			end
 		},
 		{
 			name = "Start",
