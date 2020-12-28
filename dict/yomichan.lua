@@ -218,7 +218,7 @@ local function generate_dict_table(config, data)
 			local template = config.quick_def_template and config.quick_def_template or default_qdef_template
 			local rendered = ext.string_trim(templater.render(template, {
 				readings = {data = qdef.readings},
-				variants = {data = qdef.variants},
+				variants = {data = qdef.variants and qdef.variants or {}},
 				definitions = {data = qdef.defs}
 			}))
 			if config.insert_cjk_breaks then
