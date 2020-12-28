@@ -120,6 +120,13 @@ local bindings = {
 		global = true
 	},
 	{
+		id = "show_dict_target",
+		default = "Ctrl+A",
+		desc = "Show dictionary/target menu",
+		action = function() menu_stack.push(DictTargetMenu:new()) end,
+		global = true
+	},
+	{
 		id = "copy_active_line",
 		default = "c",
 		desc = "Copy current subtitle to clipboard",
@@ -135,7 +142,7 @@ local bindings = {
 	},
 	{
 		id = "toggle_scrot",
-		default = "S",
+		default = "s",
 		desc = "Toggle screenshots on/off",
 		action = function() cfg.take_scrot = not cfg.take_scrot; menu:redraw() end
 	},
@@ -158,13 +165,6 @@ local bindings = {
 		default = "Ctrl+k",
 		desc = "Create card from active subtitle, export immediately",
 		action = function() export_active_line(true) end,
-		global = true
-	},
-	{
-		id = "show_dict_target",
-		default = "Ctrl+A",
-		desc = "Show dictionary/target menu",
-		action = function() menu_stack.push(DictTargetMenu:new()) end,
 		global = true
 	},
 	{

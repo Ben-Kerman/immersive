@@ -22,7 +22,8 @@ the video is also `15:00.000`, pressing `s` will unset the screenshot time.
 
 If no times are set, the clip will begin at the start of the first subtitle
 and end at the end of the last subtitle. The screenshot will be the frame
-that's visible when the export happens.
+that's visible when the export happens. Screenshots can be toggled with `s` in
+the global menu.
 
 `y` resets the selection and times. `p` plays the audio that would be exported
 with the current selection/times. `d` ends the subtitle selection and begins

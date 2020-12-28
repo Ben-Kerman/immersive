@@ -23,6 +23,16 @@ that menu with the same key, in which case that one takes precedence.
 
 ---
 
+## `global_menu`
+
+Available in the global menu. (`Ctrl+a`)
+
+| ID             | Key | Action                    |
+| -------------- | --- | ------------------------- |
+| `toggle_scrot` | `s` | toggle screenshots on/off |
+
+---
+
 ## `dict_target_menu`
 
 Available in the dictionary/target menu. (`Ctrl+A`)
