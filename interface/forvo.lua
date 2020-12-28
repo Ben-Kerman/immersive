@@ -242,6 +242,11 @@ function Forvo:new(data, word)
 	}, Forvo)
 
 	local req = extract_pronunciations(fv, word, function(prns)
+		if #prns == 0 then
+			msg.info("no pronunciations found for '" .. word .."'")
+			menu_stack.pop()
+		end
+
 		if cfg.values.forvo_preload_audio then
 			for _, prn in ipairs(prns) do
 				prn:load_audio()
