@@ -1,3 +1,5 @@
+-- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
+
 local bit_conv = require("utility.bit_compat")[2]
 local ext = require "utility.extension"
 

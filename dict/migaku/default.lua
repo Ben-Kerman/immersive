@@ -1,3 +1,5 @@
+-- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
+
 local config = require "systems.config"
 local templater = require "systems.templater"
 local utf_8 = require "utility.utf_8"

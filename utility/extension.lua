@@ -1,3 +1,5 @@
+-- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
+
 local extension = {}
 
 function extension.list_find(list, predicate)

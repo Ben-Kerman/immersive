@@ -1,3 +1,5 @@
+-- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
+
 local BasicOverlay = require "interface.basic_overlay"
 local cfg = require "systems.config"
 local util = require "dict.util"

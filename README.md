@@ -139,6 +139,7 @@ scripts/
         interface/
         systems/
         utility/
+        LICENSE
         main.lua
         README.md
 script-opts/

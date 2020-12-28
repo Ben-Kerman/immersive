@@ -1,3 +1,5 @@
+-- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
+
 local LineSelect = require "interface.line_select"
 local ssa = require "systems.ssa"
 local TextSelect = require "interface.text_select"

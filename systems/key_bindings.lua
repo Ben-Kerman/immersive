@@ -1,3 +1,5 @@
+-- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
+
 local cfg = require "systems.config"
 local msg = require "systems.message"
 local ext = require "utility.extension"
