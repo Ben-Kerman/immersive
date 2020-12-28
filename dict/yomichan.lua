@@ -235,10 +235,11 @@ local function generate_dict_table(config, data)
 			return rendered
 		end,
 		look_up_exact = function(term)
-			return export_entries(data.index[term])
+			return export_entries(ext.string_trim(data.index[term]))
 		end,
 		look_up_start = function(term)
-			return export_entries(util.find_start_matches(term, data, list_search_terms))
+			local trimmed = ext.string_trim(term)
+			return export_entries(util.find_start_matches(trimmed, data, list_search_terms))
 		end,
 		get_definition = function(id)
 			local entry = data.entries[id]
