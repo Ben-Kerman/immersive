@@ -131,17 +131,16 @@ containing the unzipped contents of `jmdict_english.zip`.
 Your mpv config directory should contain the following files at this point:
 
 ```
-scripts
-    immersive
-        main.lua
-        dict
-        doc
-        interface
-        systems
-        utility
+scripts/
+    immersive/
+        dict/
+        doc/
+        interface/
+        systems/
+        utility/
         main.lua
         README.md
-script-opts
+script-opts/
     immersive-dictionaries.conf
     immersive-keys.conf
     immersive-series.conf
