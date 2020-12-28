@@ -25,6 +25,7 @@ local function apply_substitutions(str, substs)
 	for _, subst in ipairs(substs) do
 		res = res:gsub(subst.pattern, subst.repl)
 	end
+	if #res == 0 then return nil end
 	return res
 end
 
