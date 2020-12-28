@@ -1,6 +1,7 @@
 local BasicOverlay = require "interface.basic_overlay"
 local cfg = require "systems.config"
 local export = require "systems.export"
+local ExportMenu = require "interface.export_menu"
 local helper = require "utility.helper"
 local Menu = require "interface.menu"
 local menu_stack = require "interface.menu_stack"
@@ -147,9 +148,11 @@ function SubSelect:start_tgt_sel()
 		menu_stack.push(TargetSelect:new(self.data, 2))
 	end
 end
-function SubSelect:start_export()
+function SubSelect:start_export(use_menu)
 	if export.verify(self.data, true) then
-		export.execute(self.data)
+		if use_menu then
+			menu_stack.push(ExportMenu:new(self.data))
+		else export.execute(self.data) end
 	end
 end
 
@@ -240,7 +243,13 @@ function SubSelect:new()
 			id = "instant_export",
 			default = "f",
 			desc = "End line selection and export immediately",
-			action = function() ss:start_export() end
+			action = function() ss:start_export(false) end
+		},
+		{
+			id = "instant_export_menu",
+			default = "F",
+			desc = "End line selection and open export menu",
+			action = function() ss:start_export(true) end
 		}
 	}
 	local data = new_data()

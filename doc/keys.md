@@ -113,19 +113,20 @@ Available when selecting an existing note to export to.
 
 Available during subtitle/timing selection.
 
-| ID                    | Key | Action                                        |
-| --------------------- | --- | --------------------------------------------- |
-| `set_start_sub`       | `q` | force start to start of active line           |
-| `set_end_sub`         | `e` | force end to end of active line               |
-| `set_start_time_pos`  | `Q` | force start to current time                   |
-| `set_end_time_pos`    | `E` | force end to current time                     |
-| `set_scrot`           | `s` | take screenshot at current time               |
-| `select_line`         | `a` | select current line                           |
-| `toggle_autoselect`   | `A` | toggle automatic selection                    |
-| `preview_audio`       | `p` | preview selection audio                       |
-| `reset`               | `k` | reset selection                               |
-| `start_target_select` | `d` | end line selection and enter target selection |
-| `instant_export`      | `f` | end line selection and export immediately     |
+| ID                    | Key | Action                                            |
+| --------------------- | --- | ------------------------------------------------- |
+| `set_start_sub`       | `q` | force start to start of active line               |
+| `set_end_sub`         | `e` | force end to end of active line                   |
+| `set_start_time_pos`  | `Q` | force start to current time                       |
+| `set_end_time_pos`    | `E` | force end to current time                         |
+| `set_scrot`           | `s` | take screenshot at current time                   |
+| `select_line`         | `a` | select current line                               |
+| `toggle_autoselect`   | `A` | toggle automatic selection                        |
+| `preview_audio`       | `p` | preview selection audio                           |
+| `reset`               | `k` | reset selection                                   |
+| `start_target_select` | `d` | end subtitle selection and enter target selection |
+| `instant_export`      | `f` | end subtitle selection and export immediately     |
+| `instant_export_menu` | `F` | end subtitle selection and open export menu       |
 
 ---
 
