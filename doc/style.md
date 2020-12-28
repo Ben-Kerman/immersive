@@ -179,11 +179,11 @@ as comments:
 
 # pronunciations that have not been loaded yet
 #[word_audio_select/unloaded]
-primary_color808080
+#primary_color=808080
 
 # pronunciations that are currently loading
 #[word_audio_select/loading]
-primary_color8080FF
+#primary_color=8080FF
 
 # pronunciations that are ready to play
 #[word_audio_select/loaded]
