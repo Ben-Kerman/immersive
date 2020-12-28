@@ -10,7 +10,7 @@ local function get_conf(config)
 		definition_template = "{{tags:<span style=\"font-size\\: 0.8em\">:</span><br>:, }}{{num}}. {{keywords:::; }}",
 		template = "{{readings[1]}}:{{readings[2:] (:):　}}<br>{{definitions:::<br>}}",
 		use_single_template = true,
-		single_template = "{{readings[1]::　}}:{{readings[2:] (:):　}} {{keywords:::; }}"
+		single_template = "{{readings[1]}}:{{readings[2:] (:):　}} {{keywords:::; }}"
 	}
 
 	local filtered = ext.map_filter_keys(config, function(key)
