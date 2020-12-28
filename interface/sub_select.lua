@@ -229,7 +229,7 @@ function SubSelect:new()
 		},
 		{
 			id = "reset",
-			default = "k",
+			default = "h",
 			desc = "Reset selection",
 			action = function() ss:reset() end
 		},

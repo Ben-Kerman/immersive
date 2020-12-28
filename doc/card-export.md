@@ -24,7 +24,7 @@ If no times are set, the clip will begin at the start of the first subtitle
 and end at the end of the last subtitle. The screenshot will be the frame
 that's visible when the export happens.
 
-`k` resets the selection and times. `p` plays the audio that would be exported
+`h` resets the selection and times. `p` plays the audio that would be exported
 with the current selection/times. `d` ends the subtitle selection and begins
 target word selection. `f` exports the selection immediately without any
 target words. `F` does the same but opens the [export menu](#export-menu)

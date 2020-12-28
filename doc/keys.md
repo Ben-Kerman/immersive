@@ -123,7 +123,7 @@ Available during subtitle/timing selection.
 | `select_line`         | `a` | select current line                               |
 | `toggle_autoselect`   | `A` | toggle automatic selection                        |
 | `preview_audio`       | `p` | preview selection audio                           |
-| `reset`               | `k` | reset selection                                   |
+| `reset`               | `h` | reset selection                                   |
 | `start_target_select` | `d` | end subtitle selection and enter target selection |
 | `instant_export`      | `f` | end subtitle selection and export immediately     |
 | `instant_export_menu` | `F` | end subtitle selection and open export menu       |
