@@ -1,4 +1,5 @@
 local config = require "systems.config"
+local msg = require "systems.message"
 local templater = require "systems.templater"
 local utf_8 = require "utility.utf_8"
 local ext = require "utility.extension"
@@ -33,6 +34,11 @@ local function format_number(num, digit_str)
 	if not digit_str then return basic end
 
 	local replacements = utf_8.codepoints(digit_str)
+	if #replacements ~= 10 then
+		msg.warn("digit replacement has the wrong length: " .. digit_str)
+		return basic
+	end
+
 	local digits = utf_8.codepoints(basic)
 	local new_digits = {}
 	for _, digit in ipairs(digits) do
