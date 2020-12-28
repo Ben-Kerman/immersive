@@ -23,9 +23,9 @@ that menu with the same key, in which case that one takes precedence.
 
 ---
 
-## `global_menu`
+## `dict_target_menu`
 
-Available from the global menu. (`Ctrl+a`)
+Available in the dictionary/target menu. (`Ctrl+A`)
 
 | ID               | Key        | Action                             |
 | ---------------- | ---------- | ---------------------------------- |
