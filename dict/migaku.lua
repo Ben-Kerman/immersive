@@ -105,7 +105,7 @@ local function generate_dict_table(config, data)
 			})
 		end,
 		look_up_exact = function(term)
-			return export_entries(ext.string_trim(data.index[term]))
+			return export_entries(data.index[ext.string_trim(term)])
 		end,
 		look_up_start = function(term)
 			local trimmed = ext.string_trim(term)
