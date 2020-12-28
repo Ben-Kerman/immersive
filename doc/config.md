@@ -23,14 +23,14 @@ Key I=Value B
 Any entries before the first section are considered to be global to that
 config file. How these are interpreted depends on what is being configured.
 
-If there are multiple entries with the same name in a section the value will
+If there are multiple entries with the same key in a section the value will
 be that of the last one.
 
 By setting the value to `[[`, the entries value can span across multiple
 lines. In this case leading and trailing spaces are removed from the opening
 token (`[[`). The multiline entry's value continues until the closing token
 `]]` is encountered on a line. For example the following entry will have the
-lines `foo` and `bar` as it's value:
+lines `foo` and `bar` as its value:
 
 ```
 key=[[
@@ -72,7 +72,7 @@ this line is invalid (missing =)
 entry_1=value
 entry_2=[[
 line 1
-# this part of multiline_entry
+# this part of entry_2
 line 3
 ]]
 entry_3=

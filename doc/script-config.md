@@ -4,7 +4,7 @@ Some general config options are located in `immersive.conf`:
 
 ```
 # if set to 'yes', load dictionaries when mpv starts
-preload_dicts=no
+preload_dictionaries=no
 
 # show the dictionary loading overlay when loading dicts at startup
 startup_dict_overlay=yes
@@ -20,7 +20,7 @@ always_show_minutes=yes
 # black out the screen during and after target selection
 target_select_blackout=yes
 
-# black out the screen during when looking up words
+# black out the screen when looking up words
 # from the active subtitle
 active_sub_blackout=yes
 
@@ -31,15 +31,14 @@ forvo_language=ja
 # waiting until attempting to play it.
 forvo_preload_audio=no
 
-# Always download mp3 files from Forvo.
-# By default the only other option (OGG/Vorbis) is used.
+# download mp3 files from Forvo instead of Ogg/Vorbis
 forvo_prefer_mp3=no
 
-# prefix to put before Forvo file in the Anki media directory
+# prefix for Forvo filenames in the Anki media directory
 # Files will be named '<prefix>-<word>.<extension>''
 forvo_prefix=word_audio
 
-# Reencode Forvo audio files since they are unnecessarily large.
+# reencode Forvo audio files since they are unnecessarily large
 forvo_reencode=yes
 
 # Forvo audio encoding options
@@ -49,7 +48,7 @@ forvo_format=matroska
 forvo_codec=libopus
 forvo_bitrate=64ki
 
-# the AnkiConnect host and port
+# AnkiConnect host and port
 ankiconnect_host=localhost
 ankiconnect_port=8765
 

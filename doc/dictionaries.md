@@ -3,7 +3,7 @@
 Immersive currently supports two dictionary formats:
 [Yomichan](https://foosoft.net/projects/yomichan/) and
 [Migaku](https://ankiweb.net/shared/info/1655992655). Both need to be
-configured slightly differently. Each dictionary has its own config section.
+configured slightly differently.
 
 The first time it is accessed, the dictionary is imported, which can take some
 time. After that it is loaded into memory until the active mpv instance is
@@ -14,10 +14,11 @@ option `preload_dictionaries` to `yes`/`true` will load all dictionaries every
 time mpv is started. This will cause Immersive (but not mpv) to be
 unresponsive for several seconds on startup.
 
-Each dictionary you configure has an exporter, which is responsible for
-turning its data into a format that is usable by Anki. Options that configure
-the exporter must be prefixed with `export:` in the config file, e.g.
-`export:template`.
+Every dictionary has its own config section. Each one also has an exporter,
+which is responsible for turning its data into a format that is usable by
+Anki. Options that configure the exporter must be prefixed with `export:` in
+the config file, e.g. `export:template`. Exporters make heavy use of
+[templates](doc/templates.md).
 
 ## Common Options
 
@@ -40,7 +41,7 @@ Yomichan dictionaries need to be unzipped into a directory first, which is
 then used as the value of `location`. For example, if you downloaded
 `jmdict_english.zip` from the Yomichan website and extracted it to a folder in
 your home directory, the location entry should look something like this:
-`location=/home/<user name>\jmdict_english` (Unix) or `location=C:\Users/<user
+`location=/home/<user name>/jmdict_english` (Unix) or `location=C:\Users/<user
 name>\jmdict_english` (Windows), with `jmdict_english` being the folder that
 contains the file `index.json` and the various term/tag banks of the
 dictionary.
@@ -49,11 +50,11 @@ dictionary.
 
 The default Yomichan exporter can be configured with the following options:
 
-- `digits`: Replacement digits for the definition number. The valueshould
+- `digits`: Replacement digits for the definition number. The value should
   contain exactly ten characters. For example set this to `０１２３４５６７８９` if you
   want to use fullwidth digits. Unset by default, in which case regular ASCII
   numerals (`0123456789`) are used.
-- `reading_template`: Template used for displaying each reading with its
+- `reading_template`: Template used for displaying each reading and its
   variants. Default:
 
 ```
@@ -63,7 +64,7 @@ The default Yomichan exporter can be configured with the following options:
 - `definition_template`: Template for each separate definition in an entry.
 
 ```
-{{tags:<span style=\"font-size\\: 0.8em\">:</span><br>:, }}{{num}}. {{keywords:::; }}
+{{tags:<span style="font-size\: 0.8em">:</span><br>:, }}{{num}}. {{keywords:::; }}
 ```
 
 - `template`: Template for the final exported entry.
@@ -73,12 +74,12 @@ The default Yomichan exporter can be configured with the following options:
 ```
 
 - `use_single_template`: If set to `yes`/`true`, use `single_template` for
-  rendering entries (turning them into text) that only have a single definition.
+  rendering entries that only have a single definition.
   Enabled by default.
 - `single_template`: Default:
 
 ```
-{{readings[1]::　}}:{{readings[2:] (:):　}} {{keywords:::; }}
+{{readings[1]}}:{{readings[2:] (:):　}} {{keywords:::; }}
 ```
 
 All defaults are set so that entries of the Yomichan version of JMdict are
@@ -94,8 +95,8 @@ The Yomichan exporter works as follows:
 2. Go through the definitions of the dictionary entry one by one. If the tags
    for the definition are different from those of the previous one, insert them
    into the template data. Render the definition using `definition_template`,
-   with the tags (if present), the keywords and the number. The number is
-   transformed using `digits`.
+   with the tags (if present), the keywords and the number. If it is set, the
+   digits of the number are taken from `digits`.
 
 3. Render `template` using the readings and definitions from steps 1. and 2.
    Alternatively, if `use_single_template` is `true`, render `single_template`
@@ -116,12 +117,12 @@ Template overview:
 	<tr>
 		<td><code>reading</code></td>
 		<td><code>single</code></td>
-		<td>The reading itself. Usually hiragana but sometimes katakana.</td>
+		<td>the reading itself; usually hiragana but sometimes katakana</td>
 	</tr>
 	<tr>
 		<td><code>variants</code></td>
 		<td><code>list</code></td>
-		<td>All variants of writing the word with this reading.</td>
+		<td>all variants of writing the word with this reading</td>
 	</tr>
 	<tr>
 		<th colspan="3"><code>definition_template</code></th>
@@ -129,27 +130,27 @@ Template overview:
 	<tr>
 		<td><code>tags</code></td>
 		<td><code>list</code></td>
-		<td>All tags for the dictionary entry.</td>
+		<td>all tags for the dictionary entry</td>
 	<tr>
 		<td><code>num</code></td>
 		<td><code>single</code></td>
-		<td>The number of the definition, with the digits replaced based on <code>digits</code>.</td>
+		<td>the number of the definition, with the digits taken from <code>digits</code></td>
 	<tr>
 		<td><code>keywords</code></td>
 		<td><code>list</code></td>
-		<td>The keywords for the definition.</td>
+		<td>the keywords for the definition</td>
 	<tr>
 		<th colspan="3"><code>template</code></th>
 	</tr>
 	<tr>
 		<td><code>readings</code></td>
 		<td><code>list</code></td>
-		<td>All readings as generated from <code>reading_template</code>.</td>
+		<td>all readings as generated from <code>reading_template</code></td>
 	</tr>
 	<tr>
 		<td><code>definitions</code></td>
 		<td><code>list</code></td>
-		<td>Definitions of all target words as generated from <code>definition_template</code>.</td>
+		<td>all readings as generated from <code>definition_template</code>></td>
 	</tr>
 	<tr>
 		<th colspan="3"><code>single_template</code></th>
@@ -157,12 +158,12 @@ Template overview:
 	<tr>
 		<td><code>readings</code></td>
 		<td><code>list</code></td>
-		<td>Same as for <code>template</code></td>
+		<td>same as for <code>template</code></td>
 	</tr>
 	<tr>
 		<td><code>keywords</code></td>
 		<td><code>list</code></td>
-		<td>Keywords of the single definition.</td>
+		<td>keywords of the single definition</td>
 	</tr>
 </table>
 
@@ -171,12 +172,12 @@ Template overview:
 
 For Migaku dictionaries `location` is simply the path of the dictionary's JSON
 file, so something like this: `location=/home/<user
-name>\Migaku_Dictionary.json` (Unix) or `location=C:\Users/<user
+name>/Migaku_Dictionary.json` (Unix) or `location=C:\Users/<user
 name>\Migaku_Dictionary.json` (Windows).
 
 ### Exporter
 
-The Migaku format is much simpler than Yomichan's, and so is it's exporter. It
+The Migaku format is much simpler than Yomichan's, and so is its exporter. It
 uses the template provided in the config option `export:template` directly on
 the dictionary data.
 
@@ -202,7 +203,7 @@ the dictionary data.
 	<tr>
 		<td><code>definition</code></td>
 		<td><code>single</code></td>
-		<td>The definition itself. It can be used directly in Anki.</td>
+		<td>the definition itself; it should already be in an Anki-friendly format</td>
 	</tr>
 	<tr>
 		<td><code>pronunciations</code></td>

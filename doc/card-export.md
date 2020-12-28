@@ -4,7 +4,7 @@
 
 The card creation process can be started at any time by pressing `a`, which
 brings up a menu for selecting subtitles to include on the card. Once the sub
-selection menu is active, The selected subtitles are show at the bottom right
+selection menu is active, the selected subtitles are show at the bottom right
 of the screen. Information on timing is at the bottom left, and a help menu
 listing all available key bindings is at the top left.
 
@@ -20,13 +20,13 @@ the corresponding time if the keypress would have set it to the same value.
 E.g. if the screenshot time is set to `15:00.000` and the current timestamp in
 the video is also `15:00.000`, pressing `s` will unset the screenshot time.
 
-If no times are set the start will be that start of the first subtitle, the
-end will be the end of the last subtitle, and the screenshot will be the frame
+If no times are set, the clip will begin at the start of the first subtitle
+and end at the end of the last subtitle. The screenshot will be the frame
 that's visible when the export happens.
 
 `k` resets the selection and times. `p` plays the audio that would be exported
-with the current selection/times. `d` ends subtitle selection mode and starts
-the target word selection. `f` exports the selection immediately without any
+with the current selection/times. `d` ends the subtitle selection and begins
+target word selection. `f` exports the selection immediately without any
 target words. `F` does the same but opens the [export menu](#export-menu)
 first.
 
@@ -55,7 +55,7 @@ open that allows you to choose one of them with `↑`/`↓` and `⏎`.
 
 After selecting a definition, the word will be shown at the bottom right of
 the screen. If you want, you can then add pronunciation audio from
-[Forvo] using `a` (see below).
+Forvo using `a` (see below).
 
 When you are ready to export the card you can do so using `f`, or `F` if you
 want to open the export menu first.
@@ -68,7 +68,7 @@ pronunciations of that word from [Forvo](https://forvo.com/). You will then be
 able to choose one using `↑`/`↓`. To play the audio of a pronunciation press
 `SPACE`. If it isn't loaded yet it might take a few seconds before it starts
 playing. If you want to load all audio files automatically set
-`forvo_preload_audio` to `yes` in the [script config](doc/script-config.md).
+`forvo_preload_audio` to `yes` in the [script config](script-config.md).
 Once you have selected a pronunciation that you are happy with, confirm it
 using `⏎`.
 
@@ -76,7 +76,7 @@ If your target language is not Japanese you will have to change `forvo_language`
 in the script config. The language code can be found on the Forvo website, for
 example on [this page](https://forvo.com/word/%E6%97%A5%E6%9C%AC/) at the right of:
 
-> 日本 pronunciation in Japanese **\[ja\]**
+> 日本 pronunciation in Japanese \[**ja**\]
 
 
 ## Export Menu
@@ -84,12 +84,14 @@ example on [this page](https://forvo.com/word/%E6%97%A5%E6%9C%AC/) at the right 
 The export menu allows exporting a card using Anki's 'Add' GUI (`g`) and
 adding the export to an existing note.
 
-`A` exports by adding to the most recently added note. `a` does the same, but
-allows selecting a note to add to from a list of candidates first. These are
-found using the following query: `"deck:<target deck>" "note:<target note
-type>" is:new`, so all new cards of the target note type from the target deck.
-You can select a note with `↑`/`↓` and `⏎`. If you want to change how notes
-are displayed, you can use the target config entry `note_template`:
+The candidates for adding are found using the following query: `"deck:<target
+deck>" "note:<target note type>" is:new`, so all new cards of the target note
+type from the target deck.
+
+`A` exports by adding to the most recently added candidate. `a` allows
+selecting a note from the list of candidates first. You can pick a note with
+`↑`/`↓` and `⏎`. If you want to change how notes are displayed, you can use
+the target config entry `note_template`:
 
 <table>
 	<tr>
@@ -148,107 +150,107 @@ as configured by the `field:...` entries of the target config:
 	<tr>
 		<td><code>word</code></td>
 		<td><code>single</code></td>
-		<td>the first target word</td>
+		<td>first target word</td>
 	</tr>
 	<tr>
 		<td><code>sentences</code></td>
 		<td><code>list</code></td>
-		<td>the subtitles selected for export</td>
+		<td>subtitles selected for export</td>
 	</tr>
 	<tr>
 		<td><code>definitions</code></td>
 		<td><code>single</code></td>
-		<td>the target word definitions as exported by the dictionary</td>
+		<td>target word definitions as exported by the dictionary</td>
 	</tr>
 	<tr>
 		<td><code>audio</code></td>
 		<td><code>single</code></td>
-		<td>the audio file as an Anki sound tag</td>
+		<td>audio clip as an Anki sound tag</td>
 	</tr>
 	<tr>
 		<td><code>image</code></td>
 		<td><code>single</code></td>
-		<td>the audio file as an Anki/HTML image tag</td>
+		<td>screenshot as an Anki/HTML image tag</td>
 	</tr>
 	<tr>
 		<td><code>word_audio</code></td>
 		<td><code>single</code></td>
-		<td>the pronunciation audio file as an Anki sound tag</td>
+		<td>pronunciation file as an Anki sound tag</td>
 	</tr>
 	<tr>
 		<td><code>audio_file</code></td>
 		<td><code>single</code></td>
-		<td>the filename of the audio file</td>
+		<td>filename of the audio clip</td>
 	</tr>
 	<tr>
 		<td><code>image_file</code></td>
 		<td><code>single</code></td>
-		<td>the filename of the image file</td>
+		<td>filename of the screenshot</td>
 	</tr>
 	<tr>
 		<td><code>word_audio_file</code></td>
 		<td><code>single</code></td>
-		<td>the filename of the pronunciation audio file</td>
+		<td>filename of the pronunciation audio</td>
 	</tr>
 	<tr>
 		<td><code>path</code></td>
 		<td><code>single</code></td>
-		<td>The path of the file mpv is currently playing (excluding the filename)</td>
+		<td>path to the file mpv is currently playing (excluding the filename)</td>
 	</tr>
 	<tr>
 		<td><code>filename</code></td>
 		<td><code>single</code></td>
-		<td>The filename of the file mpv is currently playing</td>
-	</tr>
-	<tr>
-		<td><code>start</code></td>
-		<td><code>single</code></td>
-		<td>The start time of the audio formatted as [HH:][MM:]SS</td>
-	</tr>
-	<tr>
-		<td><code>end</code></td>
-		<td><code>single</code></td>
-		<td>The end time of the audio formatted as [HH:][MM:]SS</td>
-	</tr>
-	<tr>
-		<td><code>start_ms</code></td>
-		<td><code>single</code></td>
-		<td>The start time of the audio formatted as [HH:][MM:]SS.mmm</td>
-	</tr>
-	<tr>
-		<td><code>end_ms</code></td>
-		<td><code>single</code></td>
-		<td>The end time of the audio formatted as [HH:][MM:]SS.mmm</td>
-	</tr>
-	<tr>
-		<td><code>start_seconds</code></td>
-		<td><code>single</code></td>
-		<td>The start time of the audio in seconds</td>
-	</tr>
-	<tr>
-		<td><code>end_seconds</code></td>
-		<td><code>single</code></td>
-		<td>The end time of the audio in seconds</td>
-	</tr>
-	<tr>
-		<td><code>start_seconds_ms</code></td>
-		<td><code>single</code></td>
-		<td>The start time of the audio in seconds and milliseconds</td>
-	</tr>
-	<tr>
-		<td><code>end_seconds_ms</code></td>
-		<td><code>single</code></td>
-		<td>The end time of the audio in seconds and milliseconds</td>
+		<td>filename of the file mpv is currently playing</td>
 	</tr>
 	<tr>
 		<td><code>series_id</code></td>
 		<td><code>single</code></td>
-		<td>The series ID as explained <a href="doc/series.md">here</a></td>
+		<td>series ID as explained <a href="doc/series.md">here</a></td>
 	</tr>
 	<tr>
 		<td><code>series_title</code></td>
 		<td><code>single</code></td>
-		<td>The series title as explained <a href="doc/series.md">here</a></td>
+		<td>series title as explained <a href="doc/series.md">here</a></td>
+	</tr>
+	<tr>
+		<td><code>start</code></td>
+		<td><code>single</code></td>
+		<td>start time of the audio formatted as [HH:][MM:]SS</td>
+	</tr>
+	<tr>
+		<td><code>end</code></td>
+		<td><code>single</code></td>
+		<td>end time of the audio formatted as [HH:][MM:]SS</td>
+	</tr>
+	<tr>
+		<td><code>start_ms</code></td>
+		<td><code>single</code></td>
+		<td>start time of the audio formatted as [HH:][MM:]SS.mmm</td>
+	</tr>
+	<tr>
+		<td><code>end_ms</code></td>
+		<td><code>single</code></td>
+		<td>end time of the audio formatted as [HH:][MM:]SS.mmm</td>
+	</tr>
+	<tr>
+		<td><code>start_seconds</code></td>
+		<td><code>single</code></td>
+		<td>start time of the audio in seconds</td>
+	</tr>
+	<tr>
+		<td><code>end_seconds</code></td>
+		<td><code>single</code></td>
+		<td>end time of the audio in seconds</td>
+	</tr>
+	<tr>
+		<td><code>start_seconds_ms</code></td>
+		<td><code>single</code></td>
+		<td>start time of the audio in seconds and milliseconds</td>
+	</tr>
+	<tr>
+		<td><code>end_seconds_ms</code></td>
+		<td><code>single</code></td>
+		<td>end time of the audio in seconds and milliseconds</td>
 	</tr>
 </table>
 
@@ -288,8 +290,8 @@ order they are defined in.
 
 The default value of `sentence_substitutions` contains the patterns `（.-）` and
 `%(.-%)`, both with an empty replacement. They delete character names and
-kanji readings from Japanese subtitles. If you want to disable them simply put
-this line in the global section of `immersive-targets.conf`:
+kanji readings from Japanese subtitles. If you want to disable them, simply
+put this line in the global section of `immersive-targets.conf`:
 
 ```
 sentence_substitutions=

@@ -11,7 +11,7 @@ In addition to the entries listed below, each target can include entries with
 keys like `field:<field name>`, where `<field name>` is the name of a field of
 the target's note type. These determine what the contents of the fields of the
 exported notes will be. Their values are interpreted as
-[templates](doc/templating.md).
+[templates](doc/templates.md).
 
 ---
 
@@ -23,23 +23,23 @@ comments:
 # Anki profile the target will use
 # Can be taken from the window title of the main Anki window or from the profile
 # menu (Ctrl+Shift+P in Anki)
-#profile=<must be set manually>
+profile=<must be set manually>
 
 # Anki deck the target will use
 # Subdecks use the same syntax as in Anki itself
-# e.g. Root::SubdeckA::SubdeckB
-#deck=<must be set manually>
+# e.g. Root::Subdeck::Subsubdeck
+deck=<must be set manually>
 
 # note type the target will use
-#note_type=<must be set manually>
+note_type=<must be set manually>
 
 # how export data will be added to existing notes
 # allowed values: 'append', 'prepend', 'overwrite'
 # overwrite replaces fields (but cf. template variable {{prev_content}})
 #add_mode=append
 
-# template used for formatting notes within mpv when selecting which existing
-# note to export to
+# template used for formatting notes within mpv
+# when selecting which existing note to export to
 #note_template={{type}}: {{id}}
 
 # Anki media dir override, normally derived from system default
@@ -50,12 +50,12 @@ comments:
 
 # --------------------
 
-# substitutions to apply to the {{sentences}} field
+# substitutions to apply to the {{sentences}} variable
 # for more information, see doc/card-export.md
 #sentence_substitutions=[[
-<（.-%）
-<(.-%)
-]]
+#<（.-%）
+#<(.-%)
+#]]
 
 # same as sentence_substitutions but for {{definitions}}
 #definition_substitutions=
@@ -71,7 +71,7 @@ comments:
 #audio/format=matroska
 
 # audio codec
-# e.g. 'libopus' (NOT opus), 'aac', 'vorbis', 'libmp3lame' (MP3)
+# e.g. 'libopus' (NOT 'opus'), 'aac', 'vorbis', 'libmp3lame' (MP3)
 #audio/codec=libopus
 
 # audio bitrate

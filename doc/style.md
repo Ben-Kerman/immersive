@@ -126,11 +126,11 @@ as comments:
 [menu_help]
 #align=7
 
-# used for key bindings
+# key bindings
 [menu_help/key]
 #bold=yes
 
-# used for the top line of the menu help
+# top line of the menu help
 [menu_help/hint]
 #italic=yes
 
@@ -162,8 +162,7 @@ as comments:
 # --------------------
 
 # text selection
-# applied on top of line_select
-# during target selection
+# applied on top of line_select during target selection
 [text_select]
 # none
 
@@ -192,21 +191,18 @@ primary_color8080FF
 
 # --------------------
 
-# overlay of selected subtitles
-# during subtitle selection
+# overlay of selected subtitles during subtitle selection
 [selection_overlay]
 #align=3
 
 # --------------------
 
-# overlay shown when Immersive is blocked
-# e.g. while importing dictionaries
+# overlay shown when Immersive is blocked, e.g. while importing dictionaries
 [info_overlay]
 #align=1
 
 
-# overlay for hiding the video during
-# and after target selection
+# overlay for hiding the video during and after target selection
 [blackout]
 #primary_color=<from mpv property 'background'>
 #primary_alpha=<from mpv property 'background'>

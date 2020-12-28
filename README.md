@@ -65,7 +65,7 @@ subtitles or if a word can't be found.
 5. Export to Anki using `f`.
 
 The card creation process is highly customizable. For further information read
-[this](doc/note-export.md).
+[this](doc/card-export.md).
 
 ### Dictionary Lookup in mpv
 
@@ -75,8 +75,8 @@ selection menu by pressing `k` and search for the selection using (`⇧`+)`⏎`.
 ### Subtitle Copying
 
 Immersive can copy subtitles to the clipboard. Use `c` to manually copy the
-active line at any time, or toggle automatic copying with `C`. You can copy a
-line partially in the menu for selecting text from the active line.
+active line at any time, or toggle automatic copying with `C`. You can
+partially copy a line in the menu for selecting text from the active line.
 
 
 ## Installation & Setup
@@ -107,9 +107,16 @@ The following config files are optional:
 - [`immersive-series.conf`](doc/series.md): use custom series IDs and titles
 - [`immersive-style.conf`](doc/style.md): change the appearance of the interface
 
+Documentation that is not about specific config files:
+- [Config](config.md)
+- [Templates](templates.md)
+- [Card Export](card-export.md)
+
+
 ### Quick Start Guide
 
-Download the latest release from [here](https://github.com/Ben-Kerman/mpv-immersive/releases).
+Make sure your mpv installation is version 0.33. or newer. Download the latest
+release of Immersive from [here](https://github.com/Ben-Kerman/mpv-immersive/releases).
 
 Unzip its contents into your mpv config directory. Make sure that you are not
 overwriting any older config files. Open `immersive-targets.conf` in
