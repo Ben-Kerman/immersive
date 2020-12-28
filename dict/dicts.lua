@@ -40,13 +40,20 @@ local function load_dict(dict, show_overlay, force_import)
 	return dict
 end
 
-if cfg.values.preload_dictionaries then
-	mp.register_event("start-file", function()
-		for _, dict in ipairs(dict_list) do
+mp.register_event("start-file", function()
+	for _, dict in ipairs(dict_list) do
+		local pos_override, neg_override
+		if dict.config.preload then
+			local cfg_preload = cfg.convert_bool(dict.config.preload)
+			pos_override = cfg_preload == true
+			neg_override = cfg_preload == false
+		end
+
+		if not neg_override and (cfg.values.preload_dictionaries or pos_override) then
 			load_dict(dict, cfg.values.startup_dict_overlay)
 		end
-	end)
-end
+	end
+end)
 
 local dicts = {}
 
