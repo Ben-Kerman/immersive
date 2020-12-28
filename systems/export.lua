@@ -29,7 +29,7 @@ local function apply_substitutions(str, substs)
 	return res
 end
 
-local function replace_field_vars(field_def, data, tgt, audio_file, image_file, word_audio_filename, start, stop)
+local function replace_field_vars(field_def, data, tgt, audio_file, image_file, word_audio_filename, start, stop, prev_value)
 	local abs_path = helper.current_path_abs()
 	local _, filename = mpu.split_path(abs_path)
 
@@ -59,7 +59,9 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 		word_audio = false,
 		sentences = false,
 		word = false,
-		definitions = false
+		definitions = false,
+		-- previous field value when adding to card --
+		prev_content = false
 	}
 	if word_audio_filename then
 		template_data.word_audio_file = {data = word_audio_filename}
@@ -77,7 +79,7 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 		}
 	end
 	if data.definitions and #data.definitions ~= 0 then
-		template_data.word = data.definitions[1].word
+		template_data.word = {data = data.definitions[1].word}
 		template_data.definitions = {
 			data = ext.list_map(data.definitions, function(def) return def.definition end),
 			sep = "<br>",
@@ -85,6 +87,9 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 				return apply_substitutions(sub, tgt.definition_substitutions)
 			end
 		}
+	end
+	if prev_value then
+		template_data.prev_content = {data = prev_value}
 	end
 	return templater.render(field_def, template_data)
 end
@@ -161,7 +166,7 @@ function export.resolve_times(data)
 	return start, stop, scrot
 end
 
-local function prepare_fields(data)
+local function prepare_fields(data, prev_contents)
 	local tgt = anki.active_target("could not execute export")
 	if not tgt then return end
 
@@ -181,7 +186,11 @@ local function prepare_fields(data)
 
 	local fields = {}
 	for name, def in pairs(tgt.fields) do
-		fields[name] = replace_field_vars(def, data, tgt, audio_filename, image_filename, word_audio_filename, start, stop)
+		local prev_value
+		if prev_contents and prev_contents[name] then
+			prev_value = prev_contents[name]
+		end
+		fields[name] = replace_field_vars(def, data, tgt, audio_filename, image_filename, word_audio_filename, start, stop, prev_value)
 	end
 
 	return fields, tgt
@@ -224,34 +233,41 @@ function export.execute_gui(data)
 	end
 end
 
-local function combine_fields(note, fields, tgt)
+local function combine_fields(prev_fields, fields, tgt)
 	local new_fields = {}
-	for name, content in pairs(note.fields) do
+	for name, value in pairs(prev_fields) do
 		if fields[name] then
 			local new_value = fields[name]
 			if tgt.add_mode == "append" then
-				new_value = content.value .. fields[name]
+				new_value = value .. fields[name]
 			elseif tgt.add_mode == "prepend" then
-				new_value = fields[name] .. content.value
+				new_value = fields[name] .. value
 			elseif tgt.add_mode == "overwrite" then
 				new_value = fields[name]
-			else new_value = content.value end
+			else new_value = value end
 			new_fields[name] = new_value
-		else new_fields[name] = content.value end
+		else new_fields[name] = value end
 	end
 	return new_fields
 end
 
 function export.execute_add(data, note)
-	local fields, tgt = prepare_fields(data)
+	-- "updated" because the user could have edited the note by now
 	local updated_note = ankicon.notes_info({note.noteId})[1]
-	if fields and updated_note then
-		local new_fields = fill_first_field(combine_fields(updated_note, fields, tgt), tgt, true)
+	if updated_note then
+		local prev_fields = ext.map_map(updated_note.fields, function(field_name, content)
+			return field_name, content.value
+		end)
 
-		if ankicon.update_note_fields(updated_note.noteId, new_fields) then
-			pop_menus(data)
-			msg.info("note updated successfully")
-		else msg.warn("note couldn't be updated") end
+		local fields, tgt = prepare_fields(data, prev_fields)
+		if fields then
+			local new_fields = fill_first_field(combine_fields(prev_fields, fields, tgt), tgt, true)
+
+			if ankicon.update_note_fields(updated_note.noteId, new_fields) then
+				pop_menus(data)
+				msg.info("note updated successfully")
+			else msg.warn("note couldn't be updated") end
+		end
 	end
 end
 
