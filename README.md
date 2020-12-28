@@ -108,9 +108,10 @@ The following config files are optional:
 - [`immersive-style.conf`](/doc/style.md): change the appearance of the interface
 
 Documentation that is not about specific config files:
-- [Config](config.md)
-- [Templates](templates.md)
-- [Card Export](card-export.md)
+- [Config Syntax](/doc/config.md)
+- [Interface](/doc/interface.md)
+- [Templates](/doc/templates.md)
+- [Card Export](/doc/card-export.md)
 
 
 ### Quick Start Guide
