@@ -14,6 +14,7 @@ local ActiveSubLookup = require "interface.active_sub_lookup"
 local anki = require "systems.anki"
 local cfg = require "systems.config"
 local dicts = require "dict.dicts"
+local DictTargetMenu = require "interface.dict_target_menu"
 local export = require "systems.export"
 local helper = require "utility.helper"
 local kbds = require "systems.key_bindings"
@@ -58,22 +59,6 @@ local infos = {
 	{
 		name = "Screenshots",
 		display = function() return helper.display_bool(cfg.take_scrot) end
-	},
-	{
-		name = "Anki target",
-		display = function()
-			local tgt = anki.active_target(false)
-			if tgt then return tgt.name
-			else return {style = {"menu_info", "unset"}, "none"} end
-		end
-	},
-	{
-		name = "Dictionary",
-		display = function()
-			local dict = dicts.active(true)
-			if dict then return dict.id
-			else return {style = {"menu_info", "unset"}, "none"} end
-		end
 	}
 }
 
@@ -174,28 +159,11 @@ local bindings = {
 		global = true
 	},
 	{
-		id = "prev_target",
-		default = "Ctrl+UP",
-		desc = "Switch to the previous Anki target",
-		action = function() anki.switch_target(-1); menu:redraw() end
-	},
-	{
-		id = "next_target",
-		default = "Ctrl+DOWN",
-		desc = "Switch to the next Anki target",
-		action = function() anki.switch_target(1); menu:redraw() end
-	},
-	{
-		id = "prev_dict",
-		default = "Alt+UP",
-		desc = "Switch to the previous dictionary",
-		action = function() dicts.switch(-1); menu:redraw() end
-	},
-	{
-		id = "next_dict",
-		default = "Alt+DOWN",
-		desc = "Switch to the next dictionary",
-		action = function() dicts.switch(1); menu:redraw() end
+		id = "show_dict_target",
+		default = "Ctrl+A",
+		desc = "Show dictionary/target menu",
+		action = function() menu_stack.push(DictTargetMenu:new()) end,
+		global = true
 	},
 	{
 		id = "reimport_dicts",
@@ -219,7 +187,7 @@ local bindings = {
 	}
 }
 
-menu = Menu:new{infos = infos,bindings = bindings}
+menu = Menu:new{infos = infos, bindings = bindings}
 
 kbds.create_global(bindings)
 
