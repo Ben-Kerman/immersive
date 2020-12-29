@@ -26,7 +26,7 @@ config file. How these are interpreted depends on what is being configured.
 If there are multiple entries with the same key in a section the value will
 be that of the last one.
 
-By setting the value to `[[`, the entries value can span across multiple
+By setting the value to `[[`, the entry's value can span across multiple
 lines. In this case leading and trailing spaces are removed from the opening
 token (`[[`). The multiline entry's value continues until the closing token
 `]]` is encountered on a line. For example the following entry will have the

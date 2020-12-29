@@ -52,7 +52,7 @@ The word can be selected with the usual key combinations for selecting text:
 (`Ctrl+`)(`⇧+`)`←`/`→`. `↑` and `↓` switch between subtitles and `DEL` removes
 the current one from the selection. Once you have chosen some text, you can
 look up any dictionary entries that match it exactly using `⏎` and any entries
-starting with it using `⇧+⏎`. ASCII whitespace characters at before or after
+starting with it using `⇧+⏎`. ASCII whitespace characters before or after
 the word are automatically removed before searching. If the search has any
 results, a new menu will open that allows you to choose one of them with
 `↑`/`↓` and `⏎`.
@@ -124,7 +124,7 @@ the target config entry `note_template`:
 	<tr>
 		<td><code>field_&lt;field name&gt;</code></td>
 		<td><code>single</code></td>
-		<td>Contents of the field <code>field name</code></td>
+		<td>Contents of the field <code>&lt;field name&gt;</code></td>
 	</tr>
 </table>
 
@@ -160,7 +160,7 @@ as configured by the `field:...` entries of the target config:
 	</tr>
 	<tr>
 		<td><code>definitions</code></td>
-		<td><code>single</code></td>
+		<td><code>list</code></td>
 		<td>target word definitions as exported by the dictionary</td>
 	</tr>
 	<tr>
@@ -206,12 +206,12 @@ as configured by the `field:...` entries of the target config:
 	<tr>
 		<td><code>series_id</code></td>
 		<td><code>single</code></td>
-		<td>series ID as explained <a href="doc/series.md">here</a></td>
+		<td>series ID as explained <a href="/doc/series.md">here</a></td>
 	</tr>
 	<tr>
 		<td><code>series_title</code></td>
 		<td><code>single</code></td>
-		<td>series title as explained <a href="doc/series.md">here</a></td>
+		<td>series title as explained <a href="/doc/series.md">here</a></td>
 	</tr>
 	<tr>
 		<td><code>prev_content</code></td>

@@ -33,7 +33,7 @@ the config file, e.g. `export:template`. Exporters make heavy use of
   field on the Anki card. Currently only `default` is available for either
   dictionary type, which is also used if `exporter` is not set.
 - `quick_def_template`: template used for rendering the definitions shown in mpv
-- `export:<exporter option>`: Config entries used by the exporter.
+- `export:<exporter option>`: config entries used by the exporter.
 
 
 ## Yomichan
@@ -210,7 +210,7 @@ Template overview:
 
 For Migaku dictionaries `location` is simply the path of the dictionary's JSON
 file, so something like this: `location=/home/<user
-name>/Migaku_Dictionary.json` (Unix) or `location=C:\Users/<user
+name>/Migaku_Dictionary.json` (Unix) or `location=C:\Users\<user
 name>\Migaku_Dictionary.json` (Windows).
 
 `quick_def_template` for Migaku has the following template variables:

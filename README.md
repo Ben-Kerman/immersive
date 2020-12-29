@@ -123,7 +123,7 @@ Documentation that is not about specific config files:
 
 ### Quick Start Guide
 
-Make sure your mpv installation is version 0.33.0 or later. Download the latest
+Make sure your mpv install is version 0.33.0 or later. Download the latest
 full release of Immersive from [here](https://github.com/Ben-Kerman/immersive/releases).
 
 Unzip its contents into your mpv config directory. Make sure that you are not
@@ -149,7 +149,6 @@ scripts/
         utility/
         LICENSE
         main.lua
-        README.md
 script-opts/
     immersive-dictionaries.conf
     immersive-series.conf
@@ -159,7 +158,7 @@ script-opts/
 ```
 
 You can now start mpv and open the main menu of Immersive using `Ctrl+a` or
-start creating a card with `a`.
+begin creating a card with `a`.
 
 
 ## Troubleshooting

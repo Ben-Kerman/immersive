@@ -205,7 +205,7 @@ an error message on the console (`ˋ`).
 Example config file:
 
 ```
-reimport_dicts=Ctrl+r
+copy_active_line=Ctrl+c
 
 [target_select]
 lookup_partial=Ctrl+ENTER

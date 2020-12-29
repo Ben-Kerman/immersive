@@ -15,7 +15,7 @@ The tags corresponding to each entry are listed below.
 
 ## Types
 
-All entries are one of these types:
+All entries' values must have one of these types:
 
 - `number`: number value; decimal places are generally allowed
 - `string`: sequence of multiple characters
