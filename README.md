@@ -121,18 +121,19 @@ Documentation that is not about specific config files:
 
 ### Quick Start Guide
 
-Make sure your mpv installation is version 0.33. or newer. Download the latest
-release of Immersive from [here](https://github.com/Ben-Kerman/immersive/releases).
+Make sure your mpv installation is version 0.33.0 or later. Download the latest
+full release of Immersive from [here](https://github.com/Ben-Kerman/immersive/releases).
 
 Unzip its contents into your mpv config directory. Make sure that you are not
 overwriting any existing config files. Open `immersive-targets.conf` in
 `script-opts` with a text editor of your choice (like Notepad++, Sublime Text
-or vim), and change the values of `profile`, `deck`, and `note_type` so that
-they match your Anki setup. Then open `immersive-dictionaries.conf` and set up
-your dictionaries as explained [here](/doc/dictionaries.md). If you are
-learning Japanese and using the Yomichan version of JMdict, you will most
-likely only have to change `location` so it is set to the path of a directory
-containing the unzipped contents of `jmdict_english.zip`.
+or vim), and change the values of `profile`, `deck`, `note_type`, and the
+`field:` values so that they match your Anki setup. Then open
+`immersive-dictionaries.conf` and set up your dictionaries as explained
+[here](/doc/dictionaries.md). If you are learning Japanese and using the
+Yomichan version of JMdict, you will most likely only have to change
+`location` so it is set to the path of a directory containing the unzipped
+contents of `jmdict_english.zip`.
 
 Your mpv config directory should contain the following files at this point:
 
@@ -149,14 +150,14 @@ scripts/
         README.md
 script-opts/
     immersive-dictionaries.conf
-    immersive-keys.conf
     immersive-series.conf
     immersive-style.conf
     immersive-targets.conf
     immersive.conf
 ```
 
-You can now start mpv and open the main menu of Immersive using `Ctrl+a`.
+You can now start mpv and open the main menu of Immersive using `Ctrl+a` or
+start creating a card with `a`.
 
 
 ## Troubleshooting
