@@ -51,3 +51,8 @@ Messages are displayed at the top right of the screen. White text signifies an
 informational message, yellow text a warning, red text an error and text that
 is bright red and bold a fatal error in the script (which should never happen,
 of course).
+
+All messages visible in this interface (and a few others not relevant to the
+user) are also printed to the mpv console (`ˋ`) as well as to the system
+console/terminal if mpv is connected to one using the mpv's internal messaging
+system.
