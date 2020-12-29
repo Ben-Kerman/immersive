@@ -28,6 +28,8 @@ function ExportMenu:new(data)
 		}
 	}
 	local candidates = anki.add_candidates()
+	if not candidates then return nil end
+
 	if #candidates ~= 0 then
 		table.insert(bindings, {
 			id = "export_add",
