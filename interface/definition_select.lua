@@ -13,7 +13,12 @@ local DefinitionSelect = {}
 DefinitionSelect.__index = DefinitionSelect
 
 function DefinitionSelect:new(word, prefix, data)
-	local dict = dicts.active().table
+	local dict_cfg = dicts.active()
+	if not dict_cfg then
+		return
+	end
+
+	local dict = dict_cfg.table
 	local result = (prefix and dict.look_up_start or dict.look_up_exact)(word)
 
 	if not result then
