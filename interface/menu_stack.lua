@@ -29,7 +29,9 @@ function menu_stack.pop(count)
 end
 
 function menu_stack.clear()
-	exec_top("cancel")
+	for _, menu in ipairs(stack) do
+		menu:cancel()
+	end
 	stack = {}
 end
 
