@@ -35,4 +35,8 @@ function menu_stack.clear()
 	stack = {}
 end
 
+function menu_stack.top()
+	return stack[#stack]
+end
+
 return menu_stack

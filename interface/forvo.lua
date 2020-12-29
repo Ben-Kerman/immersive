@@ -243,10 +243,13 @@ function Forvo:new(data, word)
 		menu = Menu:new{bindings = bindings}
 	}, Forvo)
 
+	local not_found_cached = false
 	local req = extract_pronunciations(fv, word, function(prns)
 		if #prns == 0 then
 			msg.info("no pronunciations found for '" .. word .."'")
-			menu_stack.pop()
+			if menu_stack.top() == fv then
+				menu_stack.pop()
+			else not_found_cached = true end
 		end
 
 		if cfg.values.forvo_preload_audio then
@@ -259,6 +262,9 @@ function Forvo:new(data, word)
 		fv.loading_overlay:hide()
 		fv.prn_sel:show()
 	end)
+	if not_found_cached then
+		return nil
+	end
 	table.insert(fv.requests, req)
 	return fv
 end
