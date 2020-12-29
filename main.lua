@@ -32,7 +32,7 @@ local TargetSelect = require "interface.target_select"
 -- forward declaration
 local menu
 
-local autocopy = false
+local autocopy = cfg.values.enable_autocopy
 
 local function get_id_title(fn_name)
 	local value, custom = series_id[fn_name]()
@@ -89,6 +89,10 @@ local function toggle_autocopy()
 	end
 	autocopy = not autocopy
 	menu:redraw()
+end
+
+if autocopy then
+	mp.observe_property("sub-text", "string", copy_active_line)
 end
 
 local function export_active_line(skip_target_select)

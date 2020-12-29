@@ -34,6 +34,7 @@ local config = {
 		ankiconnect_host = "localhost",
 		ankiconnect_port = 8765,
 		windows_copy_mode = "exact",
+		enable_autocopy = false,
 		global_autoselect = true,
 		enable_autoselect = true,
 		global_help = true,

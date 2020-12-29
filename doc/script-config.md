@@ -58,6 +58,9 @@ Some general config options are located in `immersive.conf`:
 # The method used by "quick" is also a dirty hack.
 #windows_copy_mode=exact
 
+# enable automtic subtitle copying by default
+#enable_autocopy=no
+
 # make subtitle autoselect toggle global instead of
 # being tied to each subtitle select menu
 #global_autoselect=yes
