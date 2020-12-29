@@ -7,6 +7,10 @@ screenshot of the video, and pronunciation audio from
 [Forvo](https://forvo.com/). The script is highly configurable and supports
 many possible workflows.
 
+This is a short video walking through the full process of creating a card with
+Immersive: https://youtu.be/FrTcu4ZO92w. It's possible to skip parts of the
+process if you don't need them.
+
 
 ## Requirements
 
