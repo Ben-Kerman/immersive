@@ -97,7 +97,10 @@ local function load_tgt(raw_tgt)
 				tgt.tags = ext.list_unique(ext.string_split(value, " "))
 			elseif key == "sentence_substitutions" or key == "definition_substitutions" then
 				local defs = ext.string_split(value, "\n")
-				tgt[key] = ext.list_map(defs, parse_substitution)
+				local non_empty = ext.list_filter(defs, function(def)
+					return #def ~=0
+				end)
+				tgt[key] = ext.list_map(non_empty, parse_substitution)
 			elseif ext.list_find({"media_directory"}, key) then
 				tgt[key] = value
 			end
