@@ -91,10 +91,12 @@ folder within your mpv scripts directory (`~/.config/mpv/scripts/` on Linux,
 `%APPDATA%\mpv\scripts` on Windows). This folder should be named `immersive`.
 Using any other name will mean that you will have to change the names of all
 config files to match it as well. All necessary files can be downloaded as a
-ZIP file from GitHub using the "Code" button at the top of the repo's start
-page. Simply extract the contents of the file into your mpv scripts folder and
-remove the branch name (most likely `-master`) from the name of the extracted
-directory.
+ZIP file from the latest [release](https://github.com/Ben-Kerman/immersive/releases).
+
+If you want the most up-to-date version possible, use the "Code" button at the
+top of the repo's start page. Simply extract the contents of the file into
+your mpv scripts folder and remove the branch name (most likely `-master`)
+from the name of the extracted directory.
 
 The script is configured in several different files. These need to be placed
 in a directory called `script-opts` that is located next to your `mpv.conf`
