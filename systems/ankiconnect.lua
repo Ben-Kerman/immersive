@@ -19,7 +19,9 @@ local function request(action, params)
 		}
 	}
 
-	if res.error then
+	if not res then
+		return false
+	elseif res.error then
 		local msg_str = res.error
 		if action then
 			msg_str = msg_str .. "; action: " .. action

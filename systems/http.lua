@@ -80,7 +80,10 @@ end
 
 function http.post_json(params)
 	params.data_type = "application/json; charset=UTF-8"
-	return mpu.parse_json(http.post(params))
+	local res = http.post(params)
+	if res then
+		return mpu.parse_json(res)
+	else return nil end
 end
 
 function http.get(params)
