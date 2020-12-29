@@ -94,6 +94,9 @@ local function set_time(self, var_name, value)
 	local new_val
 	if type(value) == "string" then
 		new_val = mp.get_property_number(value)
+		if ext.string_starts(value, "sub-") then
+			new_val = new_val + mp.get_property_number("sub-delay")
+		end
 	else new_val = value end
 
 	if new_val == nil or new_val == self.data.times[var_name] then
