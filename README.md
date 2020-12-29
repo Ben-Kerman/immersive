@@ -86,6 +86,8 @@ partially copy a line in the menu for selecting text from the active line.
 
 ## Installation & Setup
 
+For a guide to getting started as quickly as possible see [below](#quick-start-guide).
+
 Immersive can be installed by placing the contents of this repository in a
 folder within your mpv scripts directory (`~/.config/mpv/scripts/` on Linux,
 `%APPDATA%\mpv\scripts` on Windows). This folder should be named `immersive`.
