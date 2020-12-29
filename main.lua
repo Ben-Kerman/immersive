@@ -61,6 +61,10 @@ local infos = {
 	{
 		name = "Screenshots",
 		display = function() return helper.display_bool(cfg.take_scrot) end
+	},
+	{
+		name = "Immersive version",
+		value = "1.0"
 	}
 }
 
