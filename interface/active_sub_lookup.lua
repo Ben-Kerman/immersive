@@ -50,6 +50,7 @@ function ActiveSubLookup:new()
 		blackout = cfg.values.active_sub_blackout and ScreenBlackout:new() or nil,
 		menu = Menu:new{bindings = bindings}
 	}, ActiveSubLookup)
+	if asl.blackout then asl.blackout:show() end
 	return asl
 end
 
@@ -61,7 +62,6 @@ function ActiveSubLookup:lookup(prefix)
 end
 
 function ActiveSubLookup:show()
-	self.blackout:show()
 	self.menu:show()
 	self.txt_sel:show()
 end
@@ -69,10 +69,10 @@ end
 function ActiveSubLookup:hide()
 	self.txt_sel:hide()
 	self.menu:hide()
-	self.blackout:hide()
 end
 
 function ActiveSubLookup:cancel()
+	if self.blackout then self.blackout:cancel() end
 	self:hide()
 end
 
