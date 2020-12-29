@@ -67,19 +67,18 @@ function encoder.image(path, time)
 		"--start=" .. time,
 		"--frames=1",
 		"--of=image2",
+		"--ovc=" .. tgt_cfg.codec,
 		"--vf-add=scale=" .. width .. ":" .. height
 	}
 
-	local codec = tgt_cfg.codec
-
-	if codec == "mjpeg" then
+	if tgt_cfg.codec == "mjpeg" then
 		table.insert(args, "--ovcopts-add=qmin=" .. tgt_cfg.jpeg.qscale)
 		table.insert(args, "--ovcopts-add=qmax=" .. tgt_cfg.jpeg.qscale)
-	elseif codec == "libwebp" then
-		table.insert(args, "--ovcopts-add=lossless=" .. tgt_cfg.webp.lossless and 1 or 0)
+	elseif tgt_cfg.codec == "libwebp" then
+		table.insert(args, "--ovcopts-add=lossless=" .. (tgt_cfg.webp.lossless and 1 or 0))
 		table.insert(args, "--ovcopts-add=compression_level=" .. tgt_cfg.webp.compression)
 		table.insert(args, "--ovcopts-add=quality=" .. tgt_cfg.webp.quality)
-	elseif codec == "png" then
+	elseif tgt_cfg.codec == "png" then
 		table.insert(args, "--ovcopts-add=compression_level=" .. tgt_cfg.png.compression)
 	end
 
