@@ -165,3 +165,12 @@ If Immersive crashes at any point (when this happens, the interface suddenly
 disappears and all keybindings stop working), open the console using `ˋ`/`~`,
 take a screenshot of it and report the issue to me. If you started mpv from
 the command line the output there is preferable.
+
+
+## Suggestions & Reporting Issues
+
+If you have any suggestions for improving Immersive or encounter a problem
+while using it please contact me, even if that problem is not understanding
+parts of the documentation or how to do something with the script. Outside of
+GitHub you can reach me on the [Refold](https://refold.la/) community's
+discord servers.
