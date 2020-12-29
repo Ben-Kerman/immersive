@@ -39,8 +39,8 @@ local function default_tgt(raw_tgt)
 				pad_end = 0.1
 			},
 			image = {
-				extension = "jpg",
-				codec = "mjpeg",
+				extension = "webp",
+				codec = "libwebp",
 				max_width = -1,
 				max_height = -1,
 				jpeg = {

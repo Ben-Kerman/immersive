@@ -97,12 +97,12 @@ note_type=<must be set manually>
 # --------------------
 
 # image file extension
-#image/extension=jpg
+#image/extension=webp
 
 # image codec
 # supported values are 'mjpeg' (JPG), 'libwebp' (WebP), and 'png'
 # Technically, any codec that works with ffmpeg's image2 format can be used.
-#image/codec=mjpeg
+#image/codec=libwebp
 
 # maximum image width/height
 # If one option is set to a negative value aspect ratio will be preserved.
