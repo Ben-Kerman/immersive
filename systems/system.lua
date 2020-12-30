@@ -3,8 +3,6 @@
 local cfg = require "systems.config"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
-local utf_8 = require "utility.utf_8"
-local ext = require "utility.extension"
 
 local system = {}
 
@@ -148,7 +146,6 @@ function system.clipboard_read()
 end
 
 function system.clipboard_write(str)
-	local args
 	if system.platform == "lnx" or system.platform == "mac" then
 		local cmd
 		if system.platform == "lnx" then
