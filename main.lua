@@ -18,6 +18,7 @@ local cfg = require "systems.config"
 local dicts = require "dict.dicts"
 local DictTargetMenu = require "interface.dict_target_menu"
 local export = require "systems.export"
+local ExportMenu = require "interface.export_menu"
 local helper = require "utility.helper"
 local kbds = require "systems.key_bindings"
 local Menu = require "interface.menu"
@@ -95,13 +96,14 @@ if autocopy then
 	mp.observe_property("sub-text", "string", copy_active_line)
 end
 
-local function export_active_line(skip_target_select)
+local function export_active_line(instant, use_export_menu)
 	local sub_text = helper.check_active_sub()
 	if sub_text then
-		local fn = skip_target_select and export.execute or function(data)
-			menu_stack.push(TargetSelect:new(data))
+		local menu_type = use_export_menu and ExportMenu or TargetSelect
+		local export_fn = instant and export.execute or function(data)
+			menu_stack.push(menu_type:new(data))
 		end
-		fn{
+		export_fn{
 			subtitles = {
 				Subtitle:new(sub_text,
 				             mp.get_property_number("sub-start"),
@@ -173,6 +175,13 @@ local bindings = {
 		default = "Ctrl+k",
 		desc = "Create card from active subtitle, export immediately",
 		action = function() export_active_line(true) end,
+		global = true
+	},
+	{
+		id = "export_active_line_menu",
+		default = "Ctrl+K",
+		desc = "Create card from active subtitle, open export menu",
+		action = function() export_active_line(false, true) end,
 		global = true
 	},
 	{

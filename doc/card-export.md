@@ -38,7 +38,7 @@ first.
 By pressing `K`, line selection is skipped and the target word selection is
 started immediately with the current subtitle. `Ctrl+k` skips the entirety of
 the card creation process and instantly exports a card of the active subtitle
-including an audio clip and screenshot.
+including an audio clip and screenshot. `Ctrl+K` opens the export menu first.
 
 
 ## Target Word Selection

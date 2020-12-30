@@ -20,6 +20,7 @@ that menu with the same key, in which case that one takes precedence.
 | `lookup_word`                | `k`         | select and look up word from active subtitle          |
 | `export_active_line`         | `K`         | create card from active subtitle, skip line selection |
 | `export_active_line_instant` | `Ctrl+k`    | create card from active subtitle, export immediately  |
+| `export_active_line_menu`    | `Ctrl+K`    | create card from active subtitle, open export menu    |
 | `close_menu`                 | `ESC`       | go back to previous menu                              |
 | `clear_menus`                | `Shift+ESC` | close all active menus                                |
 
