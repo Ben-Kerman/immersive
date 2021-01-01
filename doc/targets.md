@@ -33,14 +33,26 @@ deck=<must be set manually>
 # note type the target will use
 note_type=<must be set manually>
 
+# --------------------
+
 # example field definitions
-# uncomment and change so they fit your note type:
+
+# uncomment (remove the #) and change so they fit your note type
+# Anki field names go between 'field:' and '=', exactly as they are
+# in Anki, including spaces.
+# Template variables come after the '=', like in the examples.
+
 #field:Front={{sentences}}
 #field:Back={{definitions}}
 #field:Word={{word}}
 #field:Audio={{audio}}
-#field:Pronunciation={{word_audio}}
+#field:Word Audio={{word_audio}}
 #field:Image={{image}}
+
+# Everything below this line has default values and is not required.
+# It is recommended to change image/max_width or image/max_height in order to
+# reduce file sizes, however.
+# --------------------
 
 # how export data will be added to existing notes
 # allowed values: 'append', 'prepend', 'overwrite'
