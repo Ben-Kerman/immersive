@@ -186,6 +186,11 @@ function templater.render(template, values)
 				err_msg("substitution '" .. segment.id .. "' missing")
 				table.insert(strings, "|missing substitution|")
 			elseif value then
+				if value.data == nil then
+					msg.fatal("value.data is nil")
+					return "TEMPLATE ERROR"
+				end
+
 				local data_type = type(value.data)
 				local is_map = data_type == "table"
 				               and value.data[1] == nil
@@ -221,7 +226,7 @@ function templater.render(template, values)
 						table.insert(strings, segment.suffix)
 					end
 				end
-			end
+			else msg.verbose("empty optional var: " .. segment.id) end
 		else msg.fatal("invalid segment type: " .. seg_type) end
 	end
 	return table.concat(strings)
