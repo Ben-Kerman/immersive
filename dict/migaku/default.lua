@@ -17,10 +17,10 @@ return function(entry, config)
 
 	return templater.render(template, {
 		terms = {data = entry.trms},
-		altterms = {data = entry.alts},
+		altterms = entry.alts and {data = entry.alts} or false,
 		definition = {data = entry.def},
-		pronunciations = {data = entry.pronunciations},
-		positions = {data = poss},
-		examples = {data = exps}
+		pronunciations = entry.prns and {data = entry.prns} or false,
+		positions = entry.poss and {data = entry.poss} or false,
+		examples = entry.exps and {data = entry.exps} or false
 	})
 end

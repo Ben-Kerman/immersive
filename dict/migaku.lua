@@ -44,8 +44,8 @@ local function import(dict)
 			term = raw_entry.term,
 			alt = #raw_entry.altterm ~= 0 and raw_entry.altterm or nil,
 			pron = raw_entry.pronunciation ~= 0 and raw_entry.pronunciation or nil,
-			pos = raw_entry.pos ~= 0 and raw_entry.pos or nil,
-			exmp = raw_entry.examples ~= 0 and raw_entry.examples or nil
+			pos = #raw_entry.pos ~= 0 and raw_entry.pos or nil,
+			exmp = #raw_entry.examples ~= 0 and raw_entry.examples or nil
 		})
 	end
 
