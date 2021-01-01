@@ -50,14 +50,14 @@ local function import(dict)
 	end
 
 	local entries = {}
-	for def, raw_entries in pairs(entry_map) do
+	for def, base_entries in pairs(entry_map) do
 		local terms, alts, prns, poss, examples = {}, {}, {}, {}, {}
-		for _, raw_entry in ipairs(raw_entries) do
-			ext.list_insert_cond(terms, raw_entry.term)
-			ext.list_insert_cond(alts, raw_entry.alt)
-			ext.list_insert_cond(prns, raw_entry.prn)
-			ext.list_insert_cond(poss, raw_entry.pos)
-			ext.list_insert_cond(examples, raw_entry.exmp)
+		for _, base_entry in ipairs(base_entries) do
+			ext.list_insert_cond(terms, base_entry.term)
+			ext.list_insert_cond(alts, base_entry.alt)
+			ext.list_insert_cond(prns, base_entry.prn)
+			ext.list_insert_cond(poss, base_entry.pos)
+			ext.list_insert_cond(examples, base_entry.exmp)
 		end
 		table.insert(entries, {
 			trms = terms,
