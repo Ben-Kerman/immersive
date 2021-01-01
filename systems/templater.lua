@@ -194,7 +194,9 @@ function templater.render(template, values)
 				local insert_str
 				if data_type ~= "table" or is_map then
 					local transformed = transform_data(value.data, value.transform)
-					insert_str = transformed:sub(segment.from, segment.to)
+					if transformed then
+						insert_str = transformed:sub(segment.from, segment.to)
+					end
 				elseif data_type == "table" then
 					local list = value.data
 					if segment.from ~= 1 or segment.to ~= -1 then
