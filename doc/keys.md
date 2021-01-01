@@ -154,6 +154,7 @@ Available during target selection.
 | `lookup_clipboard` | `v`           | look up word from clipboard                  |
 | `add_word_audio`   | `a`           | add Forvo audio for target word              |
 | `delete_line`      | `DEL`         | delete selected line                         |
+| `preview_audio`    | `p`           | preview selection audio                      |
 | `export`           | `f`           | export with selected target words            |
 | `export_menu`      | `F`           | export with selected target words using menu |
 

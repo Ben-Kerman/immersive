@@ -56,6 +56,12 @@ function TargetSelect:new(data, menu_lvl)
 			action = function() ts:delete_line() end
 		},
 		{
+			id = "preview_audio",
+			default = "p",
+			desc = "Preview selection audio",
+			action = function() helper.preview_audio(ts.data) end
+		},
+		{
 			id = "export",
 			default = "f",
 			desc = "Export with selected target words",

@@ -3,6 +3,7 @@
 local cfg = require "systems.config"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
+local player = require "systems.player"
 local utf_8 = require "utility.utf_8"
 local ext = require "utility.extension"
 
@@ -144,6 +145,23 @@ function helper.parse_with_escape(str, escape_char, search, init, escape_table)
 	end
 	local escaped_str = string.char(table.unpack(res))
 	return escaped_str, found_pos and found_pos, found_pos and string.char(str:byte(found_pos))
+end
+
+function helper.preview_audio(data)
+	-- prevents circular require
+	local export = require "systems.export"
+
+	if export.verify(data, true) then
+		local was_paused = mp.get_property_bool("pause")
+		mp.set_property_bool("pause", true)
+
+		local start, stop = export.resolve_times(data)
+		player.play(helper.current_path_abs(), start, stop)
+
+		mp.add_timeout(stop - start + 0.15, function()
+			mp.set_property_bool("pause", was_paused)
+		end)
+	end
 end
 
 return helper

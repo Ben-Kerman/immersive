@@ -58,8 +58,10 @@ results, a new menu will open that allows you to choose one of them with
 `↑`/`↓` and `⏎`.
 
 After selecting a definition, the word will be shown at the bottom right of
-the screen. If you want, you can then add pronunciation audio from
-Forvo using `a` (see below).
+the screen. If you want, you can then add pronunciation audio from Forvo using
+`a` (see below).
+
+Like during subtitle selection, you can preview the selection audio with `p`.
 
 When you are ready to export the card, you can do so using `f`, or `F` if you
 want to open the export menu first.

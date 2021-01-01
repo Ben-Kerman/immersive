@@ -115,22 +115,6 @@ function SubSelect:set_stop(value)
 	set_time(self, "stop", value)
 end
 
--- AUDIO PREVIEW --
-
-function SubSelect:preview_audio()
-	if export.verify(self.data, true) then
-		local was_paused = mp.get_property_bool("pause")
-		mp.set_property_bool("pause", true)
-
-		local start, stop = export.resolve_times(self.data)
-		player.play(helper.current_path_abs(), start, stop)
-
-		mp.add_timeout(stop - start + 0.15, function()
-			mp.set_property_bool("pause", was_paused)
-		end)
-	end
-end
-
 -- INIT/DEINIT  --
 
 local function new_data()
@@ -239,7 +223,7 @@ function SubSelect:new()
 			id = "preview_audio",
 			default = "p",
 			desc = "Preview selection audio",
-			action = function() ss:preview_audio() end
+			action = function() helper.preview_audio(ss.data) end
 		},
 		{
 			id = "reset",
