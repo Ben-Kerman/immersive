@@ -128,19 +128,20 @@ Documentation that is not about specific config files:
 
 ### Quick Start Guide
 
-Make sure your mpv install is version 0.33.0 or later. Download the latest
-full release of Immersive from [here](https://github.com/Ben-Kerman/immersive/releases).
-
-Unzip its contents into your mpv config directory. Make sure that you are not
-overwriting any existing config files. Open `immersive-targets.conf` in
-`script-opts` with a text editor of your choice (like Notepad++, Sublime Text
-or vim), and change the values of `profile`, `deck`, `note_type`, and the
-`field:` values so that they match your Anki setup. Then open
-`immersive-dictionaries.conf` and set up your dictionaries as explained
-[here](/doc/dictionaries.md). If you are learning Japanese and using the
-Yomichan version of JMdict, you will most likely only have to change
-`location` so it is set to the path of a directory containing the unzipped
-contents of `jmdict_english.zip`.
+1. Make sure your mpv install is version 0.33.0 or later.
+2. Download the latest full release of Immersive from
+   [here](https://github.com/Ben-Kerman/immersive/releases).
+3. Unzip its contents into your mpv config directory. Make sure that you are
+   not overwriting any existing config files.
+4. Open `immersive-targets.conf` in `script-opts` with a text editor of your
+   choice (like Notepad++, Sublime Text or vim), and change the values of
+   `profile`, `deck`, `note_type`, and the `field:` values so that they match
+   your Anki setup.
+5. Open `immersive-dictionaries.conf` and set up your dictionaries as
+   explained [here](/doc/dictionaries.md). If you are learning Japanese and using
+   the Yomichan version of JMdict, you will most likely only have to change
+   `location` so it is set to the path of a directory containing the unzipped
+   contents of `jmdict_english.zip` from the Yomichan website.
 
 Your mpv config directory should contain the following files at this point:
 
