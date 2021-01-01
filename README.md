@@ -125,6 +125,12 @@ Documentation that is not about specific config files:
 - [Templates](/doc/templates.md)
 - [Card Export](/doc/card-export.md)
 
+### Updating
+
+To update Immersive, delete the script's folder in your mpv config directory
+and replace it with the one from the latest release's script-only ZIP file.
+Also check if there were any changes to config entries that you have used in
+the [change log](/CHANGELOG.md).
 
 ### Quick Start Guide
 
