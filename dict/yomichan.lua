@@ -64,7 +64,7 @@ end
 local function import(dict)
 	local verif_res, files_or_error = verify(dict.config.location)
 	if not verif_res then
-		msg.error("failed to load Yomichan dict (" .. id .. "): " .. files_or_error)
+		msg.error("failed to load Yomichan dict (" .. dict.id .. "): " .. files_or_error)
 		return nil
 	end
 
