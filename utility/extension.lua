@@ -142,8 +142,13 @@ function extension.list_append(tgt, src, inplace)
 	return res
 end
 
-function extension.list_insert_cond(list, value)
-	if not extension.list_find(list, value) then
+function extension.list_insert_cond(list, value, predicate)
+	if not predicate then
+		predicate = function()
+			return not extension.list_find(list, value)
+		end
+	end
+	if predicate() then
 		table.insert(list, value)
 	end
 end
