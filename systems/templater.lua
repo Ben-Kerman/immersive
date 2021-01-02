@@ -188,7 +188,7 @@ function templater.render(template, values)
 			elseif value then
 				if value.data == nil then
 					msg.fatal("value.data is nil")
-					return "TEMPLATE ERROR"
+					return "template error"
 				end
 
 				local data_type = type(value.data)

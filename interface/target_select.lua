@@ -62,6 +62,15 @@ function TargetSelect:new(data, menu_lvl)
 			action = function() helper.preview_audio(ts.data) end
 		},
 		{
+			id = "undo_selection",
+			default = "BS",
+			desc = "Delete last target word",
+			action = function()
+				table.remove(ts.data.definitions)
+				ts.word_overlay:redraw()
+			end
+		},
+		{
 			id = "export",
 			default = "f",
 			desc = "Export with selected target words",

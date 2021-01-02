@@ -62,6 +62,7 @@ the screen. If you want, you can then add pronunciation audio from Forvo using
 `a` (see below).
 
 Like during subtitle selection, you can preview the selection audio with `p`.
+`⌫` removes the last selected word.
 
 When you are ready to export the card, you can do so using `f`, or `F` if you
 want to open the export menu first.
