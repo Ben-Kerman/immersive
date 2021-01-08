@@ -155,7 +155,6 @@ Your mpv config directory should contain the following files at this point:
 scripts/
     immersive/
         dict/
-        doc/
         interface/
         systems/
         utility/
