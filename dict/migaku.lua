@@ -129,8 +129,10 @@ local migaku = {}
 function migaku.load(dict, force_import)
 	local start = mp.get_time()
 	local data = util.generic_load(dict, import, force_import)
-	msg.debug(dict.id .. " (Migaku): " .. mp.get_time() - start)
-	return generate_dict_table(dict.config, data)
+	if data then
+		msg.debug(dict.id .. " (Migaku): " .. mp.get_time() - start)
+		return generate_dict_table(dict.config, data)
+	else return nil end
 end
 
 return migaku

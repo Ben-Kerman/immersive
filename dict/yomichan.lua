@@ -262,8 +262,10 @@ local yomichan = {}
 function yomichan.load(dict, force_import)
 	local start = mp.get_time()
 	local data = util.generic_load(dict, import, force_import)
-	msg.debug(dict.id .. " (Yomichan): " .. mp.get_time() - start)
-	return generate_dict_table(dict.config, data)
+	if data then
+		msg.debug(dict.id .. " (Yomichan): " .. mp.get_time() - start)
+		return generate_dict_table(dict.config, data)
+	else return nil end
 end
 
 return yomichan

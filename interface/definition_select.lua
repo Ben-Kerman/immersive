@@ -14,8 +14,8 @@ DefinitionSelect.__index = DefinitionSelect
 
 function DefinitionSelect:new(word, prefix, data)
 	local dict_cfg = dicts.active()
-	if not dict_cfg then
-		return
+	if not dict_cfg or not dict_cfg.table then
+		return nil
 	end
 
 	local dict = dict_cfg.table
