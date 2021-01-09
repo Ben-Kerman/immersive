@@ -24,20 +24,19 @@ local mpv_process = sys.background_process{
 }
 
 local function player_command(cmd)
+	local fd
 	if sys.platform == "lnx" then
-		local pipe = io.popen("socat - " .. socket_name, "w")
-		pipe:write(cmd)
-		pipe:close()
+		fd = io.popen("socat - " .. socket_name, "w")
 	elseif sys.platform == "win" then
-		local fd = io.open(socket_name, "w")
-		fd:write(cmd)
-		fd:close()
+		fd = io.open(socket_name, "w")
 	elseif sys.platform == "mac" then
 		return "" -- TODO
 	end
+	fd:write(mpu.format_json{command = cmd} .. "\n")
+	fd:close()
 end
 
-mp.register_event("shutdown", function() player_command('{"command":["quit"]}\n') end)
+mp.register_event("shutdown", function() player_command{"quit"} end)
 
 local player = {}
 
@@ -49,7 +48,7 @@ function player.play(path, start, stop)
 			["end"] = stop and tostring(stop)
 		})
 	end
-	player_command(mpu.format_json({command = cmd}) .. "\n")
+	player_command(cmd)
 end
 
 return player

@@ -89,8 +89,8 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 		template_data.definitions = {
 			data = ext.list_map(data.definitions, function(def) return def.definition end),
 			sep = "<br>",
-			transform = function(sub)
-				return apply_substitutions(sub, tgt.definition_substitutions)
+			transform = function(def)
+				return apply_substitutions(def, tgt.definition_substitutions)
 			end
 		}
 	end
