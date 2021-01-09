@@ -2,6 +2,8 @@
 
 local anki = require "systems.anki"
 local helper = require "utility.helper"
+local mpu = require "mp.utils"
+local msg = require "systems.message"
 local sys = require "systems.system"
 
 local function calc_dimension(cfg_val, prop_name)
@@ -28,7 +30,10 @@ function encoder.any_audio(params)
 	if params.start then table.insert(args, "--start=" .. params.start) end
 	if params.stop then table.insert(args, "--end=" .. params.stop) end
 
+	local start_time = mp.get_time()
 	sys.subprocess(args)
+	msg.debug("encoded audio in " .. mp.get_time() - start_time
+	          .. " (" .. params.tgt_path .. ")")
 end
 
 function encoder.audio(path, start, stop)
@@ -82,7 +87,10 @@ function encoder.image(path, time)
 		table.insert(args, "--ovcopts-add=compression_level=" .. tgt_cfg.png.compression)
 	end
 
+	local start_time = mp.get_time()
 	sys.subprocess(args)
+	msg.debug("encoded image in " .. mp.get_time() - start_time
+	          .. " (" .. path .. ")")
 end
 
 return encoder

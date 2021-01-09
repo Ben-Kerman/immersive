@@ -10,6 +10,8 @@ local ext = require "utility.extension"
 local ankiconnect_url = string.format("%s:%d", cfg.values.ankiconnect_host, cfg.values.ankiconnect_port)
 
 local function request(action, params)
+	local start_time = mp.get_time()
+
 	local res = http.post_json{
 		url = ankiconnect_url,
 		data = mpu.format_json{
@@ -18,6 +20,7 @@ local function request(action, params)
 			version = 6
 		}
 	}
+	msg.debug("AnkiConnect request in " ..  mp.get_time() - start_time .. " (" .. action .. ")")
 
 	if not res then
 		return false
