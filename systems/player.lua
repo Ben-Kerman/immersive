@@ -17,7 +17,7 @@ end)()
 local mpv_process = sys.background_process{
 	"mpv",
 	"--no-config",
-	"--vid=no",
+	"--vo=null",
 	"--sid=no",
 	"--idle",
 	"--input-ipc-server=" .. socket_name
