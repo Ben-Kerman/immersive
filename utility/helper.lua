@@ -156,7 +156,7 @@ function helper.preview_audio(data)
 		mp.set_property_bool("pause", true)
 
 		local start, stop = export.resolve_times(data)
-		player.play(helper.current_path_abs(), start, stop)
+		player.play(helper.current_path_abs(), start, stop, mp.get_property_number("aid"))
 
 		mp.add_timeout(stop - start + 0.15, function()
 			mp.set_property_bool("pause", was_paused)

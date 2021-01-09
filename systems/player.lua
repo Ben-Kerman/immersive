@@ -40,10 +40,11 @@ mp.register_event("shutdown", function() player_command{"quit"} end)
 
 local player = {}
 
-function player.play(path, start, stop)
+function player.play(path, start, stop, aid)
 	local cmd = {"loadfile", path, "replace"}
-	if start or stop then
+	if start or stop or aid then
 		table.insert(cmd, {
+			aid = aid and tostring(aid),
 			start = start and tostring(start),
 			["end"] = stop and tostring(stop)
 		})
