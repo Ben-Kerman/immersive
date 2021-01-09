@@ -5,7 +5,7 @@ local helper = require "utility.helper"
 local sys = require "systems.system"
 
 local function calc_dimension(cfg_val, prop_name)
-	if cfg_val < 0 then return cfg_val end
+	if cfg_val < 0 then return -2 end
 	local prop = mp.get_property_number(prop_name)
 	return cfg_val < prop and cfg_val or prop
 end
