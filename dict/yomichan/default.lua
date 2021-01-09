@@ -1,6 +1,6 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
 
-local config = require "systems.config"
+local cfg = require "systems.config"
 local msg = require "systems.message"
 local templater = require "systems.templater"
 local utf_8 = require "utility.utf_8"
@@ -23,7 +23,7 @@ local function get_conf(config)
 	for key, val in pairs(filtered) do
 		key_no_prefix = string.sub(key, 8)
 		if type(default[key_no_prefix]) == "boolean" then
-			val = config.convert_bool(val)
+			val = cfg.convert_bool(val)
 		end
 		default[key_no_prefix] = val
 	end
