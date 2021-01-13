@@ -165,7 +165,7 @@ function helper.preview_audio(data)
 end
 
 local whitespace_cps = {
-	9, 32, 160, 5760, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8239, 8287, 12288
+	9, 32, 160, 5760, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8203, 8239, 8287, 12288
 }
 function helper.is_space(cp)
 	return not not ext.list_find(whitespace_cps, cp)

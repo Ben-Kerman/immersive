@@ -197,17 +197,36 @@ function extension.string_ends(str, suffix)
 end
 
 function extension.string_trim(str, where)
-	local _, lead_end = str:find("^%s+")
-	local trail_start, _ = str:find("%s+$")
+	local helper = require "utility.helper"
+	local utf_8 = require "utility.utf_8"
+
+	local cdpts = utf_8.codepoints(str)
+
+	local lead_end
+	for i = 1, #cdpts, 1 do
+		if not helper.is_space(cdpts[i]) then
+			lead_end = i
+			break
+		end
+	end
+
+	local trail_start
+	for i = #cdpts, 1, -1 do
+		if not helper.is_space(cdpts[i]) then
+			trail_start = i
+			break
+		end
+	end
 
 	local first, last
 	if not where or where == "start" then
-		first = lead_end and lead_end + 1 or 1
+		first = lead_end and lead_end or 1
 	else first = 1 end
 	if not where or where == "end" then
-		last = trail_start and trail_start - 1 or #str
-	else last = #str end
-	return str:sub(first, last)
+		last = trail_start and trail_start or #cdpts
+	else last = #cdpts end
+
+	return utf_8.string(extension.list_range(cdpts, first, last))
 end
 
 function extension.string_split(str, pattern, filter_empty)
