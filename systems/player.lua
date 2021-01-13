@@ -4,7 +4,7 @@ local mpu = require "mp.utils"
 local sys = require "systems.system"
 
 local socket_name = (function()
-	local filename = script_name .. "_socket"
+	local filename = script_name .. "." .. mpu.getpid() .. ".socket"
 	if sys.platform == "lnx" then
 		return "/tmp/" .. filename
 	elseif sys.platform == "win" then
@@ -36,7 +36,10 @@ local function player_command(cmd)
 	fd:close()
 end
 
-mp.register_event("shutdown", function() player_command{"quit"} end)
+mp.register_event("shutdown", function()
+	player_command{"quit"}
+	os.remove(socket_name)
+end)
 
 local player = {}
 
