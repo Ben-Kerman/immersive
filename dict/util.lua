@@ -78,11 +78,17 @@ end
 function util.find_start_matches(term, data, search_term_fn)
 	local first_char = utf_8.string(utf_8.codepoints(term, 1, 1))
 	local start_matches = data.start_index[first_char]
-	return ext.list_filter(start_matches, function(id)
+	if not start_matches then
+		return nil
+	end
+
+	local filtered = ext.list_filter(start_matches, function(id)
 		if ext.list_find(search_term_fn(data.entries[id]), function(search_term)
 			return ext.string_starts(search_term, term)
 		end) then return true end
 	end)
+
+	return #filtered ~= 0 and filtered or nil
 end
 
 return util
