@@ -1,5 +1,6 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
 
+local helper = require "utility.helper"
 local kbds = require "systems.key_bindings"
 local msg = require "systems.message"
 local ssa = require "systems.ssa"
@@ -98,16 +99,9 @@ function TextSelect:move_curs(amount, change_sel)
 	self:update(true)
 end
 
-local whitespace_cps = {
-	9, 32, 160, 5760, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8239, 8287, 12288
-}
-local function is_space(cp)
-	return not not ext.list_find(whitespace_cps, cp)
-end
-
 local function classify_cp(cp)
 	if not cp then return "nil" end
-	if is_space(cp) then return "space" end
+	if helper.is_space(cp) then return "space" end
 
 	if (0x3041 <= cp and cp <= 0x309f) then return "hiragana" end
 	if (0x30a0 <= cp and cp <= 0x30ff) then return "katakana" end
@@ -152,7 +146,7 @@ function TextSelect:move_curs_word(dir, change_sel)
 	local bound = dir < 0 and 1 or #self.cdpts + 1
 
 	local new_pos = self.curs_pos
-	while is_space(get_cp(new_pos)) and new_pos ~= bound do
+	while helper.is_space(get_cp(new_pos)) and new_pos ~= bound do
 		new_pos = new_pos + dir
 	end
 
