@@ -114,13 +114,13 @@ function DefinitionSelect:new(word, prefix, data)
 			id = "prev_dict",
 			default = "Alt+UP",
 			desc = "Switch to the previous dictionary",
-			action = function() dicts.switch(-1); ds.menu:redraw(); menu_stack.pop(); menu_stack.push(DefinitionSelect:new(word, prefix)) end
+			action = function() dicts.switch(-1); ds.menu:redraw(); menu_stack.pop(); menu_stack.push(DefinitionSelect:new(word, prefix, data)) end
 		},
 		{
 			id = "next_dict",
 			default = "Alt+DOWN",
 			desc = "Switch to the next dictionary",
-			action = function() dicts.switch(1); ds.menu:redraw(); menu_stack.pop(); menu_stack.push(DefinitionSelect:new(word, prefix)) end
+			action = function() dicts.switch(1); ds.menu:redraw(); menu_stack.pop(); menu_stack.push(DefinitionSelect:new(word, prefix, data)) end
 		}
 	}
 
