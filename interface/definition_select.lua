@@ -18,10 +18,71 @@ function DefinitionSelect:new(word, prefix, data)
 		return nil
 	end
 
-	local dict = dict_cfg.table
-	local result = (prefix and dict.look_up_start or dict.look_up_exact)(word)
+    local dict = dict_cfg.table
 
-	if not result then
+	local function inTable(tbl, item)
+	    for key, value in pairs(tbl) do
+	        if value == item then return true end
+            if key == item then return true end
+	    end
+	    return false
+	end
+	
+    local function starts_with(str, start)
+       return str:sub(1, #start) == start
+    end
+
+	local function ends_with(str, ending)
+	   return ending == "" or str:sub(-#ending) == ending
+	end
+
+    local function deconjugate(term, conjugations)
+	    local deconjugations = {term}
+        if conjugations == "" then 
+            return deconjugations 
+        else
+            local conjugations = helper.parse_json_file(conjugations)
+            for k,v in pairs(conjugations) do
+                if ends_with(term, v['inflected'])
+                then
+                    for x,y in pairs(v['dict']) do
+                        local deinflected = term:gsub(v['inflected'],y)
+                        -- prefix function not tested
+                        if inTable(v,'prefix') then
+                            local prefix = v['prefix']
+                            if starts_with(deinflected, prefix) == true then
+                                deprefixedDeinflected=string.sub(deinflected, string.len(v['prefix'])+1)
+                                if inTable(deconjugations, deprefixedDeinflected) == false then
+                                    table.insert(deconjugations, deprefixedDeinflected)
+                                end
+                            end
+                        end
+                        if inTable(deconjugations, deinflected) == false then
+                            table.insert(deconjugations, deinflected)
+                        end
+                    end
+                end
+            end
+	        return deconjugations
+        end
+	end 
+
+    local function lookup_deconjugated(deconjugations)
+        local result = {}
+        for num,deconjugatedword in pairs(deconjugations) do
+            curresult = (prefix and dict.look_up_start or dict.look_up_exact)(deconjugatedword)
+            if curresult then
+                for k,v in pairs(curresult) do
+                    table.insert(result,v)
+                end
+            end
+        end
+        return result
+    end
+
+    local result = lookup_deconjugated(deconjugate(word,cfg.values.conjugation_dict))
+
+	if next(result) == nil then
 		msg.info("no definitions found")
 		return
 	end

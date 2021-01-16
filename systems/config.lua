@@ -40,7 +40,8 @@ local config = {
 		global_help = true,
 		enable_help = false,
 		take_screenshots = true,
-		hide_infos_if_help_active = false
+		hide_infos_if_help_active = false,
+		conjugation_dict = ""
 	}
 }
 

@@ -78,4 +78,9 @@ Some general config options are located in `immersive.conf`:
 # Hide the menu info at the bottom left if the help overlay is active.
 # Useful if the two collide due to large font sizes.
 #hide_infos_if_help_active=no
+
+# download deconjugation file from here https://mega.nz/#F!eyYwyIgY!3q4XQ3BhdvkFg9KsPe5avw!bz4ywa5A by migaku
+# empty to disable deconjugation
+# location to deconjugation file
+#conjugation_dict=
 ```

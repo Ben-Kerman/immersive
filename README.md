@@ -148,6 +148,9 @@ the [change log](/CHANGELOG.md).
    the Yomichan version of JMdict, you will most likely only have to change
    `location` so it is set to the path of a directory containing the unzipped
    contents of `jmdict_english.zip` from the Yomichan website.
+6. To enable deconjugation download deconjugation file from 
+   [here](https://mega.nz/#F!eyYwyIgY!3q4XQ3BhdvkFg9KsPe5avw!bz4ywa5A) and change
+   the location `conjugation_dict' to the path of deconjugation file.
 
 Your mpv config directory should contain the following files at this point:
 
