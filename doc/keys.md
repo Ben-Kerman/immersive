@@ -67,9 +67,11 @@ Available after opening the active line menu with `k`.
 
 Available while selecting a definition after a dictionary search.
 
-| ID         | Key      | Action                  |
-| ---------- | -------- | ----------------------- |
-| `confirm`  | `ENTER`  | use selected definition |
+| ID               | Key        | Action                             |
+| ---------------- | ---------- | ---------------------------------- |
+| `confirm`        | `ENTER`    | use selected definition            |
+| `prev_dict`      | `Alt+UP`   | switch to the previous dictionary  |
+| `next_dict`      | `Alt+DOWN` | switch to the next dictionary      |
 
 ---
 

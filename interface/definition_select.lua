@@ -1,5 +1,6 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
 
+local anki = require "systems.anki"
 local cfg = require "systems.config"
 local dicts = require "dict.dicts"
 local helper = require "utility.helper"
@@ -8,6 +9,18 @@ local Menu = require "interface.menu"
 local menu_stack = require "interface.menu_stack"
 local msg = require "systems.message"
 local templater = require "systems.templater"
+local DictTargetMenu = require "interface.dict_target_menu"
+
+local infos = {
+	{
+		name = "Dictionary",
+		display = function()
+			local dict = dicts.active(true)
+			if dict then return dict.id
+			else return {style = {"menu_info", "unset"}, "none"} end
+		end
+	}
+}
 
 local DefinitionSelect = {}
 DefinitionSelect.__index = DefinitionSelect
@@ -36,6 +49,7 @@ function DefinitionSelect:new(word, prefix, data)
 	   return ending == "" or str:sub(-#ending) == ending
 	end
 
+    -- https://github.com/migaku-official/Migaku-Dictionary-Addon/blob/master/src/dictdb.py
     local function deconjugate(term, conjugations)
 	    local deconjugations = {term}
         if conjugations == "" then 
@@ -47,7 +61,6 @@ function DefinitionSelect:new(word, prefix, data)
                 then
                     for x,y in pairs(v['dict']) do
                         local deinflected = term:gsub(v['inflected'],y)
-                        -- prefix function not tested
                         if inTable(v,'prefix') then
                             local prefix = v['prefix']
                             if starts_with(deinflected, prefix) == true then
@@ -96,6 +109,18 @@ function DefinitionSelect:new(word, prefix, data)
 			default = "ENTER",
 			desc = "Use selected definition",
 			action = function() ds:finish() end
+		},
+		{
+			id = "prev_dict",
+			default = "Alt+UP",
+			desc = "Switch to the previous dictionary",
+			action = function() dicts.switch(-1); ds.menu:redraw(); menu_stack.pop(); menu_stack.push(DefinitionSelect:new(word, prefix)) end
+		},
+		{
+			id = "next_dict",
+			default = "Alt+DOWN",
+			desc = "Switch to the next dictionary",
+			action = function() dicts.switch(1); ds.menu:redraw(); menu_stack.pop(); menu_stack.push(DefinitionSelect:new(word, prefix)) end
 		}
 	}
 
@@ -106,7 +131,7 @@ function DefinitionSelect:new(word, prefix, data)
 		line_select = LineSelect:new(result, line_conv, sel_conv, nil, 5),
 		data = data,
 		bindings = bindings,
-		menu = Menu:new{bindings = bindings},
+		menu = Menu:new{infos = infos, bindings = bindings},
 		lookup_result = {dict = dict, defs = result}
 	}, DefinitionSelect)
 	return ds
@@ -134,5 +159,4 @@ end
 function DefinitionSelect:cancel()
 	self:hide()
 end
-
 return DefinitionSelect
