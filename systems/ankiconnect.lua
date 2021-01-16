@@ -100,7 +100,7 @@ local function make_note(fields, options)
 		modelName = tgt.note_type,
 		fields = fields,
 		options = options,
-		tags = tgt.config.tags
+		tags = tgt.tags
 	}
 end
 
