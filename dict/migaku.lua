@@ -109,11 +109,15 @@ local function generate_dict_table(config, data)
 			})
 		end,
 		look_up_exact = function(term)
-			return export_entries(data.index[ext.string_trim(term)])
+			if data then
+				return export_entries(data.index[ext.string_trim(term)])
+			else return nil end
 		end,
 		look_up_start = function(term)
-			local trimmed = ext.string_trim(term)
-			return export_entries(util.find_start_matches(trimmed, data, list_search_terms))
+			if data then
+				local trimmed = ext.string_trim(term)
+				return export_entries(util.find_start_matches(trimmed, data, list_search_terms))
+			else return nil end
 		end,
 		get_definition = function(id)
 			local entry = data.entries[id]
