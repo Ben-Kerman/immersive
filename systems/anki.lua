@@ -160,14 +160,14 @@ function anki.generate_filename(series_id, extension)
 
 	local files = sys.list_files(media_dir)
 	local existing = ext.list_filter(files, function(file)
-		return ext.string_starts(file, series_id) and file:match("%." .. extension .. "$")
+		return ext.string_starts(file, series_id) and file:match("%-%d+%." .. extension .. "$")
 	end)
 	local next_number
 	if #existing == 0 then next_number = 0
 	else
 		next_number = 1 + ext.list_max(ext.list_map(existing, function(file)
 			local _, id_end = file:find(series_id, 1, true)
-			return tonumber((file:match("%-(%d+)", id_end + 1)))
+			return tonumber((file:match("%-(%d+)%..+$", id_end + 1)))
 		end))
 	end
 	return string.format("%s-%04d.%s", series_id, next_number, extension)
