@@ -239,12 +239,12 @@ local function generate_dict_table(config, data)
 			return rendered
 		end,
 		look_up_exact = function(term)
-			if data then
+			if util.check_dict_data(data) then
 				return export_entries(data.index[ext.string_trim(term)])
 			else return nil end
 		end,
 		look_up_start = function(term)
-			if data then
+			if util.check_dict_data(data) then
 				local trimmed = ext.string_trim(term)
 				return export_entries(util.find_start_matches(trimmed, data, list_search_terms))
 			else return nil end

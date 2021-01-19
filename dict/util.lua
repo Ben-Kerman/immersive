@@ -91,4 +91,12 @@ function util.find_start_matches(term, data, search_term_fn)
 	return #filtered ~= 0 and filtered or nil
 end
 
+function util.check_dict_data(data)
+	if not data then
+		msg.error("no data loaded for dictionary")
+		return false
+	end
+	return true
+end
+
 return util
