@@ -107,7 +107,8 @@ local function export_active_line(instant, use_export_menu)
 			subtitles = {
 				Subtitle:new(sub_text,
 				             mp.get_property_number("sub-start"),
-				             mp.get_property_number("sub-end"))
+				             mp.get_property_number("sub-end"),
+				             mp.get_property_number("sub-delay"))
 			}
 		}
 	end
