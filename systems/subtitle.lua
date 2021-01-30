@@ -1,7 +1,8 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
 
-local utf_8 = require "utility.utf_8"
 local ext = require "utility.extension"
+local msg = require "systems.message"
+local utf_8 = require "utility.utf_8"
 
 local Subtitle = {}
 Subtitle.__index = Subtitle
@@ -12,13 +13,16 @@ function Subtitle.__lt(a ,b)
 end
 
 function Subtitle:new(text, start, stop, delay)
-	local sub = {
+	if not start or not stop then
+		msg.error("Export will fail: Subtitle start or end time is nil.\nThis is probably an issue with the subtitle file.")
+	end
+
+	return setmetatable({
 		text = text,
 		start = start,
 		stop = stop,
 		delay = delay
-	}
-	return setmetatable(sub, Subtitle)
+	}, Subtitle)
 end
 
 function Subtitle:real_start()
