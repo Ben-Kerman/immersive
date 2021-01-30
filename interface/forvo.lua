@@ -147,11 +147,11 @@ function Pronunciation:load_audio(callback)
 					path = res
 				}
 				self.menu.prn_sel:update()
-				callback()
+				if callback then callback() end
 			end
 		end)
 		table.insert(self.menu.requests, req)
-	else callback() end
+	elseif callback then callback() end
 end
 
 function Pronunciation:play()
