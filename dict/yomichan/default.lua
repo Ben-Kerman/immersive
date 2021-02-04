@@ -64,7 +64,7 @@ return function(entry, config, tag_map)
 				else
 					for _, var in ipairs(reading.vars) do
 						if not ext.list_find(exst_rdng.vars, var) then
-							table.insert(reading.vars, var)
+							table.insert(exst_rdng.vars, var)
 						end
 					end
 				end

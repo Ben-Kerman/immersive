@@ -56,7 +56,7 @@ function system.tmp_dir()
 end
 
 local function handle_process_result(success, res, err)
-	if not res then
+	if not success then
 		msg.error("failed to run subprocess: '" .. err .. "'; arguments: " .. mpu.format_json(args))
 		return
 	end
