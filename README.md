@@ -95,8 +95,13 @@ Immersive can be installed by placing the contents of this repository in a
 folder within your mpv scripts directory (`~/.config/mpv/scripts/` on Linux,
 `%APPDATA%\mpv\scripts` on Windows). This folder should be named `immersive`.
 Using any other name will mean that you will have to change the names of all
-config files to match it as well. All necessary files can be downloaded as a
-ZIP file from the latest [release](https://github.com/Ben-Kerman/immersive/releases).
+config files to match it as well.
+
+All necessary files can be downloaded as a ZIP file from the latest
+[release](https://github.com/Ben-Kerman/immersive/releases). When installing
+Immersive from a release archive, it only needs to be extracted into the mpv
+config directory for the full release, or `scripts` directory for the
+script-only release. The above directory is already contained in the archive.
 
 If you want the most up-to-date version possible, use the "Code" button at the
 top of the repo's start page. Simply extract the contents of the file into
