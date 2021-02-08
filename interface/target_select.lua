@@ -50,6 +50,12 @@ function TargetSelect:new(data, menu_lvl)
 			action = function() ts:add_word_audio() end
 		},
 		{
+			id = "add_word_audio_direct",
+			default = "A",
+			desc = "Add Forvo audio from current selection",
+			action = function() ts:add_word_audio_direct() end
+		},
+		{
 			id = "delete_line",
 			default = "DEL",
 			desc = "Delete selected line",
@@ -144,6 +150,13 @@ function TargetSelect:add_word_audio()
 		local word = self.data.definitions[#self.data.definitions].word
 		menu_stack.push(Forvo:new(self.data, word))
 	else msg.info("no target word selected") end
+end
+
+function TargetSelect:add_word_audio_direct()
+	local word = self.tgt_word_sel:selection(true)
+	if word then
+		menu_stack.push(Forvo:new(self.data, word))
+	end
 end
 
 function TargetSelect:show()
