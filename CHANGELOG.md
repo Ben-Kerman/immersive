@@ -1,3 +1,23 @@
+# 1.2 - 2021-02-08
+
+Features:
+- Audio preview during target selection
+- Key binding for deleting target words
+- Key binding for adding word audio from selection
+
+Fixes:
+- Several bugs related to dictionary import and lookup
+- Base background player socket name on mpv's PID
+- Tags are now actually added to cards
+- Prevent clashes with mpvacious' filename scheme
+- Add sub delay for single line export
+- Warn if subtitle times are nil due to invalid sub data
+- Fix Forvo audio preloading
+- Fix crash when manually selecting times with no active subs
+- Set image export dimension placeholder properly
+- Use active track for audio preview
+- Fix infinite loop in Yomichan exporter that happened for certain words
+
 # 1.1 - 2021-01-01
 
 Minor improvements:
