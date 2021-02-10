@@ -44,14 +44,12 @@ system.anki_base_dir = (function()
 end)()
 
 function system.tmp_dir()
-	if system.platform == "lnx" then
+	if system.platform == "lnx" or system.platform == "mac" then
 		local tmpdir_env = os.getenv("TMPDIR")
 		if tmpdir_env then return tmpdir_env
 		else return "/tmp" end
 	elseif system.platform == "win" then
 		return os.getenv("TEMP")
-	elseif system.platform == "mac" then
-		-- TODO
 	end
 end
 
@@ -131,18 +129,23 @@ $utf8 = [Text.Encoding]::UTF8.GetBytes($clip)
 [Console]::OpenStandardOutput().Write($utf8, 0, $utf8.length)]]
 
 function system.clipboard_read()
-	local args
-	if system.platform == "lnx" then
-		args = {"xclip", "-out", "-selection", "clipboard"}
-	elseif system.platform == "win" then
-		args = {"powershell", "-NoProfile", "-Command", ps_clip_read}
-	elseif system.platform == "mac" then
-		args = {}-- TODO
-	end
+	if system.platform == "mac" then
+		local pipe = io.popen("LANG=en_US.UTF-8 pbpaste", "r")
+		local clip = pipe:read("*a")
+		pipe:close()
+		return clip
+	else
+		local args
+		if system.platform == "lnx" then
+			args = {"xclip", "-out", "-selection", "clipboard"}
+		elseif system.platform == "win" then
+			args = {"powershell", "-NoProfile", "-Command", ps_clip_read}
+		end
 
-	local status, clip, err_str = system.subprocess(args)
-	if status == 0 then return clip
-	else return nil, err_str end
+		local status, clip, err_str = system.subprocess(args)
+		if status == 0 then return clip
+		else return false, err_str end
+	end
 end
 
 function system.clipboard_write(str)
@@ -151,7 +154,7 @@ function system.clipboard_write(str)
 		if system.platform == "lnx" then
 			cmd = "xclip -in -selection clipboard"
 		elseif system.platform == "mac" then
-			cmd = "" -- TODO
+			cmd = "LANG=en_US.UTF-8 pbcopy"
 		end
 
 		local pipe = io.popen(cmd, "w")

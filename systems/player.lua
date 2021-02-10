@@ -10,7 +10,7 @@ local socket_name = (function()
 	elseif sys.platform == "win" then
 		return [[\\.\pipe\]] .. filename
 	elseif sys.platform == "mac" then
-		return "" -- TODO
+		return mpu.join_path(sys.tmp_dir(), filename)
 	end
 end)()
 
@@ -30,7 +30,7 @@ local function player_command(cmd)
 	elseif sys.platform == "win" then
 		fd = io.open(socket_name, "w")
 	elseif sys.platform == "mac" then
-		return "" -- TODO
+		fd = io.popen("nc -w 0 -U \"" .. socket_name .. "\"", "w")
 	end
 	fd:write(mpu.format_json{command = cmd} .. "\n")
 	fd:close()
