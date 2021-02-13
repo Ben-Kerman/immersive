@@ -3,11 +3,12 @@
 local cfg = require "systems.config"
 local ext = require "utility.extension"
 
-local config = ext.map_map(cfg.load_subcfg("series"), function(_, series)
+local config = ext.list_map(cfg.load_subcfg("series"), function(series)
 	if not cfg.check_required(series.entries, {"keywords"}) then
 		return nil
 	end
-	return series.name, {
+	return {
+		id = series.name,
 		title = series.entries.title,
 		keywords = ext.string_split(series.entries.keywords:lower(), " ", true)
 	}
@@ -33,7 +34,7 @@ end
 
 local function match_filename(filename)
 	local filename_lc = filename:lower()
-	for id, values in pairs(config) do
+	for _, values in ipairs(config) do
 		local match = true
 		for _, kw in ipairs(values.keywords) do
 			if not filename_lc:find(kw) then
@@ -42,7 +43,7 @@ local function match_filename(filename)
 			end
 		end
 		if match then
-			return id, values
+			return values.id, values
 		end
 	end
 	return false
