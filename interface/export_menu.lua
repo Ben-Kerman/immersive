@@ -4,7 +4,17 @@ local anki = require "systems.anki"
 local export = require "systems.export"
 local Menu = require "interface.menu"
 local menu_stack = require "interface.menu_stack"
+local msg = require "systems.message"
 local NoteSelect = require "interface.note_select"
+
+local function check_candidates()
+	local candidates = anki.add_candidates()
+	if not candidates or #candidates == 0 then
+		msg.warn("no notes to add to found")
+		return nil
+	end
+	return candidates
+end
 
 local ExportMenu = {}
 ExportMenu.__index = ExportMenu
@@ -25,27 +35,31 @@ function ExportMenu:new(data)
 			default = "g",
 			desc = "Export using the 'Add' GUI",
 			action = function() export.execute_gui(em.data) end
-		}
-	}
-	local candidates = anki.add_candidates()
-	if not candidates then return nil end
-
-	if #candidates ~= 0 then
-		table.insert(bindings, {
+		},
+		{
 			id = "export_add",
 			default = "a",
 			desc = "Export to existing note, choose which",
 			action = function()
-				menu_stack.push(NoteSelect:new(em.data, candidates))
+				local candidates = check_candidates()
+				if candidates then
+					menu_stack.push(NoteSelect:new(em.data, candidates))
+				end
 			end
-		})
-		table.insert(bindings, {
+		},
+		{
 			id = "export_add_to_last",
 			default = "s",
 			desc = "Export to existing note, use last added",
-			action = function() export.execute_add(em.data, candidates[1]) end
-		})
-	end
+			action = function()
+				local candidates = check_candidates()
+				if candidates then
+					export.execute_add(em.data, candidates[1])
+				end
+			end
+		}
+	}
+	
 
 	data.level = data.level and (data.level + 1) or 1
 	em = setmetatable({
