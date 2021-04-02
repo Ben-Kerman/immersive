@@ -1,5 +1,6 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
 
+local bus = require "systems.bus"
 local cfg = require "systems.config"
 local ssa = require "systems.ssa"
 
@@ -15,10 +16,15 @@ function ScreenBlackout:new()
 
 	sb = setmetatable({
 		observer = observer,
-		overlay = mp.create_osd_overlay("ass-events")
+		overlay = mp.create_osd_overlay("ass-events"),
+		handler = function(show)
+			if show then sb:show()
+			else sb:hide() end
+		end
 	}, ScreenBlackout)
 
 	sb.overlay.z = -1
+	bus.listen("set_blackouts", sb.handler)
 
 	return sb
 end
@@ -49,6 +55,7 @@ function ScreenBlackout:hide()
 end
 
 function ScreenBlackout:cancel()
+	bus.unlisten("set_blackouts", self.handler)
 	self:hide()
 end
 

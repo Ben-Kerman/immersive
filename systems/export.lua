@@ -2,8 +2,11 @@
 
 local anki = require "systems.anki"
 local ankicon = require "systems.ankiconnect"
+local BasicOverlay = require "interface.basic_overlay"
+local bus = require "systems.bus"
 local cfg = require "systems.config"
 local encoder = require "systems.encoder"
+local ext = require "utility.extension"
 local helper = require "utility.helper"
 local menu_stack = require "interface.menu_stack"
 local mpu = require "mp.utils"
@@ -12,7 +15,6 @@ local series_id = require "utility.series_id"
 local series_id = require "utility.series_id"
 local sys = require "systems.system"
 local templater = require "systems.templater"
-local ext = require "utility.extension"
 
 local function anki_sound_tag(filename)
 	return string.format("[sound:%s]", filename)
@@ -216,30 +218,50 @@ local function fill_first_field(fields, tgt, ignore_nil)
 	return fields
 end
 
+local function hide_menus(data)
+	menu_stack.push(BasicOverlay:new("exporting note", nil, "info_overlay"))
+	bus.fire("set_blackouts", false)
+end
+
+local function show_menus(data)
+	bus.fire("set_blackouts", true)
+	menu_stack.pop()
+end
+
 local function pop_menus(data)
+	local count = 1
 	if data.level then
-		menu_stack.pop(data.level)
+		count = data.level + 1
 	end
+	menu_stack.pop(count)
 end
 
 function export.execute(data)
+	hide_menus(data)
 	local fields = fill_first_field(prepare_fields(data))
 	if fields then
 		if ankicon.add_note(fields) then
 			pop_menus(data)
 			msg.info("note added successfully")
-		else msg.warn("note couldn't be added") end
+			return
+		end
 	end
+	msg.warn("note couldn't be added")
+	show_menus()
 end
 
 function export.execute_gui(data)
+	hide_menus(data)
 	local fields = prepare_fields(data)
 	if fields then
 		if ankicon.gui_add_cards(fields) then
 			pop_menus(data)
 			msg.info("'Add' GUI opened")
-		else msg.warn("'Add' GUI couldn't be opened") end
+			return
+		end
 	end
+	msg.warn("'Add' GUI couldn't be opened")
+	show_menus()
 end
 
 local function combine_fields(prev_fields, fields, tgt)
@@ -261,6 +283,7 @@ local function combine_fields(prev_fields, fields, tgt)
 end
 
 function export.execute_add(data, note)
+	hide_menus(data)
 	-- "updated" because the user could have edited the note by now
 	local updated_note = ankicon.notes_info({note.noteId})[1]
 	if updated_note then
@@ -275,9 +298,12 @@ function export.execute_add(data, note)
 			if ankicon.update_note_fields(updated_note.noteId, new_fields) then
 				pop_menus(data)
 				msg.info("note updated successfully")
-			else msg.warn("note couldn't be updated") end
+				return
+			end
 		end
 	end
+	msg.warn("note couldn't be updated")
+	show_menus()
 end
 
 return export
