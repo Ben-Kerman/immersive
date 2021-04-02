@@ -1,5 +1,7 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
 
+require "utility.compat"
+
 script_name = mp.get_script_name()
 
 -- always log verbose messages unless the user overrides msg-level
