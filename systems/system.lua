@@ -89,14 +89,14 @@ function system.mpv_executable()
 		return cfg.values.mpv_executable
 	end
 
-	if system.platform == "mac" then
+	if system.platform == "win" then
 		-- mpv for Windows apparently uses
 		-- the current exe if mpv isn't in PATH
 		return "mpv"
 	end
 
 	local exe_path
-	local fmt = system.platform == "mac" and "cmd=" or "exe="
+	local fmt = system.platform == "mac" and "comm=" or "exe="
 	local status, stdout = system.subprocess{"ps", "-p", tostring(mpu.getpid()), "-o", fmt}
 	local cmd = stdout:gsub("\n$", "")
 
