@@ -84,6 +84,33 @@ function system.background_process(args, callback)
 	end)
 end
 
+function system.mpv_executable()
+	if cfg.values.mpv_executable ~= "mpv" then
+		return cfg.values.mpv_executable
+	end
+
+	if system.platform == "mac" then
+		-- mpv for Windows apparently uses
+		-- the current exe if mpv isn't in PATH
+		return "mpv"
+	end
+
+	local exe_path
+	local fmt = system.platform == "mac" and "cmd=" or "exe="
+	local status, stdout = system.subprocess{"ps", "-p", tostring(mpu.getpid()), "-o", fmt}
+	local cmd = stdout:gsub("\n$", "")
+
+	if status == 0 then
+		if system.platform == "mac" and cmd:sub(1, 1) == "." then
+			return mpu.join_path(mp.get_property("working-directory"), cmd)
+		end
+		return cmd
+	end
+
+	-- try PATH on failure
+	return "mpv"
+end
+
 function system.list_files(dir)
 	return mpu.readdir(dir, "files")
 end

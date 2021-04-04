@@ -15,7 +15,7 @@ local socket_name = (function()
 end)()
 
 local mpv_process = sys.background_process{
-	"mpv",
+	sys.mpv_executable(),
 	"--no-config",
 	"--vo=null",
 	"--sid=no",

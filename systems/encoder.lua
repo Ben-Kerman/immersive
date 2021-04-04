@@ -16,7 +16,7 @@ local encoder = {}
 
 function encoder.any_audio(params)
 	local args = {
-		"mpv",
+		sys.mpv_executable(),
 		params.src_path,
 		"--o=" .. params.tgt_path,
 		"--no-ocopy-metadata",
@@ -62,7 +62,7 @@ function encoder.image(path, time)
 	local height = calc_dimension(tgt_cfg.max_height, "height")
 
 	local args = {
-		"mpv",
+		sys.mpv_executable(),
 		helper.current_path_abs(),
 		"--o=" .. path,
 		"--no-ocopy-metadata",

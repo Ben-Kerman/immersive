@@ -16,6 +16,7 @@ end
 
 local config = {
 	values = {
+		mpv_executable = "mpv",
 		preload_dictionaries = false,
 		startup_dict_overlay = true,
 		max_targets = 1,
