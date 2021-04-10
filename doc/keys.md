@@ -54,12 +54,12 @@ Available in the dictionary/target menu. (`Ctrl+A`)
 
 Available after opening the active line menu with `k`.
 
-| ID        | Key           | Action                                |
-| --------- | ------------- | ------------------------------------- |
-| `exact`   | `ENTER`       | look up selected word                 |
-| `partial` | `Shift+ENTER` | look up words starting with selection |
-| `copy`    | `c`           | copy selection to clipboard           |
-
+| ID            | Key           | Action                                                            |
+| ------------- | ------------- | ----------------------------------------------------------------- |
+| `exact`       | `ENTER`       | look up selected word                                             |
+| `partial`     | `Shift+ENTER` | look up words starting with selection                             |
+| `copy`        | `c`           | copy selection to clipboard                                       |
+| `primary_sel` | `z`           | set primary X11 selection to selected characters (X11/Linux only) |
 
 ---
 

@@ -198,4 +198,15 @@ function system.clipboard_write(str)
 	end
 end
 
+function system.primary_sel_write(str)
+	if system.platform ~= "lnx" then
+		msg.warn("Primary selection only available in X11 environments")
+		return
+	end
+
+	local pipe = io.popen("xclip -selection primary", "w")
+	pipe:write(str)
+	pipe:close()
+end
+
 return system

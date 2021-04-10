@@ -45,6 +45,20 @@ function ActiveSubLookup:new()
 		}
 	}
 
+	if sys.platform == "lnx" then
+		table.insert(bindings, {
+			id = "primary_sel",
+			default = "z",
+			desc = "Set primary X11 selection to selected characters",
+			action = function()
+				local selection = asl.txt_sel:selection(true)
+				if not selection then return end
+
+				sys.primary_sel_write(selection)
+			end
+		})
+	end
+
 	asl = setmetatable({
 		txt_sel = TextSelect:new((sub_text:gsub("\n", "\226\128\139"))),
 		blackout = cfg.values.active_sub_blackout and ScreenBlackout:new() or nil,
