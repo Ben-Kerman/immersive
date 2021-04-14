@@ -1,3 +1,15 @@
+# 1.3 - TBD
+Features:
+- Experimental macOS support
+- Disable menu and screen blackout while exporting notes
+- Add active sub menu key binding for setting primary selection (X11 only)
+
+Fixes:
+- Only search for notes to add to after starting the export process
+- Use the current mpv executable for encoding and audio preview instead of assuming mpv is in PATH
+- Fix precendence of conflicting series IDs
+- Add conditional replacements for `table.pack` and `table.unpack` (missing in Lua 5.1)
+
 # 1.2 - 2021-02-08
 
 Features:
