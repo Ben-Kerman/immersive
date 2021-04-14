@@ -17,37 +17,39 @@ to follow: https://youtu.be/g1aPNkdGTUc
 
 ## Requirements
 
-The currently supported platforms are Linux and Windows. If you would like to
-assist in adding macOS support, please contact me.
+Immersive supports all major desktop operating systems:
 
 <table>
 	<tr>
 		<th>Linux</th>
 		<th>Windows</th>
+		<th>macOS</th>
 		<th>required for & comments</th>
 	</tr>
 	<tr>
-		<td colspan="2">mpv (0.33.0 or later)</td>
+		<td colspan="3">mpv (0.33.0 or later)</td>
 		<td></td>
 	</tr>
 	<tr>
-		<td colspan="2">
+		<td colspan="3">
 			Anki with <a href="https://ankiweb.net/shared/info/2055492159">AnkiConnect</a>
 		</td>
 		<td>card export</td>
 	</tr>
 	<tr>
-		<td colspan="2">curl</td>
-		<td>web requests (Forvo, AnkiConnect), installed on Windows 10 by default since April 2018</td>
+		<td colspan="3">curl</td>
+		<td>web requests (Forvo, AnkiConnect). Already present by default on most systems.<br>Included in Windows 10 since April 2018</td>
 	</tr>
 	<tr>
 		<td>socat</td>
 		<td>-</td>
-		<td>background playback (export preview and Forvo)</td>
+		<td>netcat (<code>nc</code>)</td>
+		<td>background playback (audio preview and Forvo). <code>nc</code> is included in macOS 10.13 and later.</td>
 	</tr>
 	<tr>
 		<td>xclip</td>
 		<td>PowerShell</td>
+		<td>-</td>
 		<td>clipboard access, PowerShell is installed by default</td>
 	</tr>
 </table>
