@@ -76,32 +76,9 @@ function TextSelect:reset_sel()
 	self.sel.to = 0
 end
 
-function TextSelect:move_curs(amount, change_sel)
-	local new_curs_pos = self.curs_pos + amount
-	if new_curs_pos < 1 or #self.cdpts + 1 < new_curs_pos then
-		return
-	end
-
-	if change_sel then
-		if self:sel_len() == 0 then
-			self.sel.from = amount > 0 and self.curs_pos or self.curs_pos + amount
-			self.sel.to = amount > 0 and self.curs_pos + amount or self.curs_pos
-		elseif self.curs_pos == self.sel.to then
-			self.sel.to = self.sel.to + amount
-		elseif self.curs_pos == self.sel.from then
-			self.sel.from = self.sel.from + amount
-		end
-		if self:sel_len() == 0 then self:reset_sel() end
-	else self:reset_sel() end
-
-	self.curs_pos = new_curs_pos
-
-	self:update(true)
-end
-
 local function classify_cp(cp)
 	if not cp then return "nil" end
-	if helper.is_space(cp) then return "space" end
+	if helper.is_space_or_break(cp) then return "space" end
 
 	if (0x3041 <= cp and cp <= 0x309f) then return "hiragana" end
 	if (0x30a0 <= cp and cp <= 0x30ff) then return "katakana" end
@@ -137,29 +114,138 @@ local function classify_cp(cp)
 	return "other"
 end
 
-function TextSelect:move_curs_word(dir, change_sel)
-	local offset = dir < 0 and -1 or 0
-	local function get_cp(pos)
-		return self.cdpts[pos + offset]
-	end
-
-	local bound = dir < 0 and 1 or #self.cdpts + 1
-
-	local new_pos = self.curs_pos
-	while helper.is_space(get_cp(new_pos)) and new_pos ~= bound do
-		new_pos = new_pos + dir
-	end
-
-	local starting_class = classify_cp(get_cp(new_pos))
-	for i = new_pos, bound, dir do
-		if classify_cp(get_cp(i)) ~= starting_class then
-			new_pos = i
-			break
+local function group_text(cdpts)
+	local last_class = classify_cp(cdpts[1])
+	local groups = {{
+		class = last_class,
+		first = 1
+	}}
+	for i, cp in ipairs(cdpts) do
+		local class = classify_cp(cp)
+		if class == last_class then
+			table.insert(groups[#groups], cp)
+		else
+			groups[#groups].last = i - 1
+			table.insert(groups, {
+				class = class,
+				first = i,
+				cp
+			})
+			last_class = class
 		end
 	end
-	if not new_pos then new_pos = bound end
+	groups[#groups].last = #cdpts
+	return groups
+end
 
-	self:move_curs(new_pos - self.curs_pos, change_sel)
+local function find_group_index(pos, groups)
+	if pos < 1 then return 1 end
+
+	for i, group in ipairs(groups) do
+		if group.first <= pos and pos <= group.last then
+			return i
+		end
+	end
+	return #groups
+end
+
+local mvmt_type = {char = 0, word = 1, max = 2}
+local mvmt_dir = {left = 0, right = 1}
+
+function TextSelect:move_curs(mdir, mtype, sel)
+	local new_sel = {
+		curs = self.sel.curs,
+		from = self.sel.from,
+		to = self.sel.to
+	}
+
+	local dir_left = mdir == mvmt_dir.left
+	local was_front = self.sel.curs == self.sel.from
+
+	if mtype == mvmt_type.max then
+		new_sel.curs = dir_left and 1 or #self.cdpts + 1
+		if sel then
+			local side = was_front and "to" or "from"
+			new_sel.from = dir_left and 1 or self.sel[side]
+			new_sel.to = dir_left and self.sel[side] or #self.cdpts + 1
+		else
+			new_sel.from = new_sel.curs
+			new_sel.to = new_sel.curs
+		end
+	elseif mtype == mvmt_type.word then
+		local groups = group_text(self.cdpts)
+
+		local function gt(a, b) return a > b end
+		local function lt(a, b) return a < b end
+
+		local dir, offset, bound, from, to, first
+		local crs_cmp, bnd_cmp
+		if dir_left then
+			dir, offset, bound, from, to, first = -1, 0, 1, "from", "to", "first"
+			crs_cmp, bnd_cmp = gt, lt
+		else
+			dir, offset, bound, from, to, first = 1, 1, #groups, "to", "from", "last"
+			crs_cmp, bnd_cmp = lt, gt
+		end
+
+		local cur_group = find_group_index(self.sel.curs - offset, groups)
+		if crs_cmp(self.sel.curs - offset, groups[cur_group][first]) then
+			new_sel.curs = groups[cur_group][first] + offset
+		elseif cur_group ~= bound then
+			local new_group
+			if groups[cur_group + dir].class == "space" then
+				new_group = crs_cmp(cur_group + (dir * 2), bound) and cur_group + (dir * 2) or bound
+			else
+				new_group = cur_group + dir
+			end
+			new_sel.curs = groups[new_group][first] + offset
+		end
+
+		if sel then
+			if self:sel_len() ~= 0 then
+				if self.sel.curs == self.sel[to] and bnd_cmp(new_sel.curs, self.sel[from]) then
+					new_sel[from] = new_sel.curs
+					new_sel[to] = self.sel[from]
+				else
+					if was_front then
+						new_sel.from = new_sel.curs
+					else new_sel.to = new_sel.curs end
+				end
+			else
+				if dir_left then
+					new_sel.from = new_sel.curs
+				else new_sel.to = new_sel.curs end
+			end
+		else
+			new_sel.from = new_sel.curs
+			new_sel.to = new_sel.curs
+		end
+	else
+		if not sel and self:sel_len() ~= 0 then
+			if dir_left then
+				new_sel.curs = new_sel.from
+				new_sel.to = new_sel.from
+			else
+				new_sel.curs = new_sel.to
+				new_sel.from = new_sel.to
+			end
+		else
+			local curs_pos = new_sel.curs + (dir_left and -1 or 1)
+			new_sel.curs = ext.num_limit(curs_pos, 1, #self.cdpts + 1)
+			if not sel then
+				new_sel.from = new_sel.curs
+				new_sel.to = new_sel.curs
+			elseif self:sel_len() ~= 0 then
+				local side = was_front and "from" or "to"
+				new_sel[side] = new_sel.curs
+			else
+				local side = dir_left and "from" or "to"
+				new_sel[side] = new_sel.curs
+			end
+		end
+	end
+	self.sel = new_sel
+	self:update(true)
 end
 
 function TextSelect:show()
@@ -188,12 +274,13 @@ function TextSelect:finish(force)
 	return sel
 end
 
-function TextSelect:new(text, update_handler, font_size, no_style_reset, init_cursor_pos)
+function TextSelect:new(text, update_handler, font_size, no_style_reset, curs_pos)
+	if not curs_pos then curs_pos = 1 end
+
 	local ts
 	ts = {
 		cdpts = utf_8.codepoints(text),
-		curs_pos = init_cursor_pos and init_cursor_pos or 1,
-		sel = {from = 0, to = 0},
+		sel = {curs = curs_pos, from = curs_pos, to = curs_pos},
 		update_handler = update_handler and update_handler or default_update_handler,
 		font_size = font_size and font_size or ssa.query{"text_select", "font_size"},
 		style_reset = not no_style_reset,
@@ -202,73 +289,73 @@ function TextSelect:new(text, update_handler, font_size, no_style_reset, init_cu
 			{
 				id = "prev_char",
 				default = "LEFT",
-				action = function() ts:move_curs(-1) end,
+				action = function() ts:move_curs(mvmt_dir.left, mvmt_type.char, false) end,
 				repeatable = true
 			},
 			{
 				id = "next_char",
 				default = "RIGHT",
-				action = function() ts:move_curs(1) end,
+				action = function() ts:move_curs(mvmt_dir.right, mvmt_type.char, false) end,
 				repeatable = true
 			},
 			{
 				id = "prev_word",
 				default = "Ctrl+LEFT",
-				action = function() ts:move_curs_word(-1) end,
+				action = function() ts:move_curs(mvmt_dir.left, mvmt_type.word, false) end,
 				repeatable = true
 			},
 			{
 				id = "next_word",
 				default = "Ctrl+RIGHT",
-				action = function() ts:move_curs_word(1) end,
+				action = function() ts:move_curs(mvmt_dir.right, mvmt_type.word, false) end,
 				repeatable = true
 			},
 			{
 				id = "home",
 				default = "HOME",
-				action = function() ts:move_curs(-ts.curs_pos + 1) end,
+				action = function() ts:move_curs(mvmt_dir.left, mvmt_type.max, false) end,
 				repeatable = true
 			},
 			{
 				id = "end",
 				default = "END",
-				action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1) end,
+				action = function() ts:move_curs(mvmt_dir.right, mvmt_type.max, false) end,
 				repeatable = true
 			},
 			{
 				id = "prev_char_sel",
 				default = "Shift+LEFT",
-				action = function() ts:move_curs(-1, true) end,
+				action = function() ts:move_curs(mvmt_dir.left, mvmt_type.char, true) end,
 				repeatable = true
 			},
 			{
 				id = "next_char_sel",
 				default = "Shift+RIGHT",
-				action = function() ts:move_curs(1, true) end,
+				action = function() ts:move_curs(mvmt_dir.right, mvmt_type.char, true) end,
 				repeatable = true
 			},
 			{
 				id = "prev_word_sel",
 				default = "Ctrl+Shift+LEFT",
-				action = function() ts:move_curs_word(-1, true) end,
+				action = function() ts:move_curs(mvmt_dir.left, mvmt_type.word, true) end,
 				repeatable = true
 			},
 			{
 				id = "next_word_sel",
 				default = "Ctrl+Shift+RIGHT",
-				action = function() ts:move_curs_word(1, true) end,
+				action = function() ts:move_curs(mvmt_dir.right, mvmt_type.word, true) end,
 				repeatable = true
 			},
 			{
 				id = "home_sel",
 				default = "Shift+HOME",
-				action = function() ts:move_curs(-ts.curs_pos + 1, true) end,
+				action = function() ts:move_curs(mvmt_dir.left, mvmt_type.max, true) end,
 				repeatable = true
 			},
 			{
 				id = "end_sel",
 				default = "Shift+END",
-				action = function() ts:move_curs(#ts.cdpts - ts.curs_pos + 1, true) end,
+				action = function() ts:move_curs(mvmt_dir.right, mvmt_type.max, true) end,
 				repeatable = true
 			}
 		}
@@ -289,10 +376,10 @@ function TextSelect:update(visible)
 		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, 1, self.sel.from - 1)))
 		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, self.sel.from, self.sel.to - 1)))
 		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, self.sel.to, #self.cdpts)))
-		curs_pos = self.curs_pos == self.sel.from and -1 or 1
+		curs_pos = self.sel.curs == self.sel.from and -1 or 1
 	else
-		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, 1, self.curs_pos - 1)))
-		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, self.curs_pos, #self.cdpts)))
+		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, 1, self.sel.curs - 1)))
+		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, self.sel.curs, #self.cdpts)))
 		curs_pos = 0
 	end
 	self:update_handler(true, has_sel, curs_pos, segments)
