@@ -175,6 +175,8 @@ function export.resolve_times(data)
 end
 
 local function prepare_fields(data, prev_contents)
+	local start, stop, scrot = export.resolve_times(data)
+
 	local tgt = anki.active_target("could not execute export")
 	if not tgt then return end
 
@@ -184,7 +186,6 @@ local function prepare_fields(data, prev_contents)
 	end
 
 	local tgt_cfg = tgt.config
-	local start, stop, scrot = export.resolve_times(data)
 
 	local audio_filename = anki.generate_filename(series_id.id(), tgt_cfg.audio.extension)
 	encoder.audio(mpu.join_path(media_dir, audio_filename), start, stop)
