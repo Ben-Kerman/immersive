@@ -13,6 +13,13 @@ local TextSelect = require "interface.text_select"
 local ActiveSubLookup = {}
 ActiveSubLookup.__index = ActiveSubLookup
 
+function create_text_select(txt, raw)
+	if not raw then
+		txt = helper.apply_substitutions(txt, anki.sentence_substitutions(), true)
+	end
+	return TextSelect:new((txt:gsub("\n", "\226\128\139")))
+end
+
 function ActiveSubLookup:new()
 	local sub_text = helper.check_active_sub()
 	if not sub_text then return end
@@ -21,6 +28,12 @@ function ActiveSubLookup:new()
 
 	local bindings = {
 		group = "lookup_active",
+		{
+			id = "toggle_raw",
+			default = "r",
+			desc = "Toggle sentence substitutions",
+			action = function() asl:toggle_raw() end
+		},
 		{
 			id = "exact",
 			default = "ENTER",
@@ -60,9 +73,10 @@ function ActiveSubLookup:new()
 		})
 	end
 
-	local subst = helper.apply_substitutions(sub_text, anki.sentence_substitutions(), true)
 	asl = setmetatable({
-		txt_sel = TextSelect:new((subst:gsub("\n", "\226\128\139"))),
+		line = sub_text,
+		raw = false,
+		txt_sel = create_text_select(sub_text, false),
 		blackout = cfg.values.active_sub_blackout and ScreenBlackout:new() or nil,
 		menu = Menu:new{bindings = bindings}
 	}, ActiveSubLookup)
@@ -75,6 +89,13 @@ function ActiveSubLookup:lookup(prefix)
 	if not selection then return end
 
 	menu_stack.push(DefinitionSelect:new(selection, prefix))
+end
+
+function ActiveSubLookup:toggle_raw()
+	self.raw = not self.raw
+	self.txt_sel:hide()
+	self.txt_sel = create_text_select(self.line, self.raw)
+	self.txt_sel:show()
 end
 
 function ActiveSubLookup:show()
