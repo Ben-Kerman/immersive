@@ -98,9 +98,9 @@ function system.mpv_executable()
 	local exe_path
 	local fmt = system.platform == "mac" and "comm=" or "exe="
 	local status, stdout = system.subprocess{"ps", "-p", tostring(mpu.getpid()), "-o", fmt}
-	local cmd = stdout:gsub("\n$", "")
 
 	if status == 0 then
+		local cmd = stdout:gsub("\n$", "")
 		if system.platform == "mac" and cmd:sub(1, 1) == "." then
 			return mpu.join_path(mp.get_property("working-directory"), cmd)
 		end
