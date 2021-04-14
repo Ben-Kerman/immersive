@@ -1,6 +1,8 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
 
+local anki = require "systems.anki"
 local ext = require "utility.extension"
+local helper = require "utility.helper"
 local msg = require "systems.message"
 local utf_8 = require "utility.utf_8"
 
@@ -18,7 +20,8 @@ function Subtitle:new(text, start, stop, delay)
 	end
 
 	return setmetatable({
-		text = text,
+		raw_text = text,
+		text = helper.apply_substitutions(text, anki.sentence_substitutions(), true),
 		start = start,
 		stop = stop,
 		delay = delay

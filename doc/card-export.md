@@ -272,6 +272,10 @@ The variables `definitions` and `sentences` can be filtered through
 substitutions before being exported. These are defined in the entries
 `definition_substitutions` and `sentence_substitutions` of the target config.
 
+`sentence_substitutions` are applied when selecting a subtitle line,
+`definition_substitutions` before the definition is added to the note
+immediately before it is sent to Anki.
+
 Both those entries expect a multiline value, with each line representing a
 substitution, e.g. this is what the default value of `sentence_substitutions`
 would look like in a config file:

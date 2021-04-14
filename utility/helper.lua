@@ -181,4 +181,16 @@ function helper.is_space_or_break(cp)
 	return helper.is_space(cp) or helper.is_break(cp)
 end
 
+function helper.apply_substitutions(str, substs, trim)
+	local res = str
+	for _, subst in ipairs(substs) do
+		res = res:gsub(subst.pattern, subst.repl)
+	end
+
+	if #res == 0 then return nil end
+
+	if trim then return ext.string_trim(res)
+	else return res end
+end
+
 return helper

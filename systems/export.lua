@@ -24,15 +24,6 @@ local function anki_image_tag(filename)
 	return string.format([[<img src="%s">]], filename)
 end
 
-local function apply_substitutions(str, substs)
-	local res = str
-	for _, subst in ipairs(substs) do
-		res = res:gsub(subst.pattern, subst.repl)
-	end
-	if #res == 0 then return nil end
-	return res
-end
-
 local function replace_field_vars(field_def, data, tgt, audio_file, image_file, word_audio_filename, start, stop, prev_value)
 	local abs_path = helper.current_path_abs()
 	local _, filename = mpu.split_path(abs_path)
@@ -82,7 +73,7 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 			data = data.subtitles,
 			sep = "<br>",
 			transform = function(sub)
-				return apply_substitutions(sub.text, tgt.sentence_substitutions)
+				return sub.text
 			end
 		}
 	end
@@ -92,7 +83,7 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 			data = ext.list_map(data.definitions, function(def) return def.definition end),
 			sep = "<br>",
 			transform = function(def)
-				return apply_substitutions(def, tgt.definition_substitutions)
+				return helper.apply_substitutions(def, tgt.definition_substitutions)
 			end
 		}
 	end

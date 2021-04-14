@@ -1,5 +1,6 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
 
+local anki = require "systems.anki"
 local cfg = require "systems.config"
 local DefinitionSelect = require "interface.definition_select"
 local helper = require "utility.helper"
@@ -59,8 +60,9 @@ function ActiveSubLookup:new()
 		})
 	end
 
+	local subst = helper.apply_substitutions(sub_text, anki.sentence_substitutions(), true)
 	asl = setmetatable({
-		txt_sel = TextSelect:new((sub_text:gsub("\n", "\226\128\139"))),
+		txt_sel = TextSelect:new((subst:gsub("\n", "\226\128\139"))),
 		blackout = cfg.values.active_sub_blackout and ScreenBlackout:new() or nil,
 		menu = Menu:new{bindings = bindings}
 	}, ActiveSubLookup)

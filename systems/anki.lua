@@ -7,6 +7,19 @@ local msg = require "systems.message"
 local sys = require "systems.system"
 local ext = require "utility.extension"
 
+local function default_sentence_substs()
+	return {
+		{
+			pattern = "（.-）",
+			repl = ""
+		},
+		{
+			pattern = "%(.-%)",
+			repl = ""
+		}
+	}
+end
+
 local function default_tgt(raw_tgt)
 	return {
 		name = raw_tgt.name,
@@ -17,16 +30,7 @@ local function default_tgt(raw_tgt)
 		note_template = "{{type}}: {{id}}",
 		media_directory = nil,
 		tags = {"immersive"},
-		sentence_substitutions = {
-			{
-				pattern = "（.-）",
-				repl = ""
-			},
-			{
-				pattern = "%(.-%)",
-				repl = ""
-			}
-		},
+		sentence_substitutions = default_sentence_substs(),
 		definition_substitutions = {},
 		fields = {},
 		config = {
@@ -198,6 +202,12 @@ function anki.add_candidates()
 	if not notes then return nil end
 
 	return notes
+end
+
+function anki.sentence_substitutions()
+	local tgt = anki.active_target()
+	if tgt then return tgt.sentence_substitutions
+	else return default_sentence_substs() end
 end
 
 return anki
