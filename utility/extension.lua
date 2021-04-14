@@ -204,7 +204,7 @@ function extension.string_trim(str, where)
 
 	local lead_end
 	for i = 1, #cdpts, 1 do
-		if not helper.is_space(cdpts[i]) then
+		if not helper.is_space_or_break(cdpts[i]) then
 			lead_end = i
 			break
 		end
@@ -212,7 +212,7 @@ function extension.string_trim(str, where)
 
 	local trail_start
 	for i = #cdpts, 1, -1 do
-		if not helper.is_space(cdpts[i]) then
+		if not helper.is_space_or_break(cdpts[i]) then
 			trail_start = i
 			break
 		end

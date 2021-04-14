@@ -165,10 +165,20 @@ function helper.preview_audio(data)
 end
 
 local whitespace_cps = {
-	9, 32, 160, 5760, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8203, 8239, 8287, 12288
+	0x9, 0x20, 0xa0, 0x1680, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005,
+	0x2006, 0x2007, 0x2008, 0x2009, 0x200a, 0x200b, 0x202f, 0x205f, 0x3000
 }
 function helper.is_space(cp)
 	return not not ext.list_find(whitespace_cps, cp)
+end
+
+local linebreak_cps = {0xa, 0xb, 0xc, 0xd, 0x85, 0x2028, 0x2029}
+function helper.is_break(cp)
+	return not not ext.list_find(linebreak_cps, cp)
+end
+
+function helper.is_space_or_break(cp)
+	return helper.is_space(cp) or helper.is_break(cp)
 end
 
 return helper
