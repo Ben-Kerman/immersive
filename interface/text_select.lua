@@ -274,6 +274,52 @@ function TextSelect:finish(force)
 	return sel
 end
 
+local base_keys = {
+	[mvmt_dir.left] = {
+		[mvmt_type.char] = "LEFT",
+		[mvmt_type.word] = "Ctrl+LEFT",
+		[mvmt_type.max] = "HOME"
+	},
+	[mvmt_dir.right] = {
+		[mvmt_type.char] = "RIGHT",
+		[mvmt_type.word] = "Ctrl+RIGHT",
+		[mvmt_type.max] = "END"
+	}
+}
+
+local sel_modifier = "Shift+"
+
+local binding_ids = {
+	[mvmt_dir.left] = {
+		[mvmt_type.char] = {
+			[false] = "prev_char",
+			[true] = "prev_char_sel"
+		},
+		[mvmt_type.word] = {
+			[false] = "prev_word",
+			[true] = "prev_word_sel"
+		},
+		[mvmt_type.max] = {
+			[false] = "home",
+			[true] = "home_sel"
+		}
+	},
+	[mvmt_dir.right] = {
+		[mvmt_type.char] = {
+			[false] = "next_char",
+			[true] = "next_char_sel"
+		},
+		[mvmt_type.word] = {
+			[false] = "next_word",
+			[true] = "next_word_sel"
+		},
+		[mvmt_type.max] = {
+			[false] = "end",
+			[true] = "end_sel"
+		}
+	}
+}
+
 function TextSelect:new(text, update_handler, font_size, no_style_reset, curs_pos)
 	if not curs_pos then curs_pos = 1 end
 
@@ -284,81 +330,23 @@ function TextSelect:new(text, update_handler, font_size, no_style_reset, curs_po
 		update_handler = update_handler and update_handler or default_update_handler,
 		font_size = font_size and font_size or ssa.query{"text_select", "font_size"},
 		style_reset = not no_style_reset,
-		bindings = {
-			group = "text_select",
-			{
-				id = "prev_char",
-				default = "LEFT",
-				action = function() ts:move_curs(mvmt_dir.left, mvmt_type.char, false) end,
-				repeatable = true
-			},
-			{
-				id = "next_char",
-				default = "RIGHT",
-				action = function() ts:move_curs(mvmt_dir.right, mvmt_type.char, false) end,
-				repeatable = true
-			},
-			{
-				id = "prev_word",
-				default = "Ctrl+LEFT",
-				action = function() ts:move_curs(mvmt_dir.left, mvmt_type.word, false) end,
-				repeatable = true
-			},
-			{
-				id = "next_word",
-				default = "Ctrl+RIGHT",
-				action = function() ts:move_curs(mvmt_dir.right, mvmt_type.word, false) end,
-				repeatable = true
-			},
-			{
-				id = "home",
-				default = "HOME",
-				action = function() ts:move_curs(mvmt_dir.left, mvmt_type.max, false) end,
-				repeatable = true
-			},
-			{
-				id = "end",
-				default = "END",
-				action = function() ts:move_curs(mvmt_dir.right, mvmt_type.max, false) end,
-				repeatable = true
-			},
-			{
-				id = "prev_char_sel",
-				default = "Shift+LEFT",
-				action = function() ts:move_curs(mvmt_dir.left, mvmt_type.char, true) end,
-				repeatable = true
-			},
-			{
-				id = "next_char_sel",
-				default = "Shift+RIGHT",
-				action = function() ts:move_curs(mvmt_dir.right, mvmt_type.char, true) end,
-				repeatable = true
-			},
-			{
-				id = "prev_word_sel",
-				default = "Ctrl+Shift+LEFT",
-				action = function() ts:move_curs(mvmt_dir.left, mvmt_type.word, true) end,
-				repeatable = true
-			},
-			{
-				id = "next_word_sel",
-				default = "Ctrl+Shift+RIGHT",
-				action = function() ts:move_curs(mvmt_dir.right, mvmt_type.word, true) end,
-				repeatable = true
-			},
-			{
-				id = "home_sel",
-				default = "Shift+HOME",
-				action = function() ts:move_curs(mvmt_dir.left, mvmt_type.max, true) end,
-				repeatable = true
-			},
-			{
-				id = "end_sel",
-				default = "Shift+END",
-				action = function() ts:move_curs(mvmt_dir.right, mvmt_type.max, true) end,
-				repeatable = true
-			}
-		}
+		bindings = (function()
+			local tbl = {group = "text_select"}
+			for mdir, mtypes in pairs(binding_ids) do
+				for mtype, sels in pairs(mtypes) do
+					for sel, id in pairs(sels) do
+						local key = base_keys[mdir][mtype]
+						table.insert(tbl, {
+							id = id,
+							default = sel and sel_modifier .. key or key,
+							action = function() ts:move_curs(mdir, mtype, sel) end,
+							repeatable = true
+						})
+					end
+				end
+			end
+			return tbl
+		end)()
 	}
 	return setmetatable(ts, TextSelect)
 end
