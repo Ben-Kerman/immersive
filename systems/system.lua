@@ -196,7 +196,7 @@ function system.clipboard_write(str)
 	end
 end
 
-function system.primary_sel_write(str)
+function system.set_primary_sel(str)
 	if system.platform ~= "lnx" then
 		msg.warn("Primary selection is only available in X11 environments")
 		return

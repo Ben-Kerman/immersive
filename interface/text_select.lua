@@ -1,11 +1,12 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
+local ext = require "utility.extension"
 local helper = require "utility.helper"
 local kbds = require "systems.key_bindings"
 local msg = require "systems.message"
 local ssa = require "systems.ssa"
 local utf_8 = require "utility.utf_8"
-local ext = require "utility.extension"
+local sys = require "systems.system"
 
 local overlay = mp.create_osd_overlay("ass-events")
 
@@ -245,6 +246,12 @@ function TextSelect:move_curs(mdir, mtype, sel)
 		end
 	end
 	self.sel = new_sel
+	if sys.platform == "lnx" then
+		local selection = self:selection()
+		if selection and #selection ~= 0 then
+			sys.set_primary_sel(selection)
+		end
+	end
 	self:update(true)
 end
 
