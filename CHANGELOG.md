@@ -1,8 +1,10 @@
 # 1.3 - TBD
 Features:
 - Experimental macOS support
+- Improved text selection behavior
 - Disable menu and screen blackout while exporting notes
-- Add active sub menu key binding for setting primary selection (X11 only)
+- Apply sentence substitutions when selecting text and not before exporting
+- Automatically set primary X11 selection based on selected text
 
 Fixes:
 - Only search for notes to add to after starting the export process
