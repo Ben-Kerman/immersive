@@ -1,4 +1,4 @@
--- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
+-- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
 local helper = require "utility.helper"
 local kbds = require "systems.key_bindings"
