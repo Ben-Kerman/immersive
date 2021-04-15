@@ -149,8 +149,8 @@ local function find_group_index(pos, groups)
 	return #groups
 end
 
-local mvmt_type = {char = 0, word = 1, max = 2}
-local mvmt_dir = {left = 0, right = 1}
+local mvmt_type = {char = {}, word = {}, max = {}}
+local mvmt_dir = {left = {}, right = {}}
 
 function TextSelect:move_curs(mdir, mtype, sel)
 	local new_sel = {
