@@ -180,9 +180,7 @@ function system.clipboard_write(str)
 		local cmd
 		if system.platform == "lnx" then
 			cmd = "xclip -in -selection clipboard"
-		elseif system.platform == "mac" then
-			cmd = "LANG=en_US.UTF-8 pbcopy"
-		end
+		else cmd = "LANG=en_US.UTF-8 pbcopy" end
 
 		local pipe = io.popen(cmd, "w")
 		pipe:write(str)
@@ -200,11 +198,11 @@ end
 
 function system.primary_sel_write(str)
 	if system.platform ~= "lnx" then
-		msg.warn("Primary selection only available in X11 environments")
+		msg.warn("Primary selection is only available in X11 environments")
 		return
 	end
 
-	local pipe = io.popen("xclip -selection primary", "w")
+	local pipe = io.popen("xclip -in -selection primary", "w")
 	pipe:write(str)
 	pipe:close()
 end
