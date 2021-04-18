@@ -63,7 +63,9 @@ note_type=<must be set manually>
 # when selecting which existing note to export to
 #note_template={{type}}: {{id}}
 
-# Anki media dir override, normally derived from system default
+# Anki media dir override, optional and normally derived from system default
+# Must be an absolute path to the directory that encoded images/audio clips
+# should be placed in (i.e., to collection.media).
 #media_directory=<unset>
 
 # space-separated list of tags that will be added to exported notes
