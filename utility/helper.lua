@@ -58,11 +58,18 @@ function helper.check_active_sub()
 end
 
 function helper.current_path_abs()
-	local working_dir = mp.get_property("working-directory")
 	local rel_path = mp.get_property("path")
-	if working_dir and rel_path then
-		return mpu.join_path(working_dir, rel_path)
+	if rel_path then
+		if rel_path:find("^%w-://") then
+			return rel_path
+		else
+			local working_dir = mp.get_property("working-directory")
+			if working_dir then
+				return mpu.join_path(working_dir, rel_path)
+			end
+		end
 	end
+	msg.error("could not determine path of current file")
 end
 
 function helper.default_times(times)
