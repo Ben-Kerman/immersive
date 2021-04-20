@@ -1,6 +1,7 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
 local mpu = require "mp.utils"
+local msg = require "systems.message"
 local sys = require "systems.system"
 
 local socket_name = (function()
@@ -30,8 +31,10 @@ local function player_command(cmd)
 	elseif sys.platform == "mac" then
 		fd = io.popen("nc -w 0 -U \"" .. socket_name .. "\"", "w")
 	end
-	fd:write(mpu.format_json{command = cmd} .. "\n")
-	fd:close()
+	if fd then
+		fd:write(mpu.format_json{command = cmd} .. "\n")
+		fd:close()
+	else msg.error("could not connect to background player") end
 end
 
 mp.register_event("shutdown", function()
