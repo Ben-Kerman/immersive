@@ -1,6 +1,7 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
 
 local cfg = require "systems.config"
+local cfg_util = require "systems.config_util"
 local msg = require "systems.message"
 local tags = require "systems.ssa_tags"
 local ext = require "utility.extension"
@@ -131,7 +132,7 @@ local function verify_convert_value(key, value)
 			if #value == len and value:match("^%x+$") then
 				res = conv(value)
 			end
-		else res = cfg.force_type(value, tag.type) end
+		else res = cfg_util.force_type(value, tag.type) end
 
 		if res then return res
 		else msg.warn("invalid style value ignored: " .. key .. "=" .. value) end
@@ -154,7 +155,7 @@ local config = (function()
 	end
 	for _, section in ipairs(cfg_data) do
 		local path = ext.string_split(section.name, "/")
-		style_tbl = cfg.get_nested(config, path)
+		style_tbl = cfg_util.get_nested(config, path)
 		if style_tbl then
 			insert_values(style_tbl, section.entries)
 		else msg.warn("invalid style path ignored: " .. section.name) end
@@ -216,7 +217,7 @@ local function find_style(style_def)
 			return config[style_def].base
 		elseif type(style_def) == "table" then
 			if #style_def ~= 0 then
-				return cfg.get_nested(config, style_def)
+				return cfg_util.get_nested(config, style_def)
 			else return style_def end
 		else msg.fatal("invalid style type: " .. type(style_def)) end
 	end

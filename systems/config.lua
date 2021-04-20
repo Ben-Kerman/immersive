@@ -131,69 +131,9 @@ function config.load(path, global_as_base)
 	return result
 end
 
-function config.check_required(cfg, opt_names)
-	local valid = true
-	local missing = {}
-	for _, opt in ipairs(opt_names) do
-		if not cfg[opt] then
-			table.insert(missing, opt)
-			valid = false
-		end
-	end
-	return valid, missing
-end
-
 function config.load_subcfg(name, global_as_base)
 	local rel_path = string.format("script-opts/%s-%s.conf", script_name, name)
 	return config.load(mp.find_config_file(rel_path), global_as_base)
-end
-
-function config.convert_bool(str)
-	if str == "yes" or str == "true" then
-		return true
-	elseif str == "no" or str == "false" then
-		return false
-	else msg.warn("invalid boolean ('" .. str .. "'), must be 'yes', 'true', 'no' or 'false'") end
-end
-
-function config.force_type(val, type_name)
-	if type_name == "boolean" then
-		return config.convert_bool(val)
-	elseif type_name == "number" then
-		return tonumber(val)
-	elseif type_name == "string" then
-		return tostring(val)
-	else msg.fatal("invalid type name: " .. type_name) end
-end
-
-function config.convert_type(old_val, new_val)
-	return config.force_type(new_val, type(old_val))
-end
-
-function config.insert_nested(target, path, value, strict)
-	for i, comp in ipairs(path) do
-		if target[comp] == nil then
-			if strict then
-				msg.warn("invalid config path: " .. table.concat(path, "/"))
-				return
-			else target[comp] = {} end
-		end
-		if i ~= #path then
-			target = target[comp]
-		elseif type(target[comp]) == "table" then
-			msg.warn("config path ends too soon: " .. table.concat(path, "/"))
-			return
-		end
-	end
-	target[path[#path]] = config.convert_type(target[path[#path]], value)
-end
-
-function config.get_nested(target, path)
-	for i, comp in ipairs(path) do
-		if target[comp] == nil then return nil
-		else target = target[comp] end
-	end
-	return target
 end
 
 return config

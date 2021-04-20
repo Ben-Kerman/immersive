@@ -2,6 +2,7 @@
 
 local BasicOverlay = require "interface.basic_overlay"
 local cfg = require "systems.config"
+local cfg_util = require "systems.config_util"
 local util = require "dict.util"
 local kbds = require "systems.key_bindings"
 local menu_stack = require "interface.menu_stack"
@@ -25,7 +26,7 @@ local function load_dict(dict, show_overlay, force_import)
 		menu_stack.push(loading_overlay(dict.id))
 	end
 	msg.debug("loading dictionary '" .. dict.id .. "'")
-	if cfg.check_required(dict.config, {"location", "type"}) then
+	if cfg_util.check_required(dict.config, {"location", "type"}) then
 		local status, loader = pcall(require, "dict." .. dict.config.type)
 		if status then
 			dict.table = loader.load(dict, force_import)
@@ -46,7 +47,7 @@ mp.register_event("start-file", function()
 	for _, dict in ipairs(dict_list) do
 		local pos_override, neg_override
 		if dict.config.preload then
-			local cfg_preload = cfg.convert_bool(dict.config.preload)
+			local cfg_preload = cfg_util.convert_bool(dict.config.preload)
 			pos_override = cfg_preload == true
 			neg_override = cfg_preload == false
 		end

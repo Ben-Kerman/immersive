@@ -62,7 +62,7 @@ mpv_executable=mpv
 # The method used by "quick" is also a dirty hack.
 #windows_copy_mode=exact
 
-# enable automtic subtitle copying by default
+# enable automatic subtitle copying by default
 #enable_autocopy=no
 
 # make subtitle autoselect toggle global instead of

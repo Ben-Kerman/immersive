@@ -1,6 +1,7 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
 local cfg = require "systems.config"
+local cfg_util = require "systems.config_util"
 local helper = require "utility.helper"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
@@ -79,7 +80,7 @@ local anki = {targets = {}}
 
 local required_opts = {"profile", "deck", "note_type"}
 local function load_tgt(raw_tgt)
-	local valid, missing = cfg.check_required(raw_tgt.entries, required_opts)
+	local valid, missing = cfg_util.check_required(raw_tgt.entries, required_opts)
 	if not valid then
 		local fmt = "target '%s' is missing these required options: %s"
 		msg.warn(string.format(fmt, raw_tgt.name, table.concat(missing, ", ")))
@@ -91,7 +92,7 @@ local function load_tgt(raw_tgt)
 		if ext.string_starts(key, "field:") then
 			tgt.fields[key:sub(7)] = value
 		elseif string.find(key, "/") then
-			cfg.insert_nested(tgt.config, ext.string_split(key, "/"), value, true)
+			cfg_util.insert_nested(tgt.config, ext.string_split(key, "/"), value, true)
 		elseif not ext.list_find(required_opts, key) then
 			if key == "add_mode" then
 				if ext.list_find({"prepend", "append", "overwrite"}, value) then

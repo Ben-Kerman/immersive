@@ -1,10 +1,11 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
 local cfg = require "systems.config"
+local cfg_util = require "systems.config_util"
 local ext = require "utility.extension"
 
 local config = ext.list_map(cfg.load_subcfg("series"), function(series)
-	if not cfg.check_required(series.entries, {"keywords"}) then
+	if not cfg_util.check_required(series.entries, {"keywords"}) then
 		return nil
 	end
 	return {
