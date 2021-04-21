@@ -110,15 +110,6 @@ local cfg_def = {
 	}
 }
 
-local function check_file(path)
-	if not path then return false end
-	local stat_res = mpu.file_info(path)
-	if not stat_res or not stat_res.is_file then
-		return false
-	end
-	return true
-end
-
 local _msg_fmt = "config: %s; %s:%d"
 local function parse_warn(msg_txt, file, line)
 	local msg_str
@@ -259,6 +250,15 @@ local function apply_def(path, raw, def)
 	end
 
 	return result
+end
+
+local function check_file(path)
+	if not path then return false end
+	local stat_res = mpu.file_info(path)
+	if not stat_res or not stat_res.is_file then
+		return false
+	end
+	return true
 end
 
 local config = {}

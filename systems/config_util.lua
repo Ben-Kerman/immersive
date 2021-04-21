@@ -51,10 +51,6 @@ function config_util.force_type(val, type_name)
 	else msg.fatal("invalid type name: " .. type_name) end
 end
 
-function config_util.convert_type(old_val, new_val)
-	return config_util.force_type(new_val, type(old_val))
-end
-
 function config_util.insert_nested(target, path, value, strict)
 	for i, comp in ipairs(path) do
 		if i == #path then break end
