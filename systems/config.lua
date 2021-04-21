@@ -1,9 +1,114 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
-local mpo = require "mp.options"
+local cfg_util = require "systems.config_util"
+local ext = require "utility.extension"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
-local ext = require "utility.extension"
+
+local conv = cfg_util.convert
+local cfg_def = {
+	sections = false,
+	entries = {
+		items = {
+			mpv_executable = {},
+			preload_dictionaries = {
+				convert = conv.bool,
+				default = false
+			},
+			startup_dict_overlay = {
+				convert = conv.bool,
+				default = true
+			},
+			max_targets = {
+				convert = conv.num,
+				default = 1
+			},
+			always_show_minutes = {
+				convert = conv.bool,
+				default = true
+			},
+			target_select_blackout = {
+				convert = conv.bool,
+				default = true
+			},
+			active_sub_blackout = {
+				convert = conv.bool,
+				default = true
+			},
+			forvo_language = {
+				default = "ja"
+			},
+			forvo_preload_audio = {
+				convert = conv.bool,
+				default = false
+			},
+			forvo_prefer_mp3 = {
+				convert = conv.bool,
+				default = false
+			},
+			forvo_prefix = {
+				default = "word_audio"
+			},
+			forvo_reencode = {
+				convert = conv.bool,
+				default = true
+			},
+			forvo_extension = {
+				default = "mka"
+			},
+			forvo_format = {
+				default = "matroska"
+			},
+			forvo_codec = {
+				default = "libopus"
+			},
+			forvo_bitrate = {
+				default = "64ki"
+			},
+			ankiconnect_host = {
+				default = "localhost"
+			},
+			ankiconnect_port = {
+				convert = conv.num,
+				default = 8765
+			},
+			windows_copy_mode = {
+				validate = {
+					allowed = {"exact", "quick"}
+				},
+				default = "exact"
+			},
+			enable_autocopy = {
+				convert = conv.bool,
+				default = false
+			},
+			global_autoselect = {
+				convert = conv.bool,
+				default = true
+			},
+			enable_autoselect = {
+				convert = conv.bool,
+				default = true
+			},
+			global_help = {
+				convert = conv.bool,
+				default = true
+			},
+			enable_help = {
+				convert = conv.bool,
+				default = false
+			},
+			take_screenshots = {
+				convert = conv.bool,
+				default = true
+			},
+			hide_infos_if_help_active = {
+				convert = conv.bool,
+				default = false
+			}
+		}
+	}
+}
 
 local function check_file(path)
 	if not path then return false end
@@ -14,52 +119,153 @@ local function check_file(path)
 	return true
 end
 
-local config = {
-	values = {
-		mpv_executable = "mpv",
-		preload_dictionaries = false,
-		startup_dict_overlay = true,
-		max_targets = 1,
-		always_show_minutes = true,
-		target_select_blackout = true,
-		active_sub_blackout = true,
-		forvo_language = "ja",
-		forvo_preload_audio = false,
-		forvo_prefer_mp3 = false,
-		forvo_prefix = "word_audio",
-		forvo_reencode = true,
-		forvo_extension = "mka",
-		forvo_format = "matroska",
-		forvo_codec = "libopus",
-		forvo_bitrate = "64ki",
-		ankiconnect_host = "localhost",
-		ankiconnect_port = 8765,
-		windows_copy_mode = "exact",
-		enable_autocopy = false,
-		global_autoselect = true,
-		enable_autoselect = true,
-		global_help = true,
-		enable_help = false,
-		take_screenshots = true,
-		hide_infos_if_help_active = false
-	}
-}
-
-mpo.read_options(config.values)
-config.take_scrot = config.values.take_screenshots
-
-local msg_fmt = "config: %s; %s:%d"
-local function warn_msg(msg_txt, file, line)
+local _msg_fmt = "config: %s; %s:%d"
+local function parse_warn(msg_txt, file, line)
 	local msg_str
 	if file then
-		msg_str = string.format(msg_fmt, msg_txt, file, line)
+		msg_str = string.format(_msg_fmt, msg_txt, file, line)
 	else msg_str = "config: " .. msg_txt end
+
 	msg.warn(msg_str)
 end
 
-function config.load(path, global_as_base)
+local function vldt_warn(msg_txt, file, key, section)
+	local msg_str = file
+	if section then
+		msg_str = msg_str .. ", section [" .. section .. "]"
+	end
+	if key then
+		msg_str = msg_str .. ", entry '" .. key .. "'"
+	end
+	msg_str = msg_str .. ": " .. msg_txt
+
+	msg.warn(msg_str)
+end
+
+local _allow_fmt = "value '%s' not allowed, possible values: '%s'"
+local function validate_value(val, vldt_def)
+	if vldt_def.allowed then
+		local allow = vldt_def.allowed
+		if not ext.list_find(allow, val) then
+			return false, string.format(_allow_fmt, val, table.concat(allow, "', '"))
+		end
+	end
+
+	if vldt_def.bounds then
+		local min, max = vldt_def.bounds.min, vldt_def.bounds.max
+		if max and max < val then
+			return false, string.format("value %d too high (max: %d)", val, max)
+		elseif min and val < min then
+			return false, string.format("value %d too low (min: %d)", val, min)
+		end
+	end
+
+	return true
+end
+
+local function validate_entry(key, value, path, def, section_name)
+	local new_value = value
+
+	if def.convert then
+		local is_fn = type(def.convert) == "function"
+		local fn = is_fn and def.convert or def.convert.fn
+
+		local err
+		if not is_fn then
+			new_value, err = fn(value, table.unpack(def.convert.params))
+		else new_value, err = fn(value) end
+
+		if new_value == nil then
+			vldt_warn(err, path, key, section_name)
+			return nil
+		end
+	end
+
+	if def.validate then
+		local valid, err = validate_value(new_value, def.validate)
+		if not valid then
+			vldt_warn(err, path, key, section_name)
+			return nil
+		end
+	end
+
+	return new_value
+end
+
+local function validate_entries(path, entries, entr_def, section_name)
+	local result = {}
+
+	for key, value in pairs(entries) do
+		local static = not not entr_def.items[key]
+		local dynamic = entr_def.dynamic_fn and entr_def.dynamic_fn(key) or false
+
+		if static then
+			result[key] = validate_entry(key, value, path, entr_def.items[key], section_name)
+		elseif dynamic then
+			result[key] = value
+		else vldt_warn("ignoring entry with invalid key", path, key, section_name) end
+	end
+
+	for key, def in pairs(entr_def.items) do
+		if def.required and result[key] == nil then
+			vldt_warn("required entry missing", path, key, section_name)
+		end
+	end
+
+	return result
+end
+
+local function apply_defaults(entries, entr_def)
+	local result = ext.map_merge(entries)
+	for key, def in pairs(entr_def.items) do
+		if def.default ~= nil and result[key] == nil then
+			result[key] = def.default
+		end
+	end
+	return result
+end
+
+local function apply_def(path, raw, def)
+	if not def.sections and #raw ~= 0 then
+		vldt_warn("ignoring sections", path)
+	end
+
+	local global_entries = {}
+	if def.entries or def.global_as_base then
+		local entr_def = def.global_as_base and def.section_entries or def.entries
+		global_entries = validate_entries(path, raw.global, entr_def)
+	end
+
+	local result = {}
+	if def.sections then
+		for _, section in ipairs(raw) do
+			local validated = validate_entries(path, section.entries, def.section_entries, section.name)
+			if def.global_as_base then
+				for key, value in pairs(global_entries) do
+					if validated[key] == nil then
+						validated[key] = value
+					end
+				end
+			end
+			table.insert(result, {
+				name = section.name,
+				entries = apply_defaults(validated, def.section_entries)
+			})
+		end
+	end
+
+	if not def.global_as_base and def.entries then
+		result.global = apply_defaults(global_entries, def.entries)
+	end
+
+	return result
+end
+
+local config = {}
+
+function config.load(path, def)
 	if not check_file(path) then
-		msg.verbose("config file could not be loaded")
+		msg.verbose("config file could not be loaded: " .. path)
 		return {}
 	end
 
@@ -102,7 +308,7 @@ function config.load(path, global_as_base)
 						elseif global_entries then insert_global() end
 
 						section_name, section_entries = new_section_name, {}
-					else warn_msg("invalid section header ('" .. line .. "')", path, count) end
+					else parse_warn("invalid section header: '" .. line .. "'", path, count) end
 				else
 					local entries
 					if section_name then entries = section_entries
@@ -119,7 +325,7 @@ function config.load(path, global_as_base)
 							block_token = "]" .. block_token_match .. "]"
 							block_key, block_value = key, {}
 						else entries[key] = value end
-					else warn_msg("invalid line ('" .. line .. "')", path, count) end
+					else parse_warn("invalid line: '" .. line .. "'", path, count) end
 				end
 			end
 		end
@@ -128,12 +334,19 @@ function config.load(path, global_as_base)
 	if section_name then insert_section()
 	else insert_global() end
 
+	if def then
+		return apply_def(path, result, def)
+	else return result end
 	return result
 end
 
-function config.load_subcfg(name, global_as_base)
-	local rel_path = string.format("script-opts/%s-%s.conf", script_name, name)
-	return config.load(mp.find_config_file(rel_path), global_as_base)
+function config.load_subcfg(name, def)
+	local suf = name and "-" .. name or ""
+	local rel_path = string.format("script-opts/%s%s.conf", script_name, suf)
+	return config.load(mp.find_config_file(rel_path), def)
 end
+
+config.values = config.load_subcfg(nil, cfg_def).global
+config.take_scrot = config.values.take_screenshots
 
 return config

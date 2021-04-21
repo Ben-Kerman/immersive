@@ -85,7 +85,7 @@ function system.background_process(args, callback)
 end
 
 function system.mpv_executable()
-	if cfg.values.mpv_executable ~= "mpv" then
+	if cfg.values.mpv_executable then
 		return cfg.values.mpv_executable
 	end
 

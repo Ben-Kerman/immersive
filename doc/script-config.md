@@ -4,8 +4,8 @@ Some general config options are located in `immersive.conf`:
 
 ```
 # the mpv executable to use for audio previews and encoding
-# if set to 'mpv', the executable of the current process will be used
-mpv_executable=mpv
+# if unset (default), the executable of the current process will be used
+#mpv_executable=<...>
 
 # if set to 'yes', load dictionaries when mpv starts
 #preload_dictionaries=no

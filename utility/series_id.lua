@@ -4,14 +4,26 @@ local cfg = require "systems.config"
 local cfg_util = require "systems.config_util"
 local ext = require "utility.extension"
 
-local config = ext.list_map(cfg.load_subcfg("series"), function(series)
-	if not cfg_util.check_required(series.entries, {"keywords"}) then
-		return nil
-	end
+local cfg_def = {
+	sections = true,
+	section_entries = {
+		items = {
+			title = {},
+			keywords = {
+				required = true,
+				convert = function(value)
+					return ext.string_split(value:lower(), "%s+", true)
+				end
+			}
+		}
+	}
+}
+
+local config = ext.list_map(cfg.load_subcfg("series", cfg_def), function(section)
 	return {
-		id = series.name,
-		title = series.entries.title,
-		keywords = ext.string_split(series.entries.keywords:lower(), " ", true)
+		id = section.name,
+		title = section.entries.title,
+		keywords = section.entries.keywords
 	}
 end)
 

@@ -1,4 +1,4 @@
--- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
+-- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
 local BasicOverlay = require "interface.basic_overlay"
 local cfg = require "systems.config"
@@ -47,7 +47,7 @@ mp.register_event("start-file", function()
 	for _, dict in ipairs(dict_list) do
 		local pos_override, neg_override
 		if dict.config.preload then
-			local cfg_preload = cfg_util.convert_bool(dict.config.preload)
+			local cfg_preload = cfg_util.convert.bool(dict.config.preload)
 			pos_override = cfg_preload == true
 			neg_override = cfg_preload == false
 		end

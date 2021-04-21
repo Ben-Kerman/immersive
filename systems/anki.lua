@@ -21,101 +21,166 @@ local function default_sentence_substs()
 	}
 end
 
-local function default_tgt(raw_tgt)
-	return {
-		name = raw_tgt.name,
-		profile = raw_tgt.entries.profile,
-		deck = raw_tgt.entries.deck,
-		note_type = raw_tgt.entries.note_type,
-		add_mode = "append",
-		note_template = "{{type}}: {{id}}",
-		media_directory = nil,
-		tags = {"immersive"},
-		sentence_substitutions = default_sentence_substs(),
-		definition_substitutions = {},
-		fields = {},
-		config = {
-			audio = {
-				extension = "mka",
-				format = "matroska",
-				codec = "libopus",
-				bitrate = "64ki",
-				pad_start = 0.1,
-				pad_end = 0.1
+local function parse_substitutions(cfg_value)
+	local defs = ext.string_split(cfg_value, "\n", true)
+	return ext.list_map(defs, function(def)
+		local repl, lt_pos = helper.parse_with_escape(def, nil, "<")
+		if lt_pos then
+			local pattern = helper.parse_with_escape(def, nil, nil, lt_pos + 1)
+			-- pcall to verify that the pattern is valid
+			if pcall(string.find, "", pattern) then
+				return {pattern = pattern, repl = repl}
+			end
+		end
+		return nil, "invalid substitution: " .. def
+	end)
+end
+
+local conv = cfg_util.convert
+local cfg_def = {
+	sections = true,
+	global_as_default = true,
+	section_entries = {
+		dynamic_fn = function(key)
+			return ext.string_starts(key, "field:")
+		end,
+		items = {
+			profile = {
+				required = true
 			},
-			image = {
-				extension = "webp",
-				codec = "libwebp",
-				max_width = -1,
-				max_height = -1,
-				jpeg = {
-					qscale = 5
+			deck = {
+				required = true
+			},
+			note_type = {
+				required = true
+			},
+			add_mode = {
+				validate = {
+					allowed = {"append", "prepend", "overwrite"}
 				},
-				webp = {
-					lossless = false,
-					quality = 90,
-					compression = 4
+				default = "append"
+			},
+			note_template = {
+				default = "{{type}}: {{id}}"
+			},
+			media_directory = {},
+			tags = {
+				convert = {
+					fn = conv.list,
+					params = {"%s+"}
 				},
-				png = {
-					compression = 9
-				}
+				default = {"immersive"}
+			},
+			sentence_substitutions = {
+				convert = parse_substitutions,
+				default = default_sentence_substs()
+			},
+			definition_substitutions = {
+				convert = parse_substitutions,
+				default = {}
+			},
+			["audio/extension"] = {
+				default = "mka"
+			},
+			["audio/format"] = {
+				default = "matroska"
+			},
+			["audio/codec"] = {
+				default = "libopus"
+			},
+			["audio/bitrate"] = {
+				default = "48ki"
+			},
+			["audio/pad_start"] = {
+				convert = {
+					fn = conv.num,
+					params = {true}
+				},
+				default = 0.1
+			},
+			["audio/pad_end"] = {
+				convert = {
+					fn = conv.num,
+					params = {true}
+				},
+				default = 0.1
+			},
+			["image/extension"] = {
+				default = "webp"
+			},
+			["image/codec"] = {
+				default = "libwebp"
+			},
+			["image/max_width"] = {
+				convert = conv.num,
+				default = -1
+			},
+			["image/max_height"] = {
+				convert = conv.num,
+				default = -1
+			},
+			["image/jpeg/qscale"] = {
+				convert = conv.num,
+				validate = {
+					bounds = {min = 1, max = 69}
+				},
+				default = 5
+			},
+			["image/webp/lossless"] = {
+				convert = conv.bool,
+				default = false
+			},
+			["image/webp/quality"] = {
+				convert = conv.num,
+				validate = {
+					bounds = {min = 0, max = 100}
+				},
+				default = 90
+			},
+			["image/webp/compression"] = {
+				convert = conv.num,
+				validate = {
+					bounds = {min = 0, max = 6}
+				},
+				default = 4
+			},
+			["image/png/compression"] = {
+				convert = conv.num,
+				validate = {
+					bounds = {min = 0, max = 9}
+				},
+				default = 9
 			}
 		}
 	}
-end
-
-local function parse_substitution(def)
-	local repl, lt_pos = helper.parse_with_escape(def, nil, "<")
-	if lt_pos then
-		local pattern = helper.parse_with_escape(def, nil, nil, lt_pos + 1)
-		if pcall(string.find, "", pattern) then
-			return {pattern = pattern, repl = repl}
-		end
-	end
-	msg.warn("ignoring invalid substitution: " .. def)
-	return nil
-end
+}
 
 local anki = {targets = {}}
 
-local required_opts = {"profile", "deck", "note_type"}
-local function load_tgt(raw_tgt)
-	local valid, missing = cfg_util.check_required(raw_tgt.entries, required_opts)
-	if not valid then
-		local fmt = "target '%s' is missing these required options: %s"
-		msg.warn(string.format(fmt, raw_tgt.name, table.concat(missing, ", ")))
-		return
-	end
+local function load_tgt(section)
+	local tgt = {
+		name = section.name,
+		profile = section.entries.profile,
+		deck = section.entries.deck,
+		note_type = section.entries.note_type,
+		fields = {},
+		config = {}
+	}
 
-	local tgt = default_tgt(raw_tgt)
-	for key, value in pairs(raw_tgt.entries) do
+	for key, value in pairs(section.entries) do
 		if ext.string_starts(key, "field:") then
 			tgt.fields[key:sub(7)] = value
 		elseif string.find(key, "/") then
-			cfg_util.insert_nested(tgt.config, ext.string_split(key, "/"), value, true)
-		elseif not ext.list_find(required_opts, key) then
-			if key == "add_mode" then
-				if ext.list_find({"prepend", "append", "overwrite"}, value) then
-					tgt.add_mode = value
-				else msg.warn("unkown Anki add mode ('" .. value .. "'), using 'append'") end
-			elseif key == "tags" then
-				tgt.tags = ext.list_unique(ext.string_split(value, " "))
-			elseif key == "sentence_substitutions" or key == "definition_substitutions" then
-				local defs = ext.string_split(value, "\n")
-				local non_empty = ext.list_filter(defs, function(def)
-					return #def ~=0
-				end)
-				tgt[key] = ext.list_map(non_empty, parse_substitution)
-			elseif ext.list_find({"media_directory"}, key) then
-				tgt[key] = value
-			end
+			cfg_util.insert_nested(tgt.config, ext.string_split(key, "/"), value)
+		else
+			tgt[key] = value
 		end
 	end
-	table.insert(anki.targets, tgt)
+	return tgt
 end
 
-for _, raw_tgt in ipairs(cfg.load_subcfg("targets", true)) do
-	load_tgt(raw_tgt)
+for _, raw_tgt in ipairs(cfg.load_subcfg("targets", cfg_def)) do
+	table.insert(anki.targets, load_tgt(raw_tgt))
 end
 
 local active_tgt_index = 1

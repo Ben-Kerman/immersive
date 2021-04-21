@@ -1,15 +1,15 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
-local cfg = require "systems.config"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
-local player = require "systems.player"
 local utf_8 = require "utility.utf_8"
 local ext = require "utility.extension"
 
 local helper = {}
 
 function helper.format_time(time, hide_ms)
+	local cfg = require "systems.config"
+
 	local function int_div(a, b)
 		local a_int = math.floor(a)
 		local b_int = math.floor(b)
@@ -157,6 +157,7 @@ end
 function helper.preview_audio(data)
 	-- prevents circular require
 	local export = require "systems.export"
+	local player = require "systems.player"
 
 	if export.verify(data, true) then
 		local was_paused = mp.get_property_bool("pause")
