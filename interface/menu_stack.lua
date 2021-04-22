@@ -35,6 +35,31 @@ function menu_stack.clear()
 	stack = {}
 end
 
+function menu_stack.save(count)
+	exec_top("hide")
+
+	local menus = {}
+	for i = 1, count do
+		table.insert(menus, table.remove(stack))
+	end
+	return menus
+end
+
+function menu_stack.restore(menus)
+	exec_top("hide")
+
+	for _, menu in ipairs(menus) do
+		table.insert(stack, menu)
+	end
+	exec_top("show")
+end
+
+function menu_stack.drop(menus)
+	for _, menu in ipairs(menus) do
+		menu:cancel()
+	end
+end
+
 function menu_stack.top()
 	return stack[#stack]
 end
