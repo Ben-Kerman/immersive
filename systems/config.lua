@@ -269,8 +269,11 @@ end)()
 
 function config.load(path, def)
 	if not check_file(path) then
-		msg.verbose("config file could not be loaded: " .. path)
-		return {}
+		local path_str = path and ": " .. path or ""
+		msg.verbose("config file could not be loaded" .. path_str)
+		if def and def.entries then
+			return {global = apply_defaults({}, def.entries)}
+		else return {} end
 	end
 
 	local result = {}
