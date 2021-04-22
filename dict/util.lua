@@ -11,7 +11,7 @@ local ext = require "utility.extension"
 local util = {}
 
 function util.cache_path(dict)
-	local cache_dir = mpu.join_path(cfg.cfg_dir, script_name .. "-dict-cache")
+	local cache_dir = mpu.join_path(cfg.cfg_dir, script_name .. "-data/dict-cache")
 	if not sys.create_dir(cache_dir) then
 		msg.error("failed to create dictionary cache directory")
 		return
