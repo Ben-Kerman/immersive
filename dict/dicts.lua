@@ -9,7 +9,59 @@ local menu_stack = require "interface.menu_stack"
 local msg = require "systems.message"
 local ext = require "utility.extension"
 
-local dict_list = ext.list_map(cfg.load_subcfg("dictionaries"), function(dict_cfg)
+local conv = cfg_util.convert
+
+local common_entr_def = {
+	type = {
+		required = true
+	},
+	location = {
+		required = true
+	},
+	exporter = {
+		default = "default"
+	},
+	preload = {
+		convert = conv.bool
+	},
+	quick_def_template = {}
+}
+
+local entr_defs = {
+	yomichan = {
+		insert_cjk_breaks = {
+			convert = conv.bool
+		},
+		["export:digits"] = {},
+		["export:reading_template"] = {},
+		["export:definition_template"] = {},
+		["export:template"] = {},
+		["export:use_single_template"] = {},
+		["export:single_template"] = {}
+	},
+	migaku = {
+		["export:template"] = {}
+	}
+}
+
+local cfg_entr_def = {
+	sections = true,
+	section_entries = function(raw_sect)
+		local res
+		if raw_sect.type then
+			return {
+				items = ext.map_merge(common_entr_def, entr_defs[raw_sect.type])
+			}
+		else
+			return {
+				dynamic_fn = function() return true end,
+				items = common_entr_def
+			}
+		end
+	end
+}
+
+local dict_list = ext.list_map(cfg.load_subcfg("dictionaries", cfg_entr_def), function(dict_cfg)
 	return {id = dict_cfg.name, config = dict_cfg.entries, table = nil}
 end)
 local active_dict_index = 1
