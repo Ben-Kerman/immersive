@@ -42,14 +42,15 @@ function menu_stack.save(count)
 	for i = 1, count do
 		table.insert(menus, table.remove(stack))
 	end
+	exec_top("show")
 	return menus
 end
 
 function menu_stack.restore(menus)
 	exec_top("hide")
 
-	for _, menu in ipairs(menus) do
-		table.insert(stack, menu)
+	for i = #menus, 1, -1 do
+		table.insert(stack, menus[i])
 	end
 	exec_top("show")
 end
