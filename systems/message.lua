@@ -17,6 +17,8 @@ local durations = {
 	trace = osd_duration
 }
 
+local started = false
+
 local messages = {}
 
 local function update_overlay()
@@ -37,12 +39,16 @@ local function update_overlay()
 	overlay:update()
 end
 
+local function remove_msg(msg)
+	local _, pos = ext.list_find(messages, msg)
+	table.remove(messages, pos)
+	if started then update_overlay() end
+end
+
 local function add_msg_timeout(msg)
 	if msg.duration ~= 0 then
 		mp.add_timeout(msg.duration, function()
-			local _, pos = ext.list_find(messages, msg)
-			table.remove(messages, pos)
-			update_overlay()
+			remove_msg(msg)
 		end)
 	end
 end
@@ -64,13 +70,16 @@ local function add_msg(level, text, duration)
 			update_overlay()
 		end
 	end
+	return msg
 end
 
 local message = {}
 
+message.remove = remove_msg
+
 for level, _ in pairs(durations) do
 	message[level] = function(text, duration)
-		add_msg(level, text, duration)
+		return add_msg(level, text, duration)
 	end
 end
 
