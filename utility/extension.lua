@@ -192,7 +192,7 @@ function extension.string_starts(str, prefix)
 end
 
 function extension.string_ends(str, suffix)
-	local _, last_pos str:find(suffix, 1, true)
+	local _, last_pos = str:find(suffix, 1, true)
 	return last_pos == #str
 end
 
