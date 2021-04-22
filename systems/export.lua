@@ -93,7 +93,7 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 	return templater.render(field_def, template_data)
 end
 
-local function export_word_audio(data)
+local function export_word_audio(encode_state, data)
 	local media_dir = anki.media_dir()
 	if data.word_audio_file and media_dir then
 		local src_path = data.word_audio_file.path
@@ -110,12 +110,15 @@ local function export_word_audio(data)
 
 		if cfg.values.forvo_reencode then
 			return check_file(cfg.values.forvo_extension, function(tgt_path)
+				encode_state.encodes.word_audio = true
 				encoder.any_audio{
 					src_path = src_path,
 					tgt_path = tgt_path,
 					format = cfg.values.forvo_format,
 					codec = cfg.values.forvo_codec,
-					bitrate = cfg.values.forvo_bitrate
+					bitrate = cfg.values.forvo_bitrate,
+					state = encode_state,
+					desc = "word_audio"
 				}
 			end)
 		else
@@ -165,7 +168,7 @@ function export.resolve_times(data)
 	return start, stop, scrot
 end
 
-local function prepare_fields(state, data, prev_contents)
+local function prepare_fields(data, prev_contents)
 	local start, stop, scrot = export.resolve_times(data)
 
 	local tgt = anki.active_target("could not execute export")
@@ -178,14 +181,19 @@ local function prepare_fields(state, data, prev_contents)
 
 	local tgt_cfg = tgt.config
 
+	local encode_state = {encodes = {}}
+
 	local audio_filename = anki.generate_filename(series_id.id(), tgt_cfg.audio.extension)
-	encoder.audio(mpu.join_path(media_dir, audio_filename), start, stop)
+	encode_state.encodes.audio = true
+	encoder.audio(encode_state, mpu.join_path(media_dir, audio_filename), start, stop)
+
 	local image_filename
 	if cfg.take_scrot then
 		image_filename = anki.generate_filename(series_id.id(), tgt_cfg.image.extension)
-		encoder.image(mpu.join_path(media_dir, image_filename), scrot)
+		encode_state.encodes.image = true
+		encoder.image(encode_state, mpu.join_path(media_dir, image_filename), scrot)
 	end
-	local word_audio_filename = export_word_audio(data)
+	local word_audio_filename = export_word_audio(encode_state, data)
 
 	local fields = {}
 	for name, def in pairs(tgt.fields) do
@@ -231,7 +239,7 @@ end
 
 function export.execute(data)
 	local state = save_menus(data)
-	local fields = fill_first_field(prepare_fields(state, data))
+	local fields = fill_first_field(prepare_fields(data))
 	if fields then
 		if ankicon.add_note(fields) then
 			drop_menus(state)
@@ -245,7 +253,7 @@ end
 
 function export.execute_gui(data)
 	local state = save_menus(data)
-	local fields = prepare_fields(state, data)
+	local fields = prepare_fields(data)
 	if fields then
 		if ankicon.gui_add_cards(fields) then
 			drop_menus(state)
@@ -284,7 +292,7 @@ function export.execute_add(data, note)
 			return field_name, content.value
 		end)
 
-		local fields, tgt = prepare_fields(state, prev_fields)
+		local fields, tgt = prepare_fields(data, prev_fields)
 		if fields then
 			local new_fields = fill_first_field(combine_fields(prev_fields, fields, tgt), tgt, true)
 
