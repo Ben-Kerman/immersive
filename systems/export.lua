@@ -165,7 +165,7 @@ function export.resolve_times(data)
 	return start, stop, scrot
 end
 
-local function prepare_fields(data, prev_contents)
+local function prepare_fields(state, data, prev_contents)
 	local start, stop, scrot = export.resolve_times(data)
 
 	local tgt = anki.active_target("could not execute export")
@@ -210,50 +210,51 @@ local function fill_first_field(fields, tgt, ignore_nil)
 	return fields
 end
 
-local function hide_menus(data)
-	menu_stack.push(BasicOverlay:new("exporting note", nil, "info_overlay"))
+local function save_menus(data)
 	bus.fire("set_blackouts", false)
+	return {
+		msg = msg.info("exporting note", 0),
+		menus = menu_stack.save(data.level)
+	}
 end
 
-local function show_menus(data)
+local function restore_menus(state)
+	msg.remove(state.msg)
+	menu_stack.restore(state.menus)
 	bus.fire("set_blackouts", true)
-	menu_stack.pop()
 end
 
-local function pop_menus(data)
-	local count = 1
-	if data.level then
-		count = data.level + 1
-	end
-	menu_stack.pop(count)
+local function drop_menus(state)
+	msg.remove(state.msg)
+	menu_stack.drop(state.menus)
 end
 
 function export.execute(data)
-	hide_menus(data)
-	local fields = fill_first_field(prepare_fields(data))
+	local state = save_menus(data)
+	local fields = fill_first_field(prepare_fields(state, data))
 	if fields then
 		if ankicon.add_note(fields) then
-			pop_menus(data)
+			drop_menus(state)
 			msg.info("note added successfully")
 			return
 		end
 	end
+	restore_menus(state)
 	msg.warn("note couldn't be added")
-	show_menus()
 end
 
 function export.execute_gui(data)
-	hide_menus(data)
-	local fields = prepare_fields(data)
+	local state = save_menus(data)
+	local fields = prepare_fields(state, data)
 	if fields then
 		if ankicon.gui_add_cards(fields) then
-			pop_menus(data)
+			drop_menus(state)
 			msg.info("'Add' GUI opened")
 			return
 		end
 	end
+	restore_menus(state)
 	msg.warn("'Add' GUI couldn't be opened")
-	show_menus()
 end
 
 local function combine_fields(prev_fields, fields, tgt)
@@ -275,7 +276,7 @@ local function combine_fields(prev_fields, fields, tgt)
 end
 
 function export.execute_add(data, note)
-	hide_menus(data)
+	local state = save_menus(data)
 	-- "updated" because the user could have edited the note by now
 	local updated_note = ankicon.notes_info({note.noteId})[1]
 	if updated_note then
@@ -283,19 +284,19 @@ function export.execute_add(data, note)
 			return field_name, content.value
 		end)
 
-		local fields, tgt = prepare_fields(data, prev_fields)
+		local fields, tgt = prepare_fields(state, prev_fields)
 		if fields then
 			local new_fields = fill_first_field(combine_fields(prev_fields, fields, tgt), tgt, true)
 
 			if ankicon.update_note_fields(updated_note.noteId, new_fields) then
-				pop_menus(data)
+				drop_menus(state)
 				msg.info("note updated successfully")
 				return
 			end
 		end
 	end
+	restore_menus(state)
 	msg.warn("note couldn't be updated")
-	show_menus()
 end
 
 return export
