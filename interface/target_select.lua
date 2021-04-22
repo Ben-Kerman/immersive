@@ -174,6 +174,7 @@ end
 function TargetSelect:cancel()
 	if self.blackout then self.blackout:cancel() end
 	self:hide()
+	self.data.level = self.data.level - 1
 end
 
 function TargetSelect:finish()

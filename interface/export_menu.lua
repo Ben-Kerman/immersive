@@ -79,6 +79,7 @@ end
 
 function ExportMenu:cancel()
 	self:hide()
+	self.data.level = self.data.level - 1
 end
 
 return ExportMenu
