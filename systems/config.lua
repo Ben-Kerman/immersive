@@ -1,5 +1,6 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
+local bus = require "systems.bus"
 local cfg_util = require "systems.config_util"
 local ext = require "utility.extension"
 local mpu = require "mp.utils"
@@ -352,7 +353,12 @@ function config.load_subcfg(name, def)
 	return config.load(mpu.join_path(config.cfg_dir, rel_path), def)
 end
 
-config.values = config.load_subcfg(nil, cfg_def).global
-config.take_scrot = config.values.take_screenshots
+local function reload_config()
+	config.values = config.load_subcfg(nil, cfg_def).global
+	config.enable_help = config.values.enable_help
+	config.take_scrot = config.values.take_screenshots
+end
+reload_config()
+bus.listen("reload_config", reload_config)
 
 return config

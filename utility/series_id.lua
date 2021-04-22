@@ -1,5 +1,6 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
+local bus = require "systems.bus"
 local cfg = require "systems.config"
 local ext = require "utility.extension"
 
@@ -18,13 +19,18 @@ local cfg_def = {
 	}
 }
 
-local config = ext.list_map(cfg.load_subcfg("series", cfg_def), function(section)
-	return {
-		id = section.name,
-		title = section.entries.title,
-		keywords = section.entries.keywords
-	}
-end)
+local config
+local function reload_config()
+	config = ext.list_map(cfg.load_subcfg("series", cfg_def), function(section)
+		return {
+			id = section.name,
+			title = section.entries.title,
+			keywords = section.entries.keywords
+		}
+	end)
+end
+reload_config()
+bus.listen("reload_config", reload_config)
 
 local function generate_title(filename)
 	return (filename:gsub("%.[^%.]+$", "")        -- file extension

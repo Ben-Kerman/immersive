@@ -1,19 +1,11 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
 
+local bus = require "systems.bus"
 local cfg = require "systems.config"
 local msg = require "systems.message"
 local ext = require "utility.extension"
 
-local config = (function()
-	local config = {}
-	local raw_cfg = cfg.load_subcfg("keys")
-	for _, section in ipairs(raw_cfg) do
-		config[section.name] = section.entries
-	end
-	config.global = raw_cfg.global
-	return config
-end)()
-
+local config
 local global_bindings = {}
 
 local key_bindings = {}
@@ -78,5 +70,19 @@ end
 function key_bindings.remove(bindings)
 	remove_internal(bindings, false)
 end
+
+local function reload_config()
+	config = {}
+	local raw_cfg = cfg.load_subcfg("keys")
+	for _, section in ipairs(raw_cfg) do
+		config[section.name] = section.entries
+	end
+	config.global = raw_cfg.global
+
+	key_bindings.disable_global()
+	key_bindings.enable_global()
+end
+reload_config()
+bus.listen("reload_config", reload_config)
 
 return key_bindings

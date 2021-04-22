@@ -1,5 +1,6 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2020 Ben Kerman
 
+local bus = require "systems.bus"
 local cfg = require "systems.config"
 local cfg_util = require "systems.config_util"
 local msg = require "systems.message"
@@ -139,8 +140,9 @@ local function verify_convert_value(key, value)
 	else msg.warn("unknown style property ignored: " .. key) end
 end
 
-local config = (function()
-	local config = get_defaults()
+local config
+local function reload_config()
+	config = get_defaults()
 	local cfg_data = cfg.load_subcfg("style")
 
 	local function insert_values(tbl, entries)
@@ -160,8 +162,9 @@ local config = (function()
 			insert_values(style_tbl, section.entries)
 		else msg.warn("invalid style path ignored: " .. section.name) end
 	end
-	return config
-end)()
+end
+reload_config()
+bus.listen("reload_config", reload_config)
 
 local function inject_tag(list, data, closing, base)
 	table.insert(list, "{")

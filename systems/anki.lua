@@ -1,5 +1,6 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
+local bus = require "systems.bus"
 local cfg = require "systems.config"
 local cfg_util = require "systems.config_util"
 local helper = require "utility.helper"
@@ -156,6 +157,7 @@ local cfg_def = {
 }
 
 local anki = {targets = {}}
+local active_tgt_index = 1
 
 local function load_tgt(section)
 	local tgt = {
@@ -179,11 +181,16 @@ local function load_tgt(section)
 	return tgt
 end
 
-for _, raw_tgt in ipairs(cfg.load_subcfg("targets", cfg_def)) do
-	table.insert(anki.targets, load_tgt(raw_tgt))
+local function reload_config()
+	anki.targets = {}
+	for _, raw_tgt in ipairs(cfg.load_subcfg("targets", cfg_def)) do
+		table.insert(anki.targets, load_tgt(raw_tgt))
+	end
+	active_tgt_index = 1
 end
+reload_config()
+bus.listen("reload_config", reload_config)
 
-local active_tgt_index = 1
 function anki.active_target(err_msg)
 	local tgt = anki.targets[active_tgt_index]
 	if not tgt and err_msg ~= false then

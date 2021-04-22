@@ -7,10 +7,10 @@ local ssa = require "systems.ssa"
 local Menu = {}
 Menu.__index = Menu
 
-local help_key = (function()
+local function help_key()
 	local cfg_key = kbds.query_key("show_help", "menu")
 	return cfg_key and cfg_key or "h"
-end)()
+end
 
 function Menu:new(data, enabled)
 	local m = {
@@ -23,21 +23,20 @@ function Menu:new(data, enabled)
 	return setmetatable(m, Menu)
 end
 
-local show_help = cfg.values.enable_help
 function Menu:get_show_help()
 	if cfg.values.global_help then
-		return show_help
+		return cfg.enable_help
 	else return self.show_help end
 end
 
 function Menu:set_show_help(val)
 	if cfg.values.global_help then
-		show_help = val
+		cfg.enable_help = val
 	else self.show_help = val end
 end
 
 function Menu:show()
-	mp.add_forced_key_binding(help_key, "menu-show_help", function()
+	mp.add_forced_key_binding(help_key(), "menu-show_help", function()
 		self:set_show_help(not self:get_show_help())
 		self:redraw()
 	end)
@@ -57,25 +56,30 @@ function Menu:cancel()
 	self:hide()
 end
 
-local help_hint_off = {
-	style = {"menu_help", "hint"},
-	"Press ",
-	{
-		style = {"menu_help", "key"},
-		help_key
-	},
-	" to show key bindings"
-}
-local help_hint_on = {
-	style = {"menu_help", "hint"},
-	newline = true,
-	"Key Bindings (",
-	{
-		style = {"menu_help", "key"},
-		help_key
-	},
-	" to hide)"
-}
+local function help_hint_off()
+	return {
+		style = {"menu_help", "hint"},
+		"Press ",
+		{
+			style = {"menu_help", "key"},
+			help_key()
+		},
+		" to show key bindings"
+	}
+end
+
+local function help_hint_on()
+	return {
+		style = {"menu_help", "hint"},
+		newline = true,
+		"Key Bindings (",
+		{
+			style = {"menu_help", "key"},
+			help_key()
+		},
+		" to hide)"
+	}
+end
 
 function Menu:redraw()
 	if self.enabled then
@@ -88,7 +92,7 @@ function Menu:redraw()
 			}
 
 			if self:get_show_help() then
-				table.insert(ssa_definition, help_hint_on)
+				table.insert(ssa_definition, help_hint_on())
 
 				for _, binding in ipairs(self.bindings) do
 					local grp = binding.global and "global" or self.bindings.group
@@ -109,7 +113,7 @@ function Menu:redraw()
 					end
 					table.insert(ssa_definition, binding_ssa_def)
 				end
-			else table.insert(ssa_definition, help_hint_off) end
+			else table.insert(ssa_definition, help_hint_off()) end
 
 			table.insert(ssa_lines, "\\h\\N" .. ssa.generate(ssa_definition))
 		end

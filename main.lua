@@ -14,6 +14,7 @@ mp.set_property("msg-level", (function()
 	return new_msg_lvl
 end)())
 
+local bus = require "systems.bus"
 local ActiveSubLookup = require "interface.active_sub_lookup"
 local anki = require "systems.anki"
 local cfg = require "systems.config"
@@ -200,6 +201,15 @@ local bindings = {
 		desc = "Close all active menus",
 		action = menu_stack.clear,
 		global = true
+	},
+	{
+		id = "reload_config",
+		default = "r",
+		desc = "Reload all non-dictionary config files",
+		action = function()
+			menu_stack.clear()
+			bus.fire("reload_config")
+		end
 	}
 }
 
