@@ -217,6 +217,12 @@ local function apply_defaults(entries, entr_def)
 	return result
 end
 
+local function entr_def_for(val, raw_sect)
+	if type(val) == "function" then
+		return val(raw_sect)
+	else return val end
+end
+
 local function apply_def(path, raw, def)
 	if not def.sections and #raw ~= 0 then
 		vldt_warn("ignoring sections", path)
@@ -224,14 +230,16 @@ local function apply_def(path, raw, def)
 
 	local global_entries = {}
 	if def.entries or def.global_as_base then
-		local entr_def = def.global_as_base and def.section_entries or def.entries
+		local entr_def_val = def.global_as_base and def.section_entries or def.entries
+		local entr_def = entr_def_for(entr_def_val, raw.global)
 		global_entries = validate_entries(path, raw.global, entr_def)
 	end
 
 	local result = {}
 	if def.sections then
 		for _, section in ipairs(raw) do
-			local validated = validate_entries(path, section.entries, def.section_entries, section.name)
+			local entr_def = entr_def_for(def.section_entries, section.entries)
+			local validated = validate_entries(path, section.entries, entr_def, section.name)
 			if def.global_as_base then
 				for key, value in pairs(global_entries) do
 					if validated[key] == nil then
@@ -241,13 +249,14 @@ local function apply_def(path, raw, def)
 			end
 			table.insert(result, {
 				name = section.name,
-				entries = apply_defaults(validated, def.section_entries)
+				entries = apply_defaults(validated, entr_def)
 			})
 		end
 	end
 
 	if not def.global_as_base and def.entries then
-		result.global = apply_defaults(global_entries, def.entries)
+		local entr_def = entr_def_for(def.entries, raw.global)
+		result.global = apply_defaults(global_entries, entr_def)
 	end
 
 	return result
@@ -273,7 +282,8 @@ function config.load(path, def)
 		local path_str = path and ": " .. path or ""
 		msg.verbose("config file could not be loaded" .. path_str)
 		if def and def.entries then
-			return {global = apply_defaults({}, def.entries)}
+			local entr_def = entr_def_for(def.entries)
+			return {global = apply_defaults({}, entr_def)}
 		else return {} end
 	end
 
