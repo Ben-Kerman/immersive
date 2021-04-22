@@ -1,3 +1,5 @@
+-- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
+
 local utf_8 = require "utility.utf_8"
 
 local base_hira = 0x3040

@@ -229,7 +229,7 @@ local function apply_def(path, raw, def)
 	end
 
 	local global_entries = {}
-	if def.entries or def.global_as_base then
+	if raw.global and (def.entries or def.global_as_base) then
 		local entr_def_val = def.global_as_base and def.section_entries or def.entries
 		local entr_def = entr_def_for(entr_def_val, raw.global)
 		global_entries = validate_entries(path, raw.global, entr_def)
