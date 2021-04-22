@@ -7,7 +7,7 @@ local sys = require "systems.system"
 local socket_name = (function()
 	local filename = script_name .. "." .. mpu.getpid() .. ".socket"
 	if sys.platform == "lnx" or sys.platform == "mac" then
-		return mpu.join_path(sys.tmp_dir(), filename)
+		return mpu.join_path(sys.tmp_dir, filename)
 	elseif sys.platform == "win" then
 		return [[\\.\pipe\]] .. filename
 	end

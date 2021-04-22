@@ -15,7 +15,7 @@ local sys = require "systems.system"
 local url = require "utility.url"
 
 local html_cache = {}
-local cache_dir = mpu.join_path(sys.tmp_dir(), script_name .. "_forvo_cache")
+local cache_dir = mpu.join_path(sys.tmp_dir, script_name .. "_forvo_cache")
 local word_cache_file = mpu.join_path(cache_dir, "words.json")
 local audio_host = "https://audio00.forvo.com/"
 

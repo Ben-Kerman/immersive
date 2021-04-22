@@ -43,7 +43,7 @@ system.anki_base_dir = (function()
 	end
 end)()
 
-function system.tmp_dir()
+system.tmp_dir = (function()
 	if system.platform == "lnx" or system.platform == "mac" then
 		local tmpdir_env = os.getenv("TMPDIR")
 		if tmpdir_env then return tmpdir_env
@@ -51,7 +51,7 @@ function system.tmp_dir()
 	elseif system.platform == "win" then
 		return os.getenv("TEMP")
 	end
-end
+end)()
 
 local function handle_process_result(success, res, err)
 	if not success then
