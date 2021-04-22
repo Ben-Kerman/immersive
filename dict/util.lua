@@ -1,5 +1,6 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
+local cfg = require "systems.config"
 local helper = require "utility.helper"
 local mpu = require "mp.utils"
 local msg = require "systems.message"
@@ -10,8 +11,7 @@ local ext = require "utility.extension"
 local util = {}
 
 function util.cache_path(dict)
-	local config_dir =  mp.find_config_file("."):sub(1, -3)
-	local cache_dir = mpu.join_path(config_dir, script_name .. "-dict-cache")
+	local cache_dir = mpu.join_path(cfg.cfg_dir, script_name .. "-dict-cache")
 	if not sys.create_dir(cache_dir) then
 		msg.error("failed to create dictionary cache directory")
 		return

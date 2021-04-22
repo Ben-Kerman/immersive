@@ -263,6 +263,10 @@ end
 
 local config = {}
 
+config.cfg_dir = (function()
+	return (mp.find_config_file("."):sub(1, -3))
+end)()
+
 function config.load(path, def)
 	if not check_file(path) then
 		msg.verbose("config file could not be loaded: " .. path)
@@ -337,13 +341,12 @@ function config.load(path, def)
 	if def then
 		return apply_def(path, result, def)
 	else return result end
-	return result
 end
 
 function config.load_subcfg(name, def)
 	local suf = name and "-" .. name or ""
 	local rel_path = string.format("script-opts/%s%s.conf", script_name, suf)
-	return config.load(mp.find_config_file(rel_path), def)
+	return config.load(mpu.join_path(config.cfg_dir, rel_path), def)
 end
 
 config.values = config.load_subcfg(nil, cfg_def).global
