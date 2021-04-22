@@ -12,6 +12,12 @@ local function calc_dimension(cfg_val, prop_name)
 	return cfg_val < prop and cfg_val or prop
 end
 
+local function encode(args, path)
+	local start_time = mp.get_time()
+	sys.subprocess(args)
+	msg.debug(string.format("encoded '%s' in %f s", path, mp.get_time() - start_time))
+end
+
 local encoder = {}
 
 function encoder.any_audio(params)
@@ -30,10 +36,7 @@ function encoder.any_audio(params)
 	if params.start then table.insert(args, "--start=" .. params.start) end
 	if params.stop then table.insert(args, "--end=" .. params.stop) end
 
-	local start_time = mp.get_time()
-	sys.subprocess(args)
-	msg.debug("encoded audio in " .. mp.get_time() - start_time
-	          .. " (" .. params.tgt_path .. ")")
+	encode(args, params.tgt_path)
 end
 
 function encoder.audio(path, start, stop)
@@ -87,10 +90,7 @@ function encoder.image(path, time)
 		table.insert(args, "--ovcopts-add=compression_level=" .. tgt_cfg.png.compression)
 	end
 
-	local start_time = mp.get_time()
-	sys.subprocess(args)
-	msg.debug("encoded image in " .. mp.get_time() - start_time
-	          .. " (" .. path .. ")")
+	encode(args, path)
 end
 
 return encoder
