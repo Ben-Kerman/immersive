@@ -41,8 +41,9 @@ end
 
 local function remove_msg(msg)
 	local _, pos = ext.list_find(messages, msg)
-	table.remove(messages, pos)
-	if started then update_overlay() end
+	if pos then table.remove(messages, pos)
+		if started then update_overlay() end
+	end
 end
 
 local function add_msg_timeout(msg)
