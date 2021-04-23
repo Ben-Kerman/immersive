@@ -13,14 +13,16 @@ local function conv_cp(f, t, cp)
 	else return cp end
 end
 
-return function(word)
-	local cdpts = utf_8.codepoints(word)
+return function()
+	return function(word)
+		local cdpts = utf_8.codepoints(word)
 
-	local hira, kata = {}, {}
-	for _, cp in ipairs(cdpts) do
-		table.insert(hira, conv_cp(base_kata, base_hira, cp))
-		table.insert(kata, conv_cp(base_hira, base_kata, cp))
+		local hira, kata = {}, {}
+		for _, cp in ipairs(cdpts) do
+			table.insert(hira, conv_cp(base_kata, base_hira, cp))
+			table.insert(kata, conv_cp(base_hira, base_kata, cp))
+		end
+
+		return {utf_8.string(hira), utf_8.string(kata)}
 	end
-
-	return {utf_8.string(hira), utf_8.string(kata)}
 end
