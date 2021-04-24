@@ -1,5 +1,6 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
+local BasicOverlay = require "interface.basic_overlay"
 local cfg = require "systems.config"
 local dicts = require "dict.dicts"
 local helper = require "utility.helper"
@@ -8,6 +9,10 @@ local Menu = require "interface.menu"
 local menu_stack = require "interface.menu_stack"
 local msg = require "systems.message"
 local templater = require "systems.templater"
+
+local no_result = {
+	ls = BasicOverlay:new("no results")
+}
 
 local ltypes = {
 	exact = {},
@@ -26,61 +31,129 @@ local function lookup_fn(dict, ltype)
 	})[ltype]
 end
 
-function DefinitionSelect:new(word, ltype, data)
-	local dict_cfg = dicts.active()
-	if not dict_cfg or not dict_cfg.table then
-		return nil
-	end
-
-	local dict = dict_cfg.table
-	local result = lookup_fn(dict, ltype)(word)
-
-	if not result or #result == 0 then
-		msg.info("no definitions found")
-		return
-	end
-
+function DefinitionSelect:new(term, ltype, data)
 	local ds
 
 	local bindings = {
 		group = "definition_select",
 		{
+			id = "prev_dict",
+			default = "LEFT",
+			desc = "Switch to previous dictionary",
+			action = function() ds:switch_dict(-1) end
+		},
+		{
+			id = "next_dict",
+			default = "RIGHT",
+			desc = "Switch to next dictionary",
+			action = function() ds:switch_dict(1) end
+		},
+		{
+			id = "add_def",
+			default = "Ctrl+ENTER",
+			desc = "Add selected definition",
+			action = function() ds:add_definition() end
+		},
+		{
 			id = "confirm",
 			default = "ENTER",
-			desc = "Use selected definition",
+			desc = "Add selected definition and return",
 			action = function() ds:finish() end
 		}
 	}
 
-	local function sel_conv(qdef) return dict.format_quick_def(qdef) end
-	local function line_conv(qdef) return helper.short_str(sel_conv(qdef), 40, "⏎") end
+	local infos = {
+		{
+			name = "Dictionary",
+			display = function() return dicts.at(ds.dict_index).id end
+		}
+	}
 
 	ds = setmetatable({
-		line_select = LineSelect:new(result, line_conv, sel_conv, nil, 5),
+		term = term,
+		ltype = ltype,
+		dict_index = 1,
+		lookups = {},
+		active_lu = nil,
 		data = data,
-		bindings = bindings,
-		menu = Menu:new{bindings = bindings},
-		lookup_result = {dict = dict, defs = result}
+		menu = Menu:new{bindings = bindings, infos = infos}
 	}, DefinitionSelect)
+
+	ds:look_up()
+
 	return ds
 end
 
-function DefinitionSelect:finish(word)
+function DefinitionSelect:switch_dict(step)
+	local new_index = self.dict_index + step
+	if new_index < 1 or dicts.count() < new_index then
+		msg.info("no more dictionaries")
+	else
+		self.dict_index = new_index
+		self.menu:redraw()
+		self:look_up()
+	end
+end
+
+function DefinitionSelect:look_up()
+	local function switch_lu(new_lu)
+		if self.active_lu then
+			self.active_lu.ls:hide()
+		end
+		self.active_lu = new_lu
+		self.active_lu.ls:show()
+	end
+
+	local existing_lu = self.lookups[self.dict_index]
+	if existing_lu then
+		switch_lu(existing_lu)
+		return
+	end
+
+	local dict_cfg = dicts.at(self.dict_index)
+	if not dict_cfg or not dict_cfg.table then
+		msg.fatal("invalid dictionary or index")
+		return
+	end
+
+	local dict = dict_cfg.table
+	local result = lookup_fn(dict, self.ltype)(self.term)
+
+	if not result or #result == 0 then
+		switch_lu(no_result)
+		return
+	end
+
+	local function sel_conv(qdef) return dict.format_quick_def(qdef) end
+	local function line_conv(qdef) return helper.short_str(sel_conv(qdef), 40, "⏎") end
+
+	self.lookups[self.dict_index] = {
+		res = result,
+		ls = LineSelect:new(result, line_conv, sel_conv, nil, 5)
+	}
+	switch_lu(self.lookups[self.dict_index])
+end
+
+function DefinitionSelect:add_definition()
 	if self.data then
-		local dict = self.lookup_result.dict
-		local def = dict.get_definition(self.line_select:selection().id)
+		local dict = dicts.at(self.dict_index).table
+		local def = dict.get_definition(self.active_lu.ls:selection().id)
 		table.insert(self.data.definitions, def)
 	end
+end
+
+function DefinitionSelect:finish()
+	self:add_definition()
 	menu_stack.pop()
 end
 
 function DefinitionSelect:show()
 	self.menu:show()
-	self.line_select:show()
+	self.active_lu.ls:show()
 end
 
 function DefinitionSelect:hide()
-	self.line_select:hide()
+	self.active_lu.ls:hide()
 	self.menu:hide()
 end
 

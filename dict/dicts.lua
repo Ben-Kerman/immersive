@@ -156,6 +156,10 @@ end)
 
 local dicts = {}
 
+function dicts.count()
+	return #dict_list
+end
+
 function dicts.at(index, block_loading)
 	local dict = dict_list[index]
 	if not dict then return nil end
