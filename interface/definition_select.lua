@@ -35,7 +35,7 @@ function DefinitionSelect:new(word, ltype, data)
 	local dict = dict_cfg.table
 	local result = lookup_fn(dict, ltype)(word)
 
-	if not result then
+	if not result or #result == 0 then
 		msg.info("no definitions found")
 		return
 	end
