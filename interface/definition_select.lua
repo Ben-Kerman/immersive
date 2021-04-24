@@ -80,7 +80,10 @@ function DefinitionSelect:new(term, ltype, data)
 		menu = Menu:new{bindings = bindings, infos = infos}
 	}, DefinitionSelect)
 
-	ds:look_up()
+	if not ds:look_up() and dicts.count() == 1 then
+		msg.info("no results")
+		return nil
+	end
 
 	return ds
 end
@@ -112,13 +115,13 @@ function DefinitionSelect:look_up()
 	local existing_lu = self.lookups[self.dict_index]
 	if existing_lu then
 		switch_lu(existing_lu)
-		return
+		return true
 	end
 
 	local dict_cfg = dicts.at(self.dict_index)
 	if not dict_cfg or not dict_cfg.table then
 		msg.fatal("invalid dictionary or index")
-		return
+		return false
 	end
 
 	local dict = dict_cfg.table
@@ -126,7 +129,7 @@ function DefinitionSelect:look_up()
 
 	if not result or #result == 0 then
 		switch_lu(no_result)
-		return
+		return false
 	end
 
 	local function sel_conv(qdef) return dict.format_quick_def(qdef) end
@@ -137,6 +140,8 @@ function DefinitionSelect:look_up()
 		ls = LineSelect:new(result, line_conv, sel_conv, nil, 5)
 	}
 	switch_lu(self.lookups[self.dict_index])
+
+	return true
 end
 
 function DefinitionSelect:add_definition()
