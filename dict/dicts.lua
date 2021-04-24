@@ -3,11 +3,12 @@
 local BasicOverlay = require "interface.basic_overlay"
 local cfg = require "systems.config"
 local cfg_util = require "systems.config_util"
+local ext = require "utility.extension"
+local helper = require "utility.helper"
 local util = require "dict.util"
 local kbds = require "systems.key_bindings"
 local menu_stack = require "interface.menu_stack"
 local msg = require "systems.message"
-local ext = require "utility.extension"
 
 local conv = cfg_util.convert
 
@@ -23,6 +24,49 @@ local common_entr_def = {
 	},
 	preload = {
 		convert = conv.bool
+	},
+	transformations = {
+		convert = function(raw)
+			local result = {}
+
+			local next_start = 1
+			while next_start <= #raw do
+				local id, id_end, next_ch = helper.parse(raw, nil, "(,", next_start, {})
+				if id_end then
+					local transform = {id = id}
+					if next_ch == "(" then
+						local args = {}
+						local next_arg = id_end + 1
+						while true do
+							local arg, arg_end, next_ch = helper.parse(raw, nil, ",)", next_arg, {[0x2c] = 0x2c})
+							if arg_end then
+								table.insert(args, arg)
+								next_arg = arg_end + 1
+
+								if next_ch == ")" then
+									if arg_end + 1 <= #raw and raw:byte(arg_end + 1) ~= 0x2c then
+										return nil, "',' expected after ')'"
+									else
+										next_start = arg_end + 2
+										break
+									end
+								end
+							else return nil, "',' or ')' expected" end
+						end
+						transform.args = args
+					else
+						next_start = id_end + 1
+					end
+					table.insert(result, transform)
+				else
+					if #id > 0 then
+						table.insert(result, {id = id})
+					end
+					break
+				end
+			end
+			return result
+		end
 	},
 	quick_def_template = {}
 }
