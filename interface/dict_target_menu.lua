@@ -18,10 +18,10 @@ local infos = {
 		end
 	},
 	{
-		name = "Dictionary",
+		name = "Dictionary Group",
 		display = function()
-			local dict = dicts.active(true)
-			if dict then return dict.id
+			local group = dicts.active_group()
+			if group then return group
 			else return {style = {"menu_info", "unset"}, "none"} end
 		end
 	}
@@ -45,16 +45,16 @@ function DictTargetMenu:new()
 			action = function() anki.switch_target(1); dtm.menu:redraw() end
 		},
 		{
-			id = "prev_dict",
+			id = "prev_dict_group",
 			default = "Alt+UP",
-			desc = "Switch to the previous dictionary",
-			action = function() dicts.switch(-1); dtm.menu:redraw() end
+			desc = "Switch to the previous dictionary group",
+			action = function() dicts.switch_group(-1); dtm.menu:redraw() end
 		},
 		{
-			id = "next_dict",
+			id = "next_dict_group",
 			default = "Alt+DOWN",
-			desc = "Switch to the next dictionary",
-			action = function() dicts.switch(1); dtm.menu:redraw() end
+			desc = "Switch to the next dictionary group",
+			action = function() dicts.switch_group(1); dtm.menu:redraw() end
 		},
 		{
 			id = "reimport_dicts",

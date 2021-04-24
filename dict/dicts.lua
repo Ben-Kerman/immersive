@@ -13,6 +13,9 @@ local msg = require "systems.message"
 local conv = cfg_util.convert
 
 local common_entr_def = {
+	group = {
+		default = "default"
+	},
 	type = {
 		required = true
 	},
@@ -105,10 +108,21 @@ local cfg_entr_def = {
 	end
 }
 
-local dict_list = ext.list_map(cfg.load_subcfg("dictionaries", cfg_entr_def), function(dict_cfg)
-	return {id = dict_cfg.name, config = dict_cfg.entries, table = nil}
-end)
-local active_dict_index = 1
+local groups = {}
+for _, dict_cfg in ipairs(cfg.load_subcfg("dictionaries", cfg_entr_def)) do
+	local group = ext.list_find(groups, function(grp)
+		return grp.name == dict_cfg.entries.group
+	end)
+	if not group then
+		group = {
+			name = dict_cfg.entries.group
+		}
+		table.insert(groups, group)
+	end
+	table.insert(group, {id = dict_cfg.name, config = dict_cfg.entries, table = nil})
+end
+
+local active_group_index = 1
 
 local function loading_overlay(id)
 	return BasicOverlay:new("initializing dictionary (" .. id .. ")...", nil, "info_overlay")
@@ -140,49 +154,59 @@ local function load_dict(dict, show_overlay, force_import)
 end
 
 mp.register_event("start-file", function()
-	for _, dict in ipairs(dict_list) do
-		local pos_override, neg_override
-		if dict.config.preload then
-			local cfg_preload = cfg_util.convert.bool(dict.config.preload)
-			pos_override = cfg_preload == true
-			neg_override = cfg_preload == false
-		end
+	for _, group in ipairs(groups) do
+		for _, dict in ipairs(group) do
+			local pos_override, neg_override
+			if dict.config.preload then
+				local cfg_preload = cfg_util.convert.bool(dict.config.preload)
+				pos_override = cfg_preload == true
+				neg_override = cfg_preload == false
+			end
 
-		if not neg_override and (cfg.values.preload_dictionaries or pos_override) then
-			load_dict(dict, cfg.values.startup_dict_overlay)
+			if not neg_override and (cfg.values.preload_dictionaries or pos_override) then
+				load_dict(dict, cfg.values.startup_dict_overlay)
+			end
 		end
 	end
 end)
 
+local function active_group()
+	local group = groups[active_group_index]
+	if not group then
+		return nil
+	end
+
+	return group
+end
+
 local dicts = {}
 
+function dicts.active_group()
+	return active_group().name
+end
+
 function dicts.count()
-	return #dict_list
+	return #active_group()
 end
 
 function dicts.at(index, block_loading)
-	local dict = dict_list[index]
+	local dict = active_group()[index]
 	if not dict then return nil end
 
 	if block_loading then return dict
 	else return load_dict(dict, true) end
 end
 
-function dicts.active(block_loading)
-	local dict = dicts.at(active_dict_index, block_loading)
-	if not dict then
-		msg.warn("no dictionaries found")
-	else return dict end
-end
-
-function dicts.switch(dir)
-	active_dict_index = ext.num_limit(active_dict_index + dir, 1, #dict_list)
+function dicts.switch_group(dir)
+	active_group_index = ext.num_limit(active_group_index + dir, 1, #groups)
 end
 
 function dicts.reimport_all()
-	for _, dict in ipairs(dict_list) do
-		if util.is_imported(dict) then
-			load_dict(dict, true, true)
+	for _, group in ipairs(groups) do
+		for _, dict in ipairs(group) do
+			if util.is_imported(dict) then
+				load_dict(dict, true, true)
+			end
 		end
 	end
 end
