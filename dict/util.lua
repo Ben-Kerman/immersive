@@ -127,4 +127,19 @@ function util.apply_transforms(term, trf_cfg)
 	return terms
 end
 
+function util.lookup_common_transform(term, config, data)
+	local terms = util.apply_transforms(term, config.transformations)
+
+	local results = {}
+	for _, term in ipairs(terms) do
+		local indices = data.index[term]
+		if indices then
+			for _, res in ipairs(indices) do
+				ext.list_insert_cond(results, res)
+			end
+		end
+	end
+	return results
+end
+
 return util

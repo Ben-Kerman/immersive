@@ -125,6 +125,11 @@ local function generate_dict_table(config, data)
 				return util.find_start_matches(trimmed, data, list_search_terms)
 			end)
 		end,
+		look_up_transform = function(term)
+			return lookup_common(term, function(trimmed)
+				return util.lookup_common_transform(term, config, data)
+			end)
+		end,
 		get_definition = function(id)
 			local entry = data.entries[id]
 			local word = entry.trms[1]

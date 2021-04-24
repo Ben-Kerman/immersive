@@ -11,7 +11,8 @@ local templater = require "systems.templater"
 
 local ltypes = {
 	exact = {},
-	prefix = {}
+	prefix = {},
+	transform = {}
 }
 
 local DefinitionSelect = {ltypes = ltypes}
@@ -20,7 +21,8 @@ DefinitionSelect.__index = DefinitionSelect
 local function lookup_fn(dict, ltype)
 	return ({
 		[ltypes.exact] = dict.look_up_exact,
-		[ltypes.prefix] = dict.look_up_start
+		[ltypes.prefix] = dict.look_up_start,
+		[ltypes.transform] = dict.look_up_transform
 	})[ltype]
 end
 

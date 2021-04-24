@@ -39,6 +39,12 @@ function TargetSelect:new(data, menu_lvl)
 			action = function() ts:select_target_def(ltypes.prefix) end
 		},
 		{
+			id = "lookup_transform",
+			default = "Ctrl+ENTER",
+			desc = "Look up words after applying transformations",
+			action = function() ts:select_target_def(ltypes.transform) end
+		},
+		{
 			id = "lookup_clipboard",
 			default = "v",
 			desc = "Look up word from clipboard",

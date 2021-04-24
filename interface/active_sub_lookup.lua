@@ -48,6 +48,12 @@ function ActiveSubLookup:new()
 			action = function() asl:lookup(ltypes.prefix) end
 		},
 		{
+			id = "transform",
+			default = "Ctrl+ENTER",
+			desc = "Look up words after applying transformations",
+			action = function() asl:lookup(ltypes.transform) end
+		},
+		{
 			id = "copy",
 			default = "c",
 			desc = "Copy selection to clipboard",
