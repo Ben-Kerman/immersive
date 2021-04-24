@@ -17,7 +17,14 @@ local function load_table(path)
 end
 
 return function(path)
+	if not path then
+		return nil, "argument missing"
+	end
+
 	local inflections = load_table(path)
+	if not inflections then
+		return nil, "inflection table could not be loaded: " .. path
+	end
 
 	return function(word)
 		local base_forms = {}
