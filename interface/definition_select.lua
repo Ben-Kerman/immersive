@@ -9,17 +9,29 @@ local menu_stack = require "interface.menu_stack"
 local msg = require "systems.message"
 local templater = require "systems.templater"
 
-local DefinitionSelect = {}
+local ltypes = {
+	exact = {},
+	prefix = {}
+}
+
+local DefinitionSelect = {ltypes = ltypes}
 DefinitionSelect.__index = DefinitionSelect
 
-function DefinitionSelect:new(word, prefix, data)
+local function lookup_fn(dict, ltype)
+	return ({
+		[ltypes.exact] = dict.look_up_exact,
+		[ltypes.prefix] = dict.look_up_start
+	})[ltype]
+end
+
+function DefinitionSelect:new(word, ltype, data)
 	local dict_cfg = dicts.active()
 	if not dict_cfg or not dict_cfg.table then
 		return nil
 	end
 
 	local dict = dict_cfg.table
-	local result = (prefix and dict.look_up_start or dict.look_up_exact)(word)
+	local result = lookup_fn(dict, ltype)(word)
 
 	if not result then
 		msg.info("no definitions found")

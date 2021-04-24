@@ -23,19 +23,20 @@ local function line_conv(sub) return helper.short_str(sub.text, 24, "\226\128\13
 function TargetSelect:new(data, menu_lvl)
 	local ts
 
+	local ltypes = DefinitionSelect.ltypes
 	local bindings = {
 		group = "target_select",
 		{
 			id = "lookup_exact",
 			default = "ENTER",
 			desc = "Look up selected word",
-			action = function() ts:select_target_def(false) end
+			action = function() ts:select_target_def(ltypes.exact) end
 		},
 		{
 			id = "lookup_partial",
 			default = "Shift+ENTER",
 			desc = "Look up words starting with selection",
-			action = function() ts:select_target_def(true) end
+			action = function() ts:select_target_def(ltypes.prefix) end
 		},
 		{
 			id = "lookup_clipboard",
@@ -113,11 +114,11 @@ function TargetSelect:new(data, menu_lvl)
 	return ts
 end
 
-local function lookup(word, prefix, data)
-	menu_stack.push(DefinitionSelect:new(word, prefix, data))
+local function lookup(word, ltype, data)
+	menu_stack.push(DefinitionSelect:new(word, ltype, data))
 end
 
-function TargetSelect:select_target_def(prefix)
+function TargetSelect:select_target_def(ltype)
 	if cfg.values.max_targets ~= 0 and #self.data.definitions >= cfg.values.max_targets then
 		msg.info("configured target word limit (" .. cfg.values.max_targets .. ") reached")
 		return
@@ -126,7 +127,7 @@ function TargetSelect:select_target_def(prefix)
 	local selection = self.tgt_word_sel:selection(true)
 	if not selection then return end
 
-	lookup(selection, prefix, self.data)
+	lookup(selection, ltype, self.data)
 end
 
 function TargetSelect:clipboard_lookup()
@@ -136,7 +137,7 @@ function TargetSelect:clipboard_lookup()
 		return
 	end
 
-	lookup(word, false, self.data)
+	lookup(word, DefinitionSelect.ltypes.exact, self.data)
 end
 
 function TargetSelect:delete_line()

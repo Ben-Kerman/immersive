@@ -26,6 +26,7 @@ function ActiveSubLookup:new()
 
 	local asl
 
+	local ltypes = DefinitionSelect.ltypes
 	local bindings = {
 		group = "lookup_active",
 		{
@@ -38,13 +39,13 @@ function ActiveSubLookup:new()
 			id = "exact",
 			default = "ENTER",
 			desc = "Look up selected word",
-			action = function() asl:lookup(false) end
+			action = function() asl:lookup(ltypes.exact) end
 		},
 		{
 			id = "partial",
 			default = "Shift+ENTER",
 			desc = "Look up words starting with selection",
-			action = function() asl:lookup(true) end
+			action = function() asl:lookup(ltypes.prefix) end
 		},
 		{
 			id = "copy",
@@ -70,11 +71,11 @@ function ActiveSubLookup:new()
 	return asl
 end
 
-function ActiveSubLookup:lookup(prefix)
+function ActiveSubLookup:lookup(ltype)
 	local selection = self.txt_sel:selection(true)
 	if not selection then return end
 
-	menu_stack.push(DefinitionSelect:new(selection, prefix))
+	menu_stack.push(DefinitionSelect:new(selection, ltype))
 end
 
 function ActiveSubLookup:toggle_raw()
