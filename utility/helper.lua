@@ -119,7 +119,7 @@ local default_escape_table = {
 	[0x74] = 0x09, -- \t
 	[0x76] = 0x0B  -- \v
 }
-function helper.parse_with_escape(str, escape_char, search, init, escape_table)
+function helper.parse(str, escape_char, search, init, escape_table)
 	if not escape_char then escape_char = "\\" end
 	if not escape_table then escape_table = default_escape_table end
 

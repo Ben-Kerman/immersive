@@ -25,9 +25,9 @@ end
 local function parse_substitutions(cfg_value)
 	local defs = ext.string_split(cfg_value, "\n", true)
 	return ext.list_map(defs, function(def)
-		local repl, lt_pos = helper.parse_with_escape(def, nil, "<")
+		local repl, lt_pos = helper.parse(def, nil, "<")
 		if lt_pos then
-			local pattern = helper.parse_with_escape(def, nil, nil, lt_pos + 1)
+			local pattern = helper.parse(def, nil, nil, lt_pos + 1)
 			-- pcall to verify that the pattern is valid
 			if pcall(string.find, "", pattern) then
 				return {pattern = pattern, repl = repl}

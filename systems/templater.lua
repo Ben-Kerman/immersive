@@ -67,7 +67,7 @@ local function parse_affixes(str, init_pos, subst)
 
 	while true do
 		local mpos, match
-		affix, mpos, match = helper.parse_with_escape(str, nil, ":}", pos)
+		affix, mpos, match = helper.parse(str, nil, ":}", pos)
 		if mpos then pos = mpos
 		else break end
 
@@ -93,7 +93,7 @@ local function parse_substitution(str, init_pos)
 	local id_parts = {}
 	local affixes_left = false
 	while true do
-		local id_part, mpos, match = helper.parse_with_escape(str, nil, "[:}", pos)
+		local id_part, mpos, match = helper.parse(str, nil, "[:}", pos)
 		if #id_part ~= 0 then
 			table.insert(id_parts, id_part)
 		end
@@ -143,7 +143,7 @@ local function segment_str(str)
 	local pos = 1
 	while pos do
 		local escaped, match
-		escaped, pos, match = helper.parse_with_escape(str, nil, "{", pos)
+		escaped, pos, match = helper.parse(str, nil, "{", pos)
 		if #escaped ~= 0 then
 			table.insert(segments, escaped)
 		end
