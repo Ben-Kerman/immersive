@@ -17,14 +17,13 @@ function ScreenBlackout:new()
 	sb = setmetatable({
 		observer = observer,
 		overlay = mp.create_osd_overlay("ass-events"),
-		handler = function(show)
+		bus_ref = bus.listen("set_blackouts", function(show)
 			if show then sb:show()
 			else sb:hide() end
-		end
+		end)
 	}, ScreenBlackout)
 
 	sb.overlay.z = -1
-	bus.listen("set_blackouts", sb.handler)
 
 	return sb
 end
@@ -55,7 +54,7 @@ function ScreenBlackout:hide()
 end
 
 function ScreenBlackout:cancel()
-	bus.unlisten("set_blackouts", self.handler)
+	bus.unlisten("set_blackouts", self.bus_ref)
 	self:hide()
 end
 
