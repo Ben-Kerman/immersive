@@ -218,6 +218,13 @@ local function generate_dict_table(config, data)
 		end)
 	end
 
+	function lookup_common(term, fn)
+		if util.check_dict_data(data) then
+			local trimmed = ext.string_trim(term)
+			return export_entries(fn(trimmed, data))
+		else return nil end
+	end
+
 	local exporter = util.load_exporter("yomichan", config.exporter)
 	return {
 		format_quick_def = function(qdef)
@@ -239,15 +246,14 @@ local function generate_dict_table(config, data)
 			return rendered
 		end,
 		look_up_exact = function(term)
-			if util.check_dict_data(data) then
-				return export_entries(data.index[ext.string_trim(term)])
-			else return nil end
+			return lookup_common(term, function(trimmed)
+				return data.index[ext.string_trim(term)]
+			end)
 		end,
 		look_up_start = function(term)
-			if util.check_dict_data(data) then
-				local trimmed = ext.string_trim(term)
-				return export_entries(util.find_start_matches(trimmed, data, list_search_terms))
-			else return nil end
+			return lookup_common(term, function(trimmed)
+				return util.find_start_matches(trimmed, data, list_search_terms)
+			end)
 		end,
 		get_definition = function(id)
 			local entry = data.entries[id]
