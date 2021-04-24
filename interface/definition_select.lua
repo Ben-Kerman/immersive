@@ -70,6 +70,7 @@ function DefinitionSelect:new(term, ltype, data)
 	}
 
 	ds = setmetatable({
+		visible = false,
 		term = term,
 		ltype = ltype,
 		dict_index = 1,
@@ -90,18 +91,22 @@ function DefinitionSelect:switch_dict(step)
 		msg.info("no more dictionaries")
 	else
 		self.dict_index = new_index
-		self.menu:redraw()
+		if self.visible then
+			self.menu:redraw()
+		end
 		self:look_up()
 	end
 end
 
 function DefinitionSelect:look_up()
 	local function switch_lu(new_lu)
-		if self.active_lu then
+		if self.active_lu and self.visible then
 			self.active_lu.ls:hide()
 		end
 		self.active_lu = new_lu
-		self.active_lu.ls:show()
+		if self.visible then
+			self.active_lu.ls:show()
+		end
 	end
 
 	local existing_lu = self.lookups[self.dict_index]
@@ -150,11 +155,13 @@ end
 function DefinitionSelect:show()
 	self.menu:show()
 	self.active_lu.ls:show()
+	self.visible = true
 end
 
 function DefinitionSelect:hide()
 	self.active_lu.ls:hide()
 	self.menu:hide()
+	self.visible = false
 end
 
 function DefinitionSelect:cancel()
