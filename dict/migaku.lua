@@ -98,7 +98,7 @@ local function generate_dict_table(config, data)
 		end)
 	end
 
-	function lookup_common(term, fn)
+	local function lookup_common(term, fn)
 		if util.check_dict_data(data) then
 			local trimmed = ext.string_trim(term)
 			return export_entries(fn(trimmed, data))
