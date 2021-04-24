@@ -1,6 +1,7 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
 local BasicOverlay = require "interface.basic_overlay"
+local bus = require "systems.bus"
 local cfg = require "systems.config"
 local cfg_util = require "systems.config_util"
 local ext = require "utility.extension"
@@ -199,6 +200,7 @@ end
 
 function dicts.switch_group(dir)
 	active_group_index = ext.num_limit(active_group_index + dir, 1, #groups)
+	bus.fire("dict_group_change")
 end
 
 function dicts.reimport_all()

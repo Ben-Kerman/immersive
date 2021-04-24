@@ -1,6 +1,7 @@
 -- Immersive is licensed under the terms of the GNU GPL v3: https://www.gnu.org/licenses/; © 2021 Ben Kerman
 
 local BasicOverlay = require "interface.basic_overlay"
+local bus = require "systems.bus"
 local cfg = require "systems.config"
 local dicts = require "dict.dicts"
 local helper = require "utility.helper"
@@ -77,7 +78,16 @@ function DefinitionSelect:new(term, ltype, data)
 		lookups = {},
 		active_lu = nil,
 		data = data,
-		menu = Menu:new{bindings = bindings, infos = infos}
+		menu = Menu:new{bindings = bindings, infos = infos},
+		bus_ref = bus.listen("dict_group_change", function()
+			ds.dict_index = 1
+			ds.lookups = {}
+			ds.active_lu = nil
+			ds:look_up()
+			if ds.visible then
+				ds.menu:redraw()
+			end
+		end)
 	}, DefinitionSelect)
 
 	if not ds:look_up() and dicts.count() == 1 then
@@ -170,6 +180,7 @@ function DefinitionSelect:hide()
 end
 
 function DefinitionSelect:cancel()
+	bus.unlisten("dict_group_change", self.bus_ref)
 	self:hide()
 end
 
