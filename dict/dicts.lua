@@ -156,15 +156,19 @@ end)
 
 local dicts = {}
 
-function dicts.active(block_loading)
-	local dict = dict_list[active_dict_index]
-	if not dict then
-		msg.warn("no dictionaries found")
-		return nil
-	end
+function dicts.at(index, block_loading)
+	local dict = dict_list[index]
+	if not dict then return nil end
 
 	if block_loading then return dict
 	else return load_dict(dict, true) end
+end
+
+function dicts.active(block_loading)
+	local dict = dicts.at(active_dict_index, block_loading)
+	if not dict then
+		msg.warn("no dictionaries found")
+	else return dict end
 end
 
 function dicts.switch(dir)
