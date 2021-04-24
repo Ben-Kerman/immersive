@@ -99,4 +99,32 @@ function util.check_dict_data(data)
 	return true
 end
 
+local function load_transform(cfg)
+	local status, trf_loader = pcall(require, "dict.transform." .. cfg.id)
+	if status then
+		local args = cfg.args or {}
+		return trf_loader(table.unpack(args))
+	else return nil, "unknown ID: " .. cfg.id end
+end
+
+function util.apply_transforms(term, trf_cfg)
+	local terms = {term}
+	if not trf_cfg or #trf_cfg == 0 then
+		return terms
+	end
+
+	for _, trf_cfg in ipairs(trf_cfg) do
+		local trf, err = load_transform(trf_cfg)
+		if trf then
+			for _, res in ipairs(trf(term)) do
+				ext.list_insert_cond(terms, res)
+			end
+		else
+			msg.error("ignoring invalid transformation '" .. trf_cfg.id .. "': " .. err)
+		end
+	end
+
+	return terms
+end
+
 return util
