@@ -152,6 +152,13 @@ local function validate_value(val, vldt_def)
 		end
 	end
 
+	if vldt_def.fn then
+		local valid, err = vldt_def.fn(val)
+		if not valid then
+			return false, err
+		end
+	end
+
 	return true
 end
 
