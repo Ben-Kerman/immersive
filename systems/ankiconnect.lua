@@ -91,7 +91,7 @@ function ankiconnect.load_profile(profile)
 	})
 end
 
-local function make_note(fields, options)
+local function make_note(fields, options, tags)
 	local tgt = anki.active_target("could not make note")
 	if not tgt then return end
 
@@ -100,7 +100,7 @@ local function make_note(fields, options)
 		modelName = tgt.note_type,
 		fields = fields,
 		options = options,
-		tags = tgt.tags
+		tags = tags
 	}
 end
 
@@ -109,28 +109,28 @@ function ankiconnect.can_add_note(fields)
 	if not tgt then return end
 
 	local res = request("canAddNotes", {
-		notes = {make_note(fields, {allowDuplicate = true})}
+		notes = {make_note(fields, {allowDuplicate = true}, tags)}
 	})
 	if not res then return false
 	else return res[1] end
 end
 
-local function add_note_generic(fields, action, options, err_msg)
+local function add_note_generic(fields, action, options, tags, err_msg)
 	local tgt = anki.active_target("could not " .. err_msg)
 	if not tgt then return end
 
 	return request(action, {
-		note = make_note(fields, options)
+		note = make_note(fields, options, tags)
 	})
 end
 
-function ankiconnect.add_note(fields)
-	return add_note_generic(fields, "addNote", {allowDuplicate = true}, "add note")
+function ankiconnect.add_note(fields, tags)
+	return add_note_generic(fields, "addNote", {allowDuplicate = true}, tags, "add note")
 end
 
-function ankiconnect.gui_add_cards(fields)
-	-- if closeAfterAdding == true, the note type isn't set correctly
-	return add_note_generic(fields, "guiAddCards", --[[{closeAfterAdding = true}]]nil, "open card GUI")
+function ankiconnect.gui_add_cards(fields, tags)
+	-- with closeAfterAdding the note type in the GUI won't be correct
+	return add_note_generic(fields, "guiAddCards", --[[{closeAfterAdding = true}]]nil, tags, "open card GUI")
 end
 
 function ankiconnect.update_note_fields(note_id, fields)

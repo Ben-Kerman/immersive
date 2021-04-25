@@ -210,10 +210,20 @@ local function prepare_fields(data, prev_contents)
 		fields[name] = replace_field_vars(field_params)
 	end
 
-	return fields, params.tgt
+	local tags = {}
+	for _, tag in ipairs(params.tgt.tags) do
+		local tag_params = ext.map_merge(params)
+		tag_params.field_def = tag
+
+		local rendered = replace_field_vars(tag_params)
+		local no_space = rendered:gsub(" ", "_"):gsub("　", "＿")
+		table.insert(tags, no_space)
+	end
+
+	return fields, tags, params.tgt
 end
 
-local function fill_first_field(fields, tgt, ignore_nil)
+local function fill_first_field(fields, tags, tgt, ignore_nil)
 	if not fields then return end
 
 	local field_names = ankicon.model_field_names(tgt.note_type)
@@ -221,7 +231,7 @@ local function fill_first_field(fields, tgt, ignore_nil)
 	if (not first_field and not ignore_nil) or (first_field and #first_field == 0) then
 		fields[field_names[1]] = "<i>placeholder</i>"
 	end
-	return fields
+	return fields, tags
 end
 
 local function save_menus(data)
@@ -245,9 +255,9 @@ end
 
 function export.execute(data)
 	local state = save_menus(data)
-	local fields = fill_first_field(prepare_fields(data))
+	local fields, tags = fill_first_field(prepare_fields(data))
 	if fields then
-		if ankicon.add_note(fields) then
+		if ankicon.add_note(fields, tags) then
 			drop_menus(state)
 			msg.info("note added successfully")
 			return
@@ -259,9 +269,9 @@ end
 
 function export.execute_gui(data)
 	local state = save_menus(data)
-	local fields = prepare_fields(data)
+	local fields, tags = prepare_fields(data)
 	if fields then
-		if ankicon.gui_add_cards(fields) then
+		if ankicon.gui_add_cards(fields, tags) then
 			drop_menus(state)
 			msg.info("'Add' GUI opened")
 			return
@@ -298,7 +308,7 @@ function export.execute_add(data, note)
 			return field_name, content.value
 		end)
 
-		local fields, tgt = prepare_fields(data, prev_fields)
+		local fields, _, tgt = prepare_fields(data, prev_fields)
 		if fields then
 			local new_fields = fill_first_field(combine_fields(prev_fields, fields, tgt), tgt, true)
 
