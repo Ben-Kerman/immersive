@@ -198,13 +198,15 @@ local function validate_entries(path, entries, entr_def, section_name)
 		else vldt_warn("ignoring entry with invalid key", path, key, section_name) end
 	end
 
+	local valid = true
 	for key, def in pairs(entr_def.items) do
 		if def.required and result[key] == nil then
 			vldt_warn("required entry missing", path, key, section_name)
+			valid = false
 		end
 	end
 
-	return result
+	return valid and result or nil
 end
 
 local function apply_defaults(entries, entr_def)
@@ -232,7 +234,10 @@ local function apply_def(path, raw, def)
 	if raw.global and (def.entries or def.global_as_base) then
 		local entr_def_val = def.global_as_base and def.section_entries or def.entries
 		local entr_def = entr_def_for(entr_def_val, raw.global)
-		global_entries = validate_entries(path, raw.global, entr_def)
+		local validated = validate_entries(path, raw.global, entr_def)
+		if validated then
+			global_entries = validated
+		end
 	end
 
 	local result = {}
@@ -240,17 +245,19 @@ local function apply_def(path, raw, def)
 		for _, section in ipairs(raw) do
 			local entr_def = entr_def_for(def.section_entries, section.entries)
 			local validated = validate_entries(path, section.entries, entr_def, section.name)
-			if def.global_as_base then
-				for key, value in pairs(global_entries) do
-					if validated[key] == nil then
-						validated[key] = value
+			if validated then
+				if def.global_as_base then
+					for key, value in pairs(global_entries) do
+						if validated[key] == nil then
+							validated[key] = value
+						end
 					end
 				end
+				table.insert(result, {
+					name = section.name,
+					entries = apply_defaults(validated, entr_def)
+				})
 			end
-			table.insert(result, {
-				name = section.name,
-				entries = apply_defaults(validated, entr_def)
-			})
 		end
 	end
 
