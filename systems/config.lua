@@ -121,7 +121,7 @@ local function parse_warn(msg_txt, file, line)
 	msg.warn(msg_str)
 end
 
-local function vldt_warn(msg_txt, file, key, section)
+local function vldt_warn(msg_txt, file, key, section, lvl)
 	local msg_str = file
 	if section then
 		msg_str = msg_str .. ", section [" .. section .. "]"
@@ -131,7 +131,7 @@ local function vldt_warn(msg_txt, file, key, section)
 	end
 	msg_str = msg_str .. ": " .. msg_txt
 
-	msg.warn(msg_str)
+	msg[lvl and lvl or "warn"](msg_str)
 end
 
 local _allow_fmt = "value '%s' not allowed, possible values: '%s'"
@@ -201,7 +201,7 @@ local function validate_entries(path, entries, entr_def, section_name)
 	local valid = true
 	for key, def in pairs(entr_def.items) do
 		if def.required and result[key] == nil then
-			vldt_warn("required entry missing", path, key, section_name)
+			vldt_warn("required entry missing", path, key, section_name, "error")
 			valid = false
 		end
 	end
