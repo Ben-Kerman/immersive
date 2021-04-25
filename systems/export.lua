@@ -235,22 +235,28 @@ local function fill_first_field(fields, tags, tgt, ignore_nil)
 end
 
 local function save_menus(data)
-	bus.fire("set_blackouts", false)
-	return {
-		msg = msg.info("exporting note", 0),
-		menus = menu_stack.save(data.level)
-	}
+	if data.level then
+		bus.fire("set_blackouts", false)
+		return {
+			msg = msg.info("exporting note", 0),
+			menus = menu_stack.save(data.level)
+		}
+	else return nil end
 end
 
 local function restore_menus(state)
-	msg.remove(state.msg)
-	menu_stack.restore(state.menus)
-	bus.fire("set_blackouts", true)
+	if state then
+		msg.remove(state.msg)
+		menu_stack.restore(state.menus)
+		bus.fire("set_blackouts", true)
+	end
 end
 
 local function drop_menus(state)
-	msg.remove(state.msg)
-	menu_stack.drop(state.menus)
+	if state then
+		msg.remove(state.msg)
+		menu_stack.drop(state.menus)
+	end
 end
 
 function export.execute(data)
