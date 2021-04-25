@@ -17,30 +17,18 @@ local function get_conf(config)
 		single_template = "{{readings[1]}}:{{readings[2:] (:):　}} {{keywords:::; }}"
 	}
 
-	local filtered = ext.map_filter_keys(config, function(key)
-		return ext.string_starts(key, "export:")
-	end)
-
-	for key, val in pairs(filtered) do
-		key_no_prefix = string.sub(key, 8)
-		if type(default[key_no_prefix]) == "boolean" then
-			val = cfg_util.convert_bool(val)
+	for key, val in pairs(config) do
+		if ext.string_starts(key, "export:") then
+			default[string.sub(key, 8)] = val
 		end
-		default[key_no_prefix] = val
 	end
 
 	return default
 end
 
-local function format_number(num, digit_str)
+local function format_number(num, replacements)
 	local basic = tostring(num)
-	if not digit_str then return basic end
-
-	local replacements = utf_8.codepoints(digit_str)
-	if #replacements ~= 10 then
-		msg.warn("digit replacement has the wrong length: " .. digit_str)
-		return basic
-	end
+	if not replacements then return basic end
 
 	local digits = utf_8.codepoints(basic)
 	local new_digits = {}

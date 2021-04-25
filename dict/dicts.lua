@@ -10,6 +10,7 @@ local util = require "dict.util"
 local kbds = require "systems.key_bindings"
 local menu_stack = require "interface.menu_stack"
 local msg = require "systems.message"
+local utf_8 = require "utility.utf_8"
 
 local conv = cfg_util.convert
 
@@ -80,11 +81,22 @@ local entr_defs = {
 		insert_cjk_breaks = {
 			convert = conv.bool
 		},
-		["export:digits"] = {},
+		["export:digits"] = {
+			convert = function(val)
+				return utf_8.codepoints(val)
+			end,
+			validate = {
+				fn = function(cdpts)
+					return #cdpts == 10, "number of digits ≠ 10"
+				end
+			}
+		},
 		["export:reading_template"] = {},
 		["export:definition_template"] = {},
 		["export:template"] = {},
-		["export:use_single_template"] = {},
+		["export:use_single_template"] = {
+			convert = conv.bool
+		},
 		["export:single_template"] = {}
 	},
 	migaku = {
