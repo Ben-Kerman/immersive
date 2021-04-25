@@ -51,7 +51,7 @@ function extension.list_max(list, cmp)
 	end
 
 	local max = list[1]
-	for i, v in ipairs(list) do
+	for _, v in ipairs(list) do
 		if cmp(max, v) then max = v end
 	end
 	return max
@@ -59,8 +59,8 @@ end
 
 function extension.list_filter(list, predicate)
 	local res = {}
-	for _, val in ipairs(list) do
-		if predicate(val) then
+	for i, val in ipairs(list) do
+		if predicate(val, i) then
 			table.insert(res, val)
 		end
 	end

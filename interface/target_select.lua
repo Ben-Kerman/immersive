@@ -19,6 +19,7 @@ TargetSelect.__index = TargetSelect
 
 local function sel_conv(sub) return (sub.text:gsub("\n", "\226\128\139")) end
 local function line_conv(sub) return helper.short_str(sub.text, 24, "\226\128\139") end
+local function sub_change_handler(sub, txt) sub.text = txt end
 
 function TargetSelect:new(data, menu_lvl)
 	local ts
@@ -64,7 +65,7 @@ function TargetSelect:new(data, menu_lvl)
 		},
 		{
 			id = "delete_line",
-			default = "DEL",
+			default = "Alt+DEL",
 			desc = "Delete selected line",
 			action = function() ts:delete_line() end
 		},
@@ -76,7 +77,7 @@ function TargetSelect:new(data, menu_lvl)
 		},
 		{
 			id = "undo_selection",
-			default = "BS",
+			default = "Alt+BS",
 			desc = "Delete last target word",
 			action = function()
 				table.remove(ts.data.definitions)
@@ -104,7 +105,7 @@ function TargetSelect:new(data, menu_lvl)
 	ts = setmetatable({
 		data = data,
 		menu_lvl = menu_lvl and menu_lvl or 1,
-		tgt_word_sel = LineTextSelect:new(data.subtitles, line_conv, sel_conv, 9, init_line),
+		tgt_word_sel = LineTextSelect:new(data.subtitles, line_conv, sel_conv, 9, init_line, sub_change_handler),
 		word_overlay = BasicOverlay:new(data.definitions, function(defs, ssa_def)
 			for _, def in ipairs(defs) do
 				table.insert(ssa_def, {

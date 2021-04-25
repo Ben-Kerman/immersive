@@ -255,6 +255,21 @@ function TextSelect:move_curs(mdir, mtype, sel)
 	self:update(true)
 end
 
+function TextSelect:delete(mdir, mtype)
+	local first, last
+	if not self:has_sel() then
+		self:move_curs(mdir, mtype, true)
+	end
+	first, last = self.sel.from, self.sel.to - 1
+
+	self.sel = {curs = self.sel.from, from = self.sel.from, to = self.sel.from}
+	self.cdpts = ext.list_filter(self.cdpts, function(_, i)
+		return i < first or last < i
+	end)
+	self.change_handler(utf_8.string(self.cdpts))
+	self:update(true)
+end
+
 function TextSelect:show()
 	kbds.add(self.bindings)
 	self:update(true)
@@ -327,7 +342,30 @@ local binding_ids = {
 	}
 }
 
-function TextSelect:new(text, update_handler, font_size, no_style_reset, curs_pos)
+local delete_keys = {
+	[mvmt_dir.left] = {
+		[mvmt_type.char] = {
+			id = "del_prev_char",
+			default = "BS"
+		},
+		[mvmt_type.word] = {
+			id = "del_prev_word",
+			default = "Ctrl+BS"
+		}
+	},
+	[mvmt_dir.right] = {
+		[mvmt_type.char] = {
+			id = "del_next_char",
+			default = "DEL"
+		},
+		[mvmt_type.word] = {
+			id = "del_next_word",
+			default = "Ctrl+DEL"
+		}
+	}
+}
+
+function TextSelect:new(text, update_handler, font_size, no_style_reset, curs_pos, change_handler)
 	if not curs_pos then curs_pos = 1 end
 
 	local ts
@@ -335,6 +373,7 @@ function TextSelect:new(text, update_handler, font_size, no_style_reset, curs_po
 		cdpts = utf_8.codepoints(text),
 		sel = {curs = curs_pos, from = curs_pos, to = curs_pos},
 		update_handler = update_handler and update_handler or default_update_handler,
+		change_handler = change_handler,
 		font_size = font_size and font_size or ssa.query{"text_select", "font_size"},
 		style_reset = not no_style_reset,
 		bindings = (function()
@@ -347,6 +386,18 @@ function TextSelect:new(text, update_handler, font_size, no_style_reset, curs_po
 							id = id,
 							default = sel and sel_modifier .. key or key,
 							action = function() ts:move_curs(mdir, mtype, sel) end,
+							repeatable = true
+						})
+					end
+				end
+			end
+			if change_handler then
+				for mdir, mtypes in pairs(delete_keys) do
+					for mtype, def in pairs(mtypes) do
+						table.insert(tbl, {
+							id = def.id,
+							default = def.default,
+							action = function() ts:delete(mdir, mtype) end,
 							repeatable = true
 						})
 					end

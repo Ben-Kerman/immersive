@@ -153,9 +153,9 @@ Available during target selection.
 | `lookup_partial`   | `Shift+ENTER` | look up words starting with selection        |
 | `lookup_clipboard` | `v`           | look up word from clipboard                  |
 | `add_word_audio`   | `a`           | add Forvo audio for target word              |
-| `delete_line`      | `DEL`         | delete selected line                         |
+| `delete_line`      | `Alt+DEL`     | delete selected line                         |
 | `preview_audio`    | `p`           | preview selection audio                      |
-| `undo_selection`   | `BS`          | delete last target word                      |
+| `undo_selection`   | `Alt+BS`      | delete last target word                      |
 | `export`           | `f`           | export with selected target words            |
 | `export_menu`      | `F`           | export with selected target words using menu |
 
@@ -191,6 +191,16 @@ Available whenever text is selectable.
 | `next_word_sel` | `Ctrl+Shift+RIGHT` | move selection boundary to the right by a word      |
 | `home_sel`      | `Shift+HOME`       | select from cursor to the start of the text         |
 | `end_sel`       | `Shift+END`        | select from cursor to the end of the text           |
+
+If the text can be changed (e.g. during target selection) the following keys
+become available:
+
+| ID              | Key        | Action                                   |
+| --------------- | ---------- | ---------------------------------------- |
+| `del_prev_char` | `BS`       | delete character left of the cursor      |
+| `del_next_char` | `DEL`      | delete character right of the cursor     |
+| `del_prev_word` | `Ctrl+BS`  | delete from cursor to next word boundary |
+| `del_next_word` | `Ctrl+DEL` | delete from cursor to next word boundary |
 
 ---
 

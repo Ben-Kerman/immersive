@@ -11,7 +11,7 @@ function LineTextSelect:delete_sel()
 	self._line_select:delete_sel()
 end
 
-function LineTextSelect:new(lines, line_conv, sel_conv, limit, init)
+function LineTextSelect:new(lines, line_conv, sel_conv, limit, init, change_handler)
 	local lts
 	local function _sel_conv() return lts.sel_ssa_def end
 	local function update_handler(line)
@@ -19,12 +19,19 @@ function LineTextSelect:new(lines, line_conv, sel_conv, limit, init)
 			lts.active_line = line
 			if lts._text_select then lts._text_select:finish() end
 
+			local txt_change_handler
+			if change_handler then
+				txt_change_handler = function(text)
+					change_handler(line, text)
+				end
+			end
+
 			lts._text_select = TextSelect:new(sel_conv(line), function(self, visible, has_sel, curs_pos, segments)
 				if visible then
 					lts.sel_ssa_def = self:default_generator(has_sel, curs_pos, segments)
 					lts._line_select:update()
 				else lts.sel_ssa_def = {} end
-			end, ssa.query{"line_select", "selection", "font_size"}, true)
+			end, ssa.query{"line_select", "selection", "font_size"}, true, nil, txt_change_handler)
 			lts._text_select:show()
 		end
 	end
