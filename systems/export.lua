@@ -24,28 +24,28 @@ local function anki_image_tag(filename)
 	return string.format([[<img src="%s">]], filename)
 end
 
-local function replace_field_vars(field_def, data, tgt, audio_file, image_file, word_audio_filename, start, stop, prev_value)
+local function replace_field_vars(p)
 	local abs_path = helper.current_path_abs()
 	local _, filename = mpu.split_path(abs_path)
 
 	local template_data = {
 		-- exported files --
-		audio_file = {data = audio_file},
+		audio_file = {data = p.audio_file},
 		image_file = false,
-		audio = {data = anki_sound_tag(audio_file)},
+		audio = {data = anki_sound_tag(p.audio_file)},
 		image = false,
 		-- current file --
 		path = {data = abs_path},
 		filename = {data = filename},
 		-- times --
-		start = {data = helper.format_time(start, true)},
-		["end"] = {data = helper.format_time(stop, true)},
-		start_ms = {data = helper.format_time(start)},
-		end_ms = {data = helper.format_time(stop)},
-		start_seconds = {data = string.format("%.0f", math.floor(start))},
-		end_seconds = {data = string.format("%.0f", math.floor(stop))},
-		start_seconds_ms = {data = string.format("%.3f", start)},
-		end_seconds_ms = {data = string.format("%.3f", stop)},
+		start = {data = helper.format_time(p.start, true)},
+		["end"] = {data = helper.format_time(p.stop, true)},
+		start_ms = {data = helper.format_time(p.start)},
+		end_ms = {data = helper.format_time(p.stop)},
+		start_seconds = {data = string.format("%.0f", math.floor(p.start))},
+		end_seconds = {data = string.format("%.0f", math.floor(p.stop))},
+		start_seconds_ms = {data = string.format("%.3f", p.start)},
+		end_seconds_ms = {data = string.format("%.3f", p.stop)},
 		-- series --
 		series_id = {data = series_id.id()},
 		series_title = {data = series_id.title()},
@@ -58,39 +58,39 @@ local function replace_field_vars(field_def, data, tgt, audio_file, image_file, 
 		-- previous field value when adding to card --
 		prev_content = false
 	}
-	if image_file then
-		template_data.image_file = {data = image_file}
-		template_data.image = {data = anki_image_tag(image_file)}
+	if p.image_file then
+		template_data.image_file = {data = p.image_file}
+		template_data.image = {data = anki_image_tag(p.image_file)}
 	end
-	if word_audio_filename then
-		template_data.word_audio_file = {data = word_audio_filename}
+	if p.word_audio_file then
+		template_data.word_audio_file = {data = p.word_audio_file}
 		template_data.word_audio = {
-			data = anki_sound_tag(word_audio_filename)
+			data = anki_sound_tag(p.word_audio_file)
 		}
 	end
-	if data.subtitles and #data.subtitles ~= 0 then
+	if p.data.subtitles and #p.data.subtitles ~= 0 then
 		template_data.sentences = {
-			data = data.subtitles,
+			data = p.data.subtitles,
 			sep = "<br>",
 			transform = function(sub)
 				return sub.text
 			end
 		}
 	end
-	if data.definitions and #data.definitions ~= 0 then
-		template_data.word = {data = data.definitions[1].word}
+	if p.data.definitions and #p.data.definitions ~= 0 then
+		template_data.word = {data = p.data.definitions[1].word}
 		template_data.definitions = {
-			data = ext.list_map(data.definitions, function(def) return def.definition end),
+			data = ext.list_map(p.data.definitions, function(def) return def.definition end),
 			sep = "<br>",
 			transform = function(def)
-				return helper.apply_substitutions(def, tgt.definition_substitutions)
+				return helper.apply_substitutions(def, p.tgt.definition_substitutions)
 			end
 		}
 	end
-	if prev_value then
-		template_data.prev_content = {data = prev_value}
+	if p.prev_value then
+		template_data.prev_content = {data = p.prev_value}
 	end
-	return templater.render(field_def, template_data)
+	return templater.render(p.field_def, template_data)
 end
 
 local function export_word_audio(encode_state, data)
@@ -169,42 +169,48 @@ function export.resolve_times(data)
 end
 
 local function prepare_fields(data, prev_contents)
-	local start, stop, scrot = export.resolve_times(data)
+	local params = {
+		data = data
+	}
 
-	local tgt = anki.active_target("could not execute export")
-	if not tgt then return end
+	local start, stop, scrot = export.resolve_times(data)
+	params.start, params.stop = start, stop
+
+	params.tgt = anki.active_target("could not execute export")
+	if not params.tgt then return end
 
 	local media_dir = anki.media_dir()
-	if not media_dir or not ankicon.prepare_target(tgt) then
+	if not media_dir or not ankicon.prepare_target(params.tgt) then
 		return nil
 	end
 
-	local tgt_cfg = tgt.config
+	local tgt_cfg = params.tgt.config
 
 	local encode_state = {encodes = {}}
 
-	local audio_filename = anki.generate_filename(series_id.id(), tgt_cfg.audio.extension)
+	params.audio_file = anki.generate_filename(series_id.id(), tgt_cfg.audio.extension)
 	encode_state.encodes.audio = true
-	encoder.audio(encode_state, mpu.join_path(media_dir, audio_filename), start, stop)
+	encoder.audio(encode_state, mpu.join_path(media_dir, params.audio_file), start, stop)
 
-	local image_filename
 	if cfg.take_scrot then
-		image_filename = anki.generate_filename(series_id.id(), tgt_cfg.image.extension)
+		params.image_file = anki.generate_filename(series_id.id(), tgt_cfg.image.extension)
 		encode_state.encodes.image = true
-		encoder.image(encode_state, mpu.join_path(media_dir, image_filename), scrot)
+		encoder.image(encode_state, mpu.join_path(media_dir, params.image_file), scrot)
 	end
-	local word_audio_filename = export_word_audio(encode_state, data)
+	params.word_audio_file = export_word_audio(encode_state, data)
 
 	local fields = {}
-	for name, def in pairs(tgt.fields) do
-		local prev_value
+	for name, def in pairs(params.tgt.fields) do
+		local field_params = ext.map_merge(params)
+		field_params.field_def = def
+
 		if prev_contents and prev_contents[name] then
-			prev_value = prev_contents[name]
+			field_params.prev_value = prev_contents[name]
 		end
-		fields[name] = replace_field_vars(def, data, tgt, audio_filename, image_filename, word_audio_filename, start, stop, prev_value)
+		fields[name] = replace_field_vars(field_params)
 	end
 
-	return fields, tgt
+	return fields, params.tgt
 end
 
 local function fill_first_field(fields, tgt, ignore_nil)
