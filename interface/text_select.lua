@@ -68,8 +68,8 @@ function TextSelect:cursor()
 	}
 end
 
-function TextSelect:sel_len()
-	return self.sel.to - self.sel.from
+function TextSelect:has_sel()
+	return self.sel.to - self.sel.from ~= 0
 end
 
 function TextSelect:reset_sel()
@@ -203,7 +203,7 @@ function TextSelect:move_curs(mdir, mtype, sel)
 		end
 
 		if sel then
-			if self:sel_len() ~= 0 then
+			if self:has_sel() then
 				if self.sel.curs == self.sel[to] and bnd_cmp(new_sel.curs, self.sel[from]) then
 					new_sel[from] = new_sel.curs
 					new_sel[to] = self.sel[from]
@@ -222,7 +222,7 @@ function TextSelect:move_curs(mdir, mtype, sel)
 			new_sel.to = new_sel.curs
 		end
 	else
-		if not sel and self:sel_len() ~= 0 then
+		if not sel and self:has_sel() then
 			if dir_left then
 				new_sel.curs = new_sel.from
 				new_sel.to = new_sel.from
@@ -236,7 +236,7 @@ function TextSelect:move_curs(mdir, mtype, sel)
 			if not sel then
 				new_sel.from = new_sel.curs
 				new_sel.to = new_sel.curs
-			elseif self:sel_len() ~= 0 then
+			elseif self:has_sel() then
 				local side = was_front and "from" or "to"
 				new_sel[side] = new_sel.curs
 			else
@@ -266,7 +266,7 @@ function TextSelect:hide()
 end
 
 function TextSelect:selection(force)
-	if force and self:sel_len() == 0 then
+	if force and not self:has_sel() then
 		msg.info("no text selected")
 		return nil
 	end
@@ -366,7 +366,7 @@ function TextSelect:update(visible)
 
 	local segments = {}
 	local curs_pos
-	local has_sel = self:sel_len() ~= 0
+	local has_sel = self:has_sel()
 	if has_sel then
 		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, 1, self.sel.from - 1)))
 		table.insert(segments, utf_8.string(ext.list_range(self.cdpts, self.sel.from, self.sel.to - 1)))
