@@ -31,11 +31,13 @@ function SubSelect:select_sub()
 
 		local subtitles = self.data.subtitles
 		-- check for end time, lines with identical start times get combined by mpv
-		if not ext.list_find(subtitles, function(s) return s.stop == sub.stop end) then
+		if #sub.text ~= 0 and not ext.list_find(subtitles, function(s)
+			return s.stop == sub.stop
+		end) then
 			table.insert(subtitles, sub)
 			table.sort(subtitles)
+			self.sel_overlay:redraw()
 		end
-		self.sel_overlay:redraw()
 	end
 end
 

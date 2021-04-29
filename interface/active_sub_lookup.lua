@@ -17,6 +17,9 @@ function create_text_select(txt, raw)
 	if not raw then
 		txt = helper.apply_substitutions(txt, anki.sentence_substitutions(), true)
 	end
+	if not txt then
+		txt = "－"
+	end
 	return TextSelect:new((txt:gsub("\n", "\226\128\139")))
 end
 
