@@ -316,7 +316,7 @@ function export.execute_add(data, note)
 
 		local fields, _, tgt = prepare_fields(data, prev_fields)
 		if fields then
-			local new_fields = fill_first_field(combine_fields(prev_fields, fields, tgt), tgt, true)
+			local new_fields = fill_first_field(combine_fields(prev_fields, fields, tgt), nil, tgt, true)
 
 			if ankicon.update_note_fields(updated_note.noteId, new_fields) then
 				drop_menus(state)
