@@ -93,7 +93,7 @@ local onbin_godan = {
 }
 
 local keiyoushi = {
-	"かっ", "かれ", "かろ", "く", "けれ", "さ"
+	"かっ", "かれ", "かろ", "く", "けれ", "き", "さ", "そう"
 }
 
 local function is_hiragana(cp)
