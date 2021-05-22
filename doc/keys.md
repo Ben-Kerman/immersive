@@ -177,30 +177,30 @@ selection or when picking Forvo audio.
 
 Available whenever text is selectable.
 
-| ID              | Key                | Action                                              |
-| --------------- | ------------------ | --------------------------------------------------- |
-| `prev_char`     | `LEFT`             | move one character to the left                      |
-| `next_char`     | `RIGHT`            | move one character to the right                     |
-| `prev_word`     | `Ctrl+LEFT`        | move one word to the left                           |
-| `next_word`     | `Ctrl+RIGHT`       | move one word to the right                          |
-| `home`          | `HOME`             | move to the start of the text                       |
-| `end`           | `END`              | move to the end of the text                         |
-| `prev_char_sel` | `Shift+LEFT`       | move selection boundary to the left by a character  |
-| `next_char_sel` | `Shift+RIGHT`      | move selection boundary to the right by a character |
-| `prev_word_sel` | `Ctrl+Shift+LEFT`  | move selection boundary to the left by a word       |
-| `next_word_sel` | `Ctrl+Shift+RIGHT` | move selection boundary to the right by a word      |
-| `home_sel`      | `Shift+HOME`       | select from cursor to the start of the text         |
-| `end_sel`       | `Shift+END`        | select from cursor to the end of the text           |
+| ID              | Key                | Action                                                |
+| --------------- | ------------------ | ----------------------------------------------------- |
+| `prev_char`     | `LEFT`             | move one character to the left                        |
+| `next_char`     | `RIGHT`            | move one character to the right                       |
+| `prev_word`     | `Ctrl+LEFT`        | move one word to the left                             |
+| `next_word`     | `Ctrl+RIGHT`       | move one word to the right                            |
+| `home`          | `HOME`             | move to the start of the text                         |
+| `end`           | `END`              | move to the end of the text                           |
+| `prev_char_sel` | `Shift+LEFT`       | move selection boundary to the left by one character  |
+| `next_char_sel` | `Shift+RIGHT`      | move selection boundary to the right by one character |
+| `prev_word_sel` | `Ctrl+Shift+LEFT`  | move selection boundary to the left by one word       |
+| `next_word_sel` | `Ctrl+Shift+RIGHT` | move selection boundary to the right by one word      |
+| `home_sel`      | `Shift+HOME`       | select from cursor to the start of the text           |
+| `end_sel`       | `Shift+END`        | select from cursor to the end of the text             |
 
 If the text can be changed (e.g. during target selection) the following keys
 become available:
 
-| ID              | Key        | Action                                   |
-| --------------- | ---------- | ---------------------------------------- |
-| `del_prev_char` | `BS`       | delete character left of the cursor      |
-| `del_next_char` | `DEL`      | delete character right of the cursor     |
-| `del_prev_word` | `Ctrl+BS`  | delete from cursor to next word boundary |
-| `del_next_word` | `Ctrl+DEL` | delete from cursor to next word boundary |
+| ID              | Key        | Action                                                             |
+| --------------- | ---------- | ------------------------------------------------------------------ |
+| `del_prev_char` | `BS`       | delete character left of the cursor, or selection if there is one  |
+| `del_next_char` | `DEL`      | delete character right of the cursor, or selection if there is one |
+| `del_prev_word` | `Ctrl+BS`  | delete from cursor to previous word boundary                       |
+| `del_next_word` | `Ctrl+DEL` | delete from cursor to next word boundary                           |
 
 ---
 
