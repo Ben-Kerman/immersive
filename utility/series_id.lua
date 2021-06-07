@@ -3,6 +3,8 @@
 local bus = require "systems.bus"
 local cfg = require "systems.config"
 local ext = require "utility.extension"
+local helper = require "utility.helper"
+local mpu = require "mp.utils"
 
 local cfg_def = {
 	sections = true,
@@ -50,12 +52,24 @@ local function generate_id(filename)
 	             :gsub("%-+$", ""))               -- trailing dashes
 end
 
-local function match_filename(filename)
-	local filename_lc = filename:lower()
+local function get_base()
+	local abs_path, is_url = helper.current_path_abs()
+	if not abs_path then return false end
+
+	if is_url then
+		return abs_path
+	else
+		local _, filename = mpu.split_path(abs_path)
+		return filename
+	end
+end
+
+local function match_keywords(str)
+	local str_lc = str:lower()
 	for _, values in ipairs(config) do
 		local match = true
 		for _, kw in ipairs(values.keywords) do
-			if not filename_lc:find(kw) then
+			if not str_lc:find(kw) then
 				match = false
 				break
 			end
@@ -70,23 +84,23 @@ end
 local series_id = {}
 
 function series_id.id()
-	local filename = mp.get_property("filename")
-	if not filename then return nil end
+	local base = get_base()
+	if not base then return nil end
 
-	local filename_lc = filename:lower()
-	local id = match_filename(filename_lc)
-	if id then return id, true
-	else return generate_id(filename_lc), false end
+	local id = match_keywords(base)
+	if id then
+		return id, true
+	else return generate_id(base), false end
 end
 
 function series_id.title()
-	local filename = mp.get_property("filename")
-	if not filename then return nil end
+	local base = get_base()
+	if not base then return nil end
 
-	local id, values = match_filename(filename)
+	local id, values = match_keywords(base)
 	if id and values.title then
 		return values.title, true
-	else return generate_title(filename), false end
+	else return generate_title(base), false end
 end
 
 return series_id
