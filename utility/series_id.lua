@@ -99,8 +99,14 @@ function series_id.title()
 
 	local id, values = match_keywords(base)
 	if id and values.title then
-		return values.title, true
-	else return generate_title(base), false end
+		if values.title == "{{media_title}}" then
+			local media_title = mp.get_property("media-title")
+			if media_title ~= mp.get_property("filename") then
+				return media_title, true
+			end
+		else return values.title, true end
+	end
+	return generate_title(base), false
 end
 
 return series_id
