@@ -26,7 +26,7 @@ end
 
 local function replace_field_vars(p)
 	local abs_path = helper.current_path_abs()
-	local _, filename = mpu.split_path(abs_path)
+	local path, filename = mpu.split_path(abs_path)
 
 	local template_data = {
 		-- exported files --
@@ -35,7 +35,7 @@ local function replace_field_vars(p)
 		audio = {data = anki_sound_tag(p.audio_file)},
 		image = false,
 		-- current file --
-		path = {data = abs_path},
+		path = {data = path},
 		filename = {data = filename},
 		-- times --
 		start = {data = helper.format_time(p.start, true)},
