@@ -169,12 +169,16 @@ end
 
 function DefinitionSelect:show()
 	self.menu:show()
-	self.active_lu.ls:show()
+	if self.active_lu then
+		self.active_lu.ls:show()
+	end
 	self.visible = true
 end
 
 function DefinitionSelect:hide()
-	self.active_lu.ls:hide()
+	if self.active_lu then
+		self.active_lu.ls:hide()
+	end
 	self.menu:hide()
 	self.visible = false
 end
