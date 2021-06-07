@@ -199,12 +199,18 @@ as configured by the `field:...` entries of the target config:
 	<tr>
 		<td><code>path</code></td>
 		<td><code>single</code></td>
-		<td>path to the file mpv is currently playing (excluding the filename)</td>
+		<td>
+			path to the file mpv is currently playing (excluding the filename)<br>
+			the full URL for URLs
+		</td>
 	</tr>
 	<tr>
 		<td><code>filename</code></td>
 		<td><code>single</code></td>
-		<td>filename of the file mpv is currently playing</td>
+		<td>
+			filename of the file mpv is currently playing<br>
+			identical to <code>path</code> for URLs
+		</td>
 	</tr>
 	<tr>
 		<td><code>series_id</code></td>

@@ -61,11 +61,11 @@ function helper.current_path_abs()
 	local rel_path = mp.get_property("path")
 	if rel_path then
 		if rel_path:find("^%w-://") then
-			return rel_path
+			return rel_path, true
 		else
 			local working_dir = mp.get_property("working-directory")
 			if working_dir then
-				return mpu.join_path(working_dir, rel_path)
+				return mpu.join_path(working_dir, rel_path), false
 			end
 		end
 	end

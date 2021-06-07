@@ -25,8 +25,11 @@ local function anki_image_tag(filename)
 end
 
 local function replace_field_vars(p)
-	local abs_path = helper.current_path_abs()
-	local path, filename = mpu.split_path(abs_path)
+	local abs_path, is_url = helper.current_path_abs()
+	local path, filename = abs_path, abs_path
+	if not is_url then
+		path, filename = mpu.split_path(abs_path)
+	end
 
 	local template_data = {
 		-- exported files --
