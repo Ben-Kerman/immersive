@@ -41,6 +41,10 @@ local special_cases = {
 	["なさい"] = "なさる",
 	["為さい"] = "為さる"
 }
+local special_suru = {
+	[{"さ", "し", "す", "せ", "そ", "すれ", "そ", "しろ", "しよ", "せよ"}] = "する",
+	[{"じ", "ぜ", "ずれ", "じろ", "じよ", "ぜよ"}] = "ずる"
+}
 
 local ichidan = {
 	"い", "き", "ぎ", "し", "じ", "ち", "ぢ", "に", "ひ", "び", "ぴ", "み", "り",
@@ -148,6 +152,11 @@ return function()
 		for infl, base in pairs(special_cases) do
 			if word == infl then
 				table.insert(base_forms, base)
+			end
+		end
+		for infls, base in pairs(special_suru) do
+			for _, infl in ipairs(infls) do
+				deinflect(base_forms, word, infl, base)
 			end
 		end
 
