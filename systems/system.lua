@@ -95,9 +95,13 @@ function system.mpv_executable()
 		return "mpv"
 	end
 
-	local exe_path
-	local fmt = system.platform == "mac" and "comm=" or "exe="
-	local status, stdout = system.subprocess{"ps", "-p", tostring(mpu.getpid()), "-o", fmt}
+	local args
+	if system.platform == "mac" then
+		args = {"ps", "-p", tostring(mpu.getpid()), "-o", "comm="}
+	else
+		args = {"readlink", string.format("/proc/%d/exe", mpu.getpid())}
+	end
+	local status, stdout = system.subprocess(args)
 
 	if status == 0 then
 		local cmd = stdout:gsub("\n$", "")
