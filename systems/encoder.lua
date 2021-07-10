@@ -40,11 +40,12 @@ function encoder.any_audio(params)
 		sys.mpv_executable(),
 		params.src_path,
 		"--o=" .. params.tgt_path,
+		"--no-config",
 		"--no-ocopy-metadata",
 		"--vid=no",
 		"--aid=" .. (params.track or "1"),
 		"--sid=no",
-		"--of=" ..params. format,
+		"--of=" ..params.format,
 		"--oac=" .. params.codec,
 		"--oacopts=b=" .. params.bitrate
 	}
@@ -85,6 +86,7 @@ function encoder.image(state, path, time)
 		sys.mpv_executable(),
 		helper.current_path_abs(),
 		"--o=" .. path,
+		"--no-config",
 		"--no-ocopy-metadata",
 		"--vid=" .. mp.get_property("vid"),
 		"--aid=no",
