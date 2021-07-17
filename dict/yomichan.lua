@@ -144,7 +144,9 @@ local function import(dict)
 
 						if reading then
 							if other_var then
-								table.insert(reading.vars, other_var)
+								if not reading.vars then
+									reading.vars = {other_var}
+								else table.insert(reading.vars, other_var) end
 							end
 						else
 							table.insert(readings, {
