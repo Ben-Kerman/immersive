@@ -142,6 +142,17 @@ local function loading_overlay(id)
 end
 
 local function load_dict(dict, show_overlay, force_import)
+	local function reenable()
+		if show_overlay then
+			menu_stack.pop()
+		end
+		-- kind of hacky, a custom event handler
+		-- could be a better solution
+		mp.add_timeout(0.2, function()
+			kbds.enable_global()
+		end)
+	end
+
 	if not force_import and dict.table then return dict end
 
 	kbds.disable_global()
@@ -156,18 +167,12 @@ local function load_dict(dict, show_overlay, force_import)
 			if dict_table then
 				dict.table = dict_table
 			else
+				reenable()
 				return nil
 			end
 		else msg.error("unknown dictionary type: " .. dict.config.type) end
 	end
-	if show_overlay then
-		menu_stack.pop()
-	end
-	-- kind of hacky, a custom event handler
-	-- could be a better solution
-	mp.add_timeout(0.2, function()
-		kbds.enable_global()
-	end)
+	reenable()
 	return dict
 end
 
