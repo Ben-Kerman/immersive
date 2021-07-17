@@ -36,7 +36,7 @@ local function verify(dir)
 
 	local stat_res = mpu.file_info(dir)
 	if not stat_res or not stat_res.is_dir then
-		return false, "path doesn't exist of is not a directory"
+		return false, "path doesn't exist or is not a directory"
 	end
 
 	local files = sys.list_files(dir)

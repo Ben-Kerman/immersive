@@ -66,7 +66,7 @@ function DefinitionSelect:new(term, ltype, data)
 	local infos = {
 		{
 			name = "Dictionary",
-			display = function() return dicts.at(ds.dict_index).id end
+			display = function() return dicts.at(ds.dict_index, true).id end
 		}
 	}
 
@@ -130,7 +130,6 @@ function DefinitionSelect:look_up()
 
 	local dict_cfg = dicts.at(self.dict_index)
 	if not dict_cfg or not dict_cfg.table then
-		msg.fatal("invalid dictionary or index")
 		return false
 	end
 

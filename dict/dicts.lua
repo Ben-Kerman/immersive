@@ -152,7 +152,12 @@ local function load_dict(dict, show_overlay, force_import)
 	if cfg_util.check_required(dict.config, {"location", "type"}) then
 		local status, loader = pcall(require, "dict." .. dict.config.type)
 		if status then
-			dict.table = loader.load(dict, force_import)
+			local dict_table = loader.load(dict, force_import)
+			if dict_table then
+				dict.table = dict_table
+			else
+				return nil
+			end
 		else msg.error("unknown dictionary type: " .. dict.config.type) end
 	end
 	if show_overlay then
