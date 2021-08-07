@@ -99,6 +99,13 @@ function util.check_dict_data(data)
 	return true
 end
 
+function util.lookup_common(data, term, fn, exp)
+	if util.check_dict_data(data) then
+		local trimmed = ext.string_trim(term)
+		return exp(fn(trimmed, data))
+	else return nil end
+end
+
 local function load_transform(cfg)
 	local status, trf_loader = pcall(require, "dict.transform." .. cfg.id)
 	if status then
