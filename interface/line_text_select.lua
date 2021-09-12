@@ -60,7 +60,9 @@ function LineTextSelect:hide()
 end
 
 function LineTextSelect:selection(force)
-	return self._text_select:selection(force)
+	if #self.lines > 0 then
+		return self._text_select:selection(force)
+	else return nil end
 end
 
 function LineTextSelect:finish(force)
