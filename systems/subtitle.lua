@@ -21,7 +21,7 @@ function Subtitle:new(text, start, stop, delay)
 
 	return setmetatable({
 		raw_text = text,
-		text = helper.apply_substitutions(text, anki.sentence_substitutions(), true) or "",
+		text = helper.apply_substitutions(text, anki.sentence_substitutions(), true) or text,
 		start = start,
 		stop = stop,
 		delay = delay

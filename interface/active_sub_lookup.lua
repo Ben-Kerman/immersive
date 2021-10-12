@@ -15,10 +15,10 @@ ActiveSubLookup.__index = ActiveSubLookup
 
 function create_text_select(txt, raw)
 	if not raw then
-		txt = helper.apply_substitutions(txt, anki.sentence_substitutions(), true)
-	end
-	if not txt then
-		txt = "－"
+		subst_txt = helper.apply_substitutions(txt, anki.sentence_substitutions(), true)
+		if subst_txt then
+			txt = subst_txt
+		end
 	end
 	return TextSelect:new((txt:gsub("\n", "\226\128\139")))
 end
