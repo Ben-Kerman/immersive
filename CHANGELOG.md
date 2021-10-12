@@ -1,16 +1,32 @@
-# 1.3 - TBD
+# 1.3 - 2021-10-12
+
 Features:
 - Experimental macOS support
-- Improved text selection behavior
+- Audio/image encoding from youtube-dl streams  
+  This should add support for any site/service youtube-dl supports
+- Dictionary switching while selecting a definition
+- Transformed lookup of selected text  
+  Currently supports Migaku format-based deinflection, Japanese deinflection, and kana conversion
+- Key bindings for deleting text during target word selection
+- Runtime-reloadable config files (except dictionary config)
+- Validation and error messages/warnings for most config files
+- Optional support for multiple dictionary groups
+- Dynamic tags using the same template variables as note fields
+
+Improvements:
+- Significantly improved export speed by running encoding in the background
 - Disable menu and screen blackout while exporting notes
-- Apply sentence substitutions when selecting text and not before exporting
+- Apply sentence substitutions when selecting text instead of before exporting
+- Text selection rework
 - Automatically set primary X11 selection based on selected text
+- Only search for notes to add to after starting the export process
 
 Fixes:
-- Only search for notes to add to after starting the export process
+- Show an error message if the background player is unreachable instead of crashing
 - Use the current mpv executable for encoding and audio preview instead of assuming mpv is in PATH
-- Fix precendence of conflicting series IDs
+- Fix precedence of conflicting series IDs
 - Add conditional replacements for `table.pack` and `table.unpack` (missing in Lua 5.1)
+- Disable mpv config for encoder processes
 
 # 1.2 - 2021-02-08
 
