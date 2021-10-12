@@ -67,7 +67,7 @@ local infos = {
 	},
 	{
 		name = "Immersive version",
-		value = "1.2"
+		value = "1.3"
 	}
 }
 
