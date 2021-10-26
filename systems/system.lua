@@ -129,7 +129,7 @@ function system.create_dir(path)
 	if system.platform == "lnx" or system.platform == "mac" then
 		args = {"mkdir", "-p", path}
 	elseif system.platform == "win" then
-		args = {"cmd", "/d", "/c", "mkdir", (path:gsub("/", "\""))}
+		args = {"cmd", "/d", "/c", "mkdir", (path:gsub("/", "\\"))}
 	end
 	return system.subprocess(args) == 0
 end
