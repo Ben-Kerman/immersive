@@ -154,7 +154,7 @@ function DefinitionSelect:look_up()
 end
 
 function DefinitionSelect:add_definition()
-	if self.data then
+	if self.data and self.active_lu ~= no_result then
 		local dict = dicts.at(self.dict_index).table
 		local def = dict.get_definition(self.active_lu.ls:selection().id)
 		table.insert(self.data.definitions, def)
