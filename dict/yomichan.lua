@@ -242,7 +242,7 @@ local function generate_dict_table(config, data)
 		end,
 		look_up_exact = function(term)
 			return util.lookup_common(data, term, function(trimmed)
-				return data.index[ext.string_trim(term)]
+				return data.index[trimmed]
 			end, export_entries)
 		end,
 		look_up_start = function(term)
@@ -252,7 +252,7 @@ local function generate_dict_table(config, data)
 		end,
 		look_up_transform = function(term)
 			return util.lookup_common(data, term, function(trimmed)
-				return util.lookup_common_transform(term, config, data)
+				return util.lookup_common_transform(trimmed, config, data)
 			end, export_entries)
 		end,
 		get_definition = function(id)
