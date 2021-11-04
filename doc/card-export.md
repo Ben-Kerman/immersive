@@ -52,10 +52,14 @@ The word can be selected with the usual key combinations for selecting text:
 (`Ctrl+`)(`⇧+`)`←`/`→`. `↑` and `↓` switch between subtitles and `DEL` removes
 the current one from the selection. Once you have chosen some text, you can
 look up any dictionary entries that match it exactly using `⏎` and any entries
-starting with it using `⇧+⏎`. ASCII whitespace characters before or after
-the word are automatically removed before searching. If the search has any
-results, a new menu will open that allows you to choose one of them with
-`↑`/`↓` and `⏎`.
+starting with it using `⇧+⏎`. Any whitespace characters (according to Unicode
+properties, including zero width spaces (U+200B)) before or after the word are
+automatically removed before searching.
+
+If the search has any results, a new menu will open that allows you to choose
+one of them with `↑`/`↓` and `⏎`, or `Ctrl+⏎` to add multiple definitions
+without returning to the previous menu. `←`/`→` can be used to switch between
+dictionaries (in the current group, if more than one is configured).
 
 After selecting a definition, the word will be shown at the bottom right of
 the screen. If you want, you can then add pronunciation audio from Forvo using

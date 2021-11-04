@@ -20,11 +20,17 @@ Anki. Options that configure the exporter must be prefixed with `export:` in
 the config file, e.g. `export:template`. Exporters make heavy use of
 [templates](/doc/templates.md).
 
+If desired, dictionaries can be divided into multiple groups (by giving each
+section a `group` entry) in order to limit which dictionaries are directly
+accessible during definition selection. The active dictionary group can be
+changed in the target/dictionary menu at any time.
+
 ## Common Options
 
 - `type`: The type of the dictionary. Allowed values are `yomichan` and `migaku`.
 - `location`: The location of the dictionary files. This needs to be an absolute
   path, so one starting with `/` on Unix or `C:\`/`D:\`/etc. on Windows.
+- `group`: Which group the dictionary belongs to. The default value is `default`.
 - `preload`: If set to `yes`/`true`, always preload this dictionary,
   regardless of the script setting `preload_dictionaries`. If set to
   `no`/`false`, never preload this dictionary. If unset (default), use the

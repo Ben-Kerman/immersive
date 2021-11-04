@@ -40,13 +40,13 @@ Available in the global menu. (`Ctrl+a`)
 
 Available in the dictionary/target menu. (`Ctrl+A`)
 
-| ID               | Key        | Action                             |
-| ---------------- | ---------- | ---------------------------------- |
-| `prev_target`    | `Ctrl+UP`  | switch to the previous Anki target |
-| `next_target`    | `Ctrl+DOWN`| switch to the next Anki target     |
-| `prev_dict`      | `Alt+UP`   | switch to the previous dictionary  |
-| `next_dict`      | `Alt+DOWN` | switch to the next dictionary      |
-| `reimport_dicts` | `r`        | reimport all imported dictionaries |
+| ID                | Key        | Action                              |
+| ----------------- | ---------- | ----------------------------------- |
+| `prev_target`     | `Ctrl+UP`  | switch to previous Anki target      |
+| `next_target`     | `Ctrl+DOWN`| switch to next Anki target          |
+| `prev_dict_group` | `Alt+UP`   | switch to previous dictionary group |
+| `next_dict_group` | `Alt+DOWN` | switch to next dictionary group     |
+| `reimport_dicts`  | `r`        | reimport all cached dictionaries    |
 
 ---
 
@@ -68,9 +68,12 @@ Available after opening the active line menu with `k`.
 
 Available while selecting a definition after a dictionary search.
 
-| ID         | Key      | Action                  |
-| ---------- | -------- | ----------------------- |
-| `confirm`  | `ENTER`  | use selected definition |
+| ID          | Key          | Action                             |
+| ----------- | ------------ | ---------------------------------- |
+| `prev_dict` | `LEFT`       | switch to previous dictionary      |
+| `next_dict` | `RIGHT`      | switch to next dictionary          |
+| `add_def`   | `Ctrl+ENTER` | add selected definition            |
+| `confirm`   | `ENTER`      | add selected definition and return |
 
 ---
 

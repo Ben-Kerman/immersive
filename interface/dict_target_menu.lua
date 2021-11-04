@@ -35,31 +35,31 @@ function DictTargetMenu:new()
 		{
 			id = "prev_target",
 			default = "Ctrl+UP",
-			desc = "Switch to the previous Anki target",
+			desc = "Switch to previous Anki target",
 			action = function() anki.switch_target(-1); dtm.menu:redraw() end
 		},
 		{
 			id = "next_target",
 			default = "Ctrl+DOWN",
-			desc = "Switch to the next Anki target",
+			desc = "Switch to next Anki target",
 			action = function() anki.switch_target(1); dtm.menu:redraw() end
 		},
 		{
 			id = "prev_dict_group",
 			default = "Alt+UP",
-			desc = "Switch to the previous dictionary group",
+			desc = "Switch to previous dictionary group",
 			action = function() dicts.switch_group(-1); dtm.menu:redraw() end
 		},
 		{
 			id = "next_dict_group",
 			default = "Alt+DOWN",
-			desc = "Switch to the next dictionary group",
+			desc = "Switch to next dictionary group",
 			action = function() dicts.switch_group(1); dtm.menu:redraw() end
 		},
 		{
 			id = "reimport_dicts",
 			default = "r",
-			desc = "Reimport all imported dictionaries",
+			desc = "Reimport all cached dictionaries",
 			action = function() dicts.reimport_all() end
 		}
 	}
