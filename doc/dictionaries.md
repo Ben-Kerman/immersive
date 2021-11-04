@@ -34,6 +34,9 @@ the config file, e.g. `export:template`. Exporters make heavy use of
   dictionary type, which is also used if `exporter` is not set.
 - `quick_def_template`: template used for rendering the definitions shown in mpv
 - `export:<exporter option>`: config entries used by the exporter.
+- `transformations`: Transformations to apply to the selected text when
+  invoking lookup with Ctrl+⏎.  
+  See [here](/doc/lookup-transformations.md) for more details.
 
 
 ## Yomichan

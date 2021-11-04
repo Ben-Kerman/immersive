@@ -54,12 +54,13 @@ Available in the dictionary/target menu. (`Ctrl+A`)
 
 Available after opening the active line menu with `k`.
 
-| ID           | Key           | Action                                |
-| ------------ | ------------- | ------------------------------------- |
-| `toggle_raw` | `r`           | toggle sentence substitutions         |
-| `exact`      | `ENTER`       | look up selected word                 |
-| `partial`    | `Shift+ENTER` | look up words starting with selection |
-| `copy`       | `c`           | copy selection to clipboard           |
+| ID           | Key           | Action                                       |
+| ------------ | ------------- | -------------------------------------------- |
+| `toggle_raw` | `r`           | toggle sentence substitutions                |
+| `exact`      | `ENTER`       | look up selected word                        |
+| `partial`    | `Shift+ENTER` | look up words starting with selection        |
+| `transform`  | `Ctrl+ENTER`  | look up words after applying transformations |
+| `copy`       | `c`           | copy selection to clipboard                  |
 
 ---
 
@@ -151,6 +152,7 @@ Available during target selection.
 | ------------------ | ------------- | -------------------------------------------- |
 | `lookup_exact`     | `ENTER`       | look up selected word                        |
 | `lookup_partial`   | `Shift+ENTER` | look up words starting with selection        |
+| `lookup_transform` | `Ctrl+ENTER`  | look up words after applying transformations |
 | `lookup_clipboard` | `v`           | look up word from clipboard                  |
 | `add_word_audio`   | `a`           | add Forvo audio for target word              |
 | `delete_line`      | `Alt+DEL`     | delete selected line                         |
