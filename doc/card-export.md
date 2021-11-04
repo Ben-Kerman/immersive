@@ -48,6 +48,9 @@ default you are limited to one (in accordance with AJATT/MIA/Refold practices),
 but it's possible to increase this limit (or remove it entirely) in the
 [script config](/doc/script-config.md).
 
+Unneeded parts of the text are deletable using the bindings described in
+[keys.md](/doc/keys.md#text_select).
+
 The word can be selected with the usual key combinations for selecting text:
 (`Ctrl+`)(`⇧+`)`←`/`→`. `↑` and `↓` switch between subtitles and `DEL` removes
 the current one from the selection. Once you have chosen some text, you can
@@ -144,7 +147,9 @@ screenshot are encoded, as is the Forvo audio if there is any and it is
 configured to be.
 
 Then the following template is applied to each field of the target note type,
-as configured by the `field:...` entries of the target config:
+as configured by the `field:...` entries of the target config, as well as to
+all tags in the target's `tags` entry (additionally, spaces are replaced by
+underscores in tags):
 
 <table>
 	<tr>
@@ -273,8 +278,7 @@ as configured by the `field:...` entries of the target config:
 	</tr>
 </table>
 
-The card is exported with the resulting fields, as well as the tags configured
-for the target.
+The card is exported with the resulting fields and tags.
 
 ### Substitutions
 

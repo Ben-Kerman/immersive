@@ -112,8 +112,9 @@ from the name of the extracted directory.
 
 The script is configured in several different files. These need to be placed
 in a directory called `script-opts` that is located next to your `mpv.conf`
-and scripts folder. For a description of the general config syntax, see [this
-document](/doc/config.md).
+and `scripts` folder. For a description of the general config syntax, see [this
+document](/doc/config.md). Except for `immersive-dictionaries.conf` all config
+files can be reloaded from the global menu (`Ctrl+a`) at runtime.
 
 In order to use the main feature of generating Anki cards with included
 definitions, these config files need to be present:

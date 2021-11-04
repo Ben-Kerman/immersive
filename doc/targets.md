@@ -71,6 +71,9 @@ note_type=<must be set manually>
 # space-separated list of tags that will be added to exported notes
 #tags=immersive
 
+# can be set dynamically using field template variables, e.g.:
+#tags={{series_id}}
+
 # --------------------
 
 # substitutions to apply to the {{sentences}} variable
