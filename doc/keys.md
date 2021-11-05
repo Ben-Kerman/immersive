@@ -157,6 +157,7 @@ Available during target selection.
 | `lookup_partial`   | `Shift+ENTER` | look up words starting with selection        |
 | `lookup_transform` | `Ctrl+ENTER`  | look up words after applying transformations |
 | `lookup_clipboard` | `v`           | look up word from clipboard                  |
+| `copy`             | `c`           | copy selection to clipboard                  |
 | `add_word_audio`   | `a`           | add Forvo audio for target word              |
 | `delete_line`      | `Alt+DEL`     | delete selected line                         |
 | `preview_audio`    | `p`           | preview selection audio                      |

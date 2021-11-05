@@ -52,6 +52,17 @@ function TargetSelect:new(data, menu_lvl)
 			action = function() ts:clipboard_lookup() end
 		},
 		{
+			id = "copy",
+			default = "c",
+			desc = "Copy selection to clipboard",
+			action = function()
+				local selection = ts.tgt_word_sel:selection(true)
+				if not selection then return end
+
+				sys.clipboard_write(selection)
+			end
+		},
+		{
 			id = "add_word_audio",
 			default = "a",
 			desc = "Add Forvo audio for target word",
