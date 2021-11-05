@@ -30,9 +30,10 @@ that menu with the same key, in which case that one takes precedence.
 
 Available in the global menu. (`Ctrl+a`)
 
-| ID             | Key | Action                    |
-| -------------- | --- | ------------------------- |
-| `toggle_scrot` | `s` | toggle screenshots on/off |
+| ID              | Key | Action                                 |
+| --------------- | --- | -------------------------------------- |
+| `toggle_scrot`  | `s` | toggle screenshots on/off              |
+| `reload_config` | `r` | reload all non-dictionary config files |
 
 ---
 
@@ -81,15 +82,10 @@ Available while selecting a definition after a dictionary search.
 
 Available in the export menu.
 
-| ID           | Key | Action                     |
-| ------------ | --- | -------------------------- |
-| `export`     | `f` | export                     |
-| `export_gui` | `g` | export using the 'Add' GUI |
-
-If there are cards to add to in Anki the following bindings become available:
-
 | ID                   | Key | Action                                  |
 | -------------------- | --- | --------------------------------------- |
+| `export`             | `f` | export                                  |
+| `export_gui`         | `g` | export using the 'Add' GUI              |
 | `export_add`         | `a` | export to existing note, choose which   |
 | `export_add_to_last` | `s` | export to existing note, use last added |
 
@@ -151,19 +147,20 @@ Available during subtitle/timing selection.
 
 Available during target selection.
 
-| ID                 | Key           | Action                                       |
-| ------------------ | ------------- | -------------------------------------------- |
-| `lookup_exact`     | `ENTER`       | look up selected word                        |
-| `lookup_partial`   | `Shift+ENTER` | look up words starting with selection        |
-| `lookup_transform` | `Ctrl+ENTER`  | look up words after applying transformations |
-| `lookup_clipboard` | `v`           | look up word from clipboard                  |
-| `copy`             | `c`           | copy selection to clipboard                  |
-| `add_word_audio`   | `a`           | add Forvo audio for target word              |
-| `delete_line`      | `Alt+DEL`     | delete selected line                         |
-| `preview_audio`    | `p`           | preview selection audio                      |
-| `undo_selection`   | `Alt+BS`      | delete last target word                      |
-| `export`           | `f`           | export with selected target words            |
-| `export_menu`      | `F`           | export with selected target words using menu |
+| ID                      | Key           | Action                                       |
+| ----------------------- | ------------- | -------------------------------------------- |
+| `lookup_exact`          | `ENTER`       | look up selected word                        |
+| `lookup_partial`        | `Shift+ENTER` | look up words starting with selection        |
+| `lookup_transform`      | `Ctrl+ENTER`  | look up words after applying transformations |
+| `lookup_clipboard`      | `v`           | look up word from clipboard                  |
+| `copy`                  | `c`           | copy selection to clipboard                  |
+| `add_word_audio`        | `a`           | add Forvo audio for target word              |
+| `add_word_audio_direct` | `A`           | add Forvo audio from current selection       |
+| `delete_line`           | `Alt+DEL`     | delete selected line                         |
+| `preview_audio`         | `p`           | preview selection audio                      |
+| `undo_selection`        | `Alt+BS`      | delete last target word                      |
+| `export`                | `f`           | export with selected target words            |
+| `export_menu`           | `F`           | export with selected target words using menu |
 
 ---
 
@@ -217,7 +214,7 @@ Each section defines the bindings for one of the groups listed above. Global
 entries before the first group set the global bindings. The values follow the
 same syntax as mpv's `input.conf` and are passed to the player as-is.
 Initialization of invalid bindings silently fails, though it's possible to see
-an error message on the console (`ˋ`).
+an error message on the console (`ˋ`/`~`).
 
 ---
 

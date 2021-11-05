@@ -6,7 +6,7 @@ mpv OSD style by default.
 
 Styles are nested. For example, the style for selected text is based on the
 style for the text selection interface, so if text_select is set to be bold,
-the selection will also be. The section name is a `/`-separated path to the
+the selection will be too. The section name is a `/`-separated path to the
 style being configured by it.
 
 Styling is done through Advanced Substation Alpha (SSA/ASS) tags internally.
@@ -34,7 +34,7 @@ The following entries are available in each section, including the global one:
 
 | key               | type      | SSA     | description
 | ----------------- | --------- | ------- | ------------------------------------------------------------------------------------------------------------
-| `align`           | `number`  | `an`    | "Numpad" alignment. 7 is top left, 5 is centered, 6 is center-right, etc.
+| `align`           | `number`  | `an`    | Numpad alignment. 7 is top left, 5 is centered, 6 is center-right, etc.
 | `bold`            | `boolean` | `b`     | Make text bold
 | `italic`          | `boolean` | `i`     | Italicize text
 | `underline`       | `boolean` | `u`     | Underline text

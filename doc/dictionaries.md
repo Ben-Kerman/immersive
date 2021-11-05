@@ -5,7 +5,7 @@ Immersive currently supports two dictionary formats:
 [Migaku](https://ankiweb.net/shared/info/1655992655). Both need to be
 configured slightly differently.
 
-The first time it is accessed, the dictionary is imported, which can take some
+The first time a dictionary is accessed, it is imported, which can take some
 time. After that it is loaded into memory until the active mpv instance is
 closed. New instances of Immersive can load a cached version of the dictionary
 from disk which will take less time. By default, dictionaries are only loaded
@@ -23,7 +23,7 @@ the config file, e.g. `export:template`. Exporters make heavy use of
 If desired, dictionaries can be divided into multiple groups (by giving each
 section a `group` entry) in order to limit which dictionaries are directly
 accessible during definition selection. The active dictionary group can be
-changed in the target/dictionary menu at any time.
+changed in the target/dictionary menu (`Ctrl`+`A`) at any time.
 
 ## Common Options
 
@@ -34,14 +34,14 @@ changed in the target/dictionary menu at any time.
 - `preload`: If set to `yes`/`true`, always preload this dictionary,
   regardless of the script setting `preload_dictionaries`. If set to
   `no`/`false`, never preload this dictionary. If unset (default), use the
-  script setting.
-- `exporter`: The exporter used for generating the `{{definitions}}` template
-  field on the Anki card. Currently only `default` is available for either
+  aforementioned script setting.
+- `exporter`: The exporter used for generating the field template variable
+  `{{definitions}}`. Currently only `default` is available for either
   dictionary type, which is also used if `exporter` is not set.
 - `quick_def_template`: template used for rendering the definitions shown in mpv
 - `export:<exporter option>`: config entries used by the exporter.
 - `transformations`: Transformations to apply to the selected text when
-  invoking lookup with Ctrl+⏎.  
+  invoking lookup with `Ctrl`+`⏎`.  
   See [here](/doc/lookup-transformations.md) for more details.
 
 
@@ -197,7 +197,7 @@ Template overview:
 	<tr>
 		<td><code>definitions</code></td>
 		<td><code>list</code></td>
-		<td>all readings as generated from <code>definition_template</code></td>
+		<td>all definitions as generated from <code>definition_template</code></td>
 	</tr>
 	<tr>
 		<th colspan="3"><code>single_template</code></th>
@@ -240,7 +240,7 @@ name>\Migaku_Dictionary.json` (Windows).
 	<tr>
 		<td><code>altterms</code></td>
 		<td><code>list</code></td>
-		<td>alternative versions of the terms above</td>
+		<td>alternative versions of the above terms</td>
 	<tr>
 		<td><code>definitions</code></td>
 		<td><code>list</code></td>
@@ -277,7 +277,7 @@ the dictionary data.
 	<tr>
 		<td><code>altterms</code></td>
 		<td><code>list</code></td>
-		<td>alternative versions of the terms above</td>
+		<td>alternative versions of the above terms</td>
 	</tr>
 	<tr>
 		<td><code>definition</code></td>

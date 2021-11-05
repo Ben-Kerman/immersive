@@ -5,7 +5,7 @@ in its own config section. The global entries are used as default values for
 all targets.
 
 The section header is used as the target name that is visible in the global
-menu. (`Ctrl+a`)
+menu. (`Ctrl`+`a`)
 
 In addition to the entries listed below, each target can include entries with
 keys like `field:<field name>`, where `<field name>` is the name of a field of

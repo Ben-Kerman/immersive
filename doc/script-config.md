@@ -58,8 +58,8 @@ Some general config options are located in `immersive.conf`:
 # "exact" takes longer (200ms-1s), but preserves the text exactly,
 # i.e. it also copies line breaks.
 # "quick" is much faster (<50ms), but might not copy the text
-# with 100% accuracy (more like 99%).
-# The method used by "quick" is also a dirty hack.
+# with 100% accuracy. This method sometimes causes encoding issues
+# and is known to sporadically copy corrupted text.
 #windows_copy_mode=exact
 
 # enable automatic subtitle copying by default

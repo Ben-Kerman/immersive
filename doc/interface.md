@@ -1,16 +1,16 @@
 # Interface
 
-Immersive's interface consists of menus. These are text overlays that are
-drawn on top of the video. If you opened a menu on top of another one (e.g. by
-pressing `Ctrl+A` to switch the active dictionary before looking up a word),
-you can go back to the previous menu at any time by hitting `ESC`. `Shift+ESC`
-clears all active menus. The data of each menu will be preserved until it is
-closed with (`Shift+`)`ESC` or by performing an action that closes it
-automatically, such as exporting a card.
+Immersive's interface consists of text overlays drawn on top of the video,
+referred to as menus. If you opened a menu on top of another one (e.g. by
+pressing `Ctrl`+`A` to switch the active dictionary before looking up a
+word), you can go back to the previous menu at any time by hitting `ESC`.
+`Shift`+`ESC` clears all active menus. The data of each menu will be
+preserved until it is closed with (`Shift`+)`ESC` or by performing an action
+that closes it automatically, such as exporting a card.
 
 Internally menus are kept track of with a stack. Every new menu is pushed on
 top of the previous one (which is then hidden) and `ESC` removes the last added
-menu and reactivates the one before/below. `Shift+ESC` empties the stack.
+menu and reactivates the one before/below. `Shift`+`ESC` empties the stack.
 
 Each menu has a togglable overview of available key bindings at the top left.
 The key bindings listed there are specific to that menu, unless their
@@ -20,24 +20,25 @@ relevant to the menu at the bottom left.
 
 ## Global Menu
 
-The global menu can always be opened using `Ctrl+a`. It contains an overview
+The global menu can always be opened using `Ctrl`+`a`. It contains an overview
 of Immersive's global key bindings, as well as information on the series
 ID/title and on whether autocopy and screenshots are enabled.
 
 
 ## Dictionary/Target Menu
 
-This menu can be opened with `Ctrl+A`. It allows switching between
-dictionaries and Anki targets and also shows which one is currently active for
-both. If you have selected the wrong dictionary/target, it's possible to
-change it here even if you are about to look up a word/export a card.
+This menu can be opened with `Ctrl`+`A` and allows switching between
+dictionary groups and Anki targets. It also shows which one is currently
+active for both. If you have selected the wrong group or target, it's
+possible to change them here even if you are about to look up a word or
+export a card.
 
 
 ## Active Subtitle Lookup
 
 By pressing `k`, you can bring up a menu that allows looking up words from the
-current line outside of the card creation process. It functions identically to
-the target word selection menu.
+current line outside of the card creation process. It functions almost
+identically to the target word selection menu.
 
 
 ## Card Creation Menus
@@ -53,6 +54,6 @@ is bright red and bold a fatal error in the script (which should never happen,
 of course).
 
 All messages visible in this interface (and a few others not relevant to the
-user) are also printed to the mpv console (`ˋ`) as well as to the system
-console/terminal if mpv is connected to one using the mpv's internal messaging
+user) are also printed to the mpv console (`ˋ`/`~`) as well as to the system
+console/terminal (if mpv is connected to one) using the mpv's internal messaging
 system.

@@ -8,7 +8,7 @@ Immersive includes a simple integrated text templating engine.
 A template consists of regular text, with substitutions between `{{`/`}}`. In
 addition to the regular control character escapes (`\a`, `\b`, `\e`, `\f`,
 `\n`, `\r`, `\t`, `\v`), `\{` can be escaped outside of substitution tags.
-Inside a tag `\}` and `\:`must be escaped, as well as `\[` depending on the
+Inside a tag `\}` and `\:` must be escaped, as well as `\[` depending on the
 part of the tag it is in.
 
 The most basic substitution tag is `{{<variable name>}}`. So given a variable

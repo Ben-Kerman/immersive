@@ -1,7 +1,7 @@
 # Lookup Transformations
 
 By looking up a word with `transform` from the active line menu or
-`lookup_transform` during target selection (both bound to Ctrl+⏎ by default),
+`lookup_transform` during target selection (both bound to `Ctrl`+`⏎` by default),
 transformations are applied to the selected text before searching the
 dictionary. All possible results are looked up, including the untransformed
 selection.

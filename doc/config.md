@@ -39,7 +39,7 @@ bar
 ]]
 ```
 
-If there should be a line containing `]]`, a string can be added between the
+If there needs to be a line containing `]]`, a string can be added between the
 `[` of the opening token, which then has to be present in the closing token as
 well, like this:
 
