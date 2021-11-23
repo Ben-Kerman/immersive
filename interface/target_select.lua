@@ -132,8 +132,8 @@ function TargetSelect:new(data, menu_lvl)
 	return ts
 end
 
-local function lookup(word, ltype, data)
-	menu_stack.push(DefinitionSelect:new(word, ltype, data))
+local function lookup(selection, ltype, data)
+	menu_stack.push(DefinitionSelect:new(selection, ltype, data))
 end
 
 function TargetSelect:select_target_def(ltype)

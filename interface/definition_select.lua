@@ -157,6 +157,7 @@ function DefinitionSelect:add_definition()
 	if self.data and self.active_lu ~= no_result then
 		local dict = dicts.at(self.dict_index).table
 		local def = dict.get_definition(self.active_lu.ls:selection().id)
+		def.sel = self.term
 		table.insert(self.data.definitions, def)
 	end
 end

@@ -262,7 +262,11 @@ local function generate_dict_table(config, data)
 				word = entry[1].rdng[1].vars[1]
 			else word = entry[1].rdng[1].rdng end
 
-			return {word = word, definition = exporter(entry, config, data.tags)}
+			return {
+				sel = nil,
+				word = word,
+				definition = exporter(entry, config, data.tags)
+			}
 		end
 	}
 end

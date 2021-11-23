@@ -1,6 +1,7 @@
 # 1.4 - TBD
 
 Features:
+- Add field template variable `selections`.
 - Replace field template variable `word` with `words`.
   **Config change required** for any fields that contained `{{word}}`.
 
