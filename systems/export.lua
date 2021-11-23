@@ -56,7 +56,7 @@ local function replace_field_vars(p)
 		word_audio_file = false,
 		word_audio = false,
 		sentences = false,
-		word = false,
+		words = false,
 		definitions = false,
 		-- previous field value when adding to card --
 		prev_content = false
@@ -81,7 +81,9 @@ local function replace_field_vars(p)
 		}
 	end
 	if p.data.definitions and #p.data.definitions ~= 0 then
-		template_data.word = {data = p.data.definitions[1].word}
+		template_data.words = {
+			data = ext.list_map(p.data.definitions, function(def) return def.word end)
+		}
 		template_data.definitions = {
 			data = ext.list_map(p.data.definitions, function(def) return def.definition end),
 			sep = "<br>",

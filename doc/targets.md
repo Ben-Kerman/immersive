@@ -44,7 +44,8 @@ note_type=<must be set manually>
 
 #field:Front={{sentences}}
 #field:Back={{definitions}}
-#field:Word={{word}}
+#field:Word={{words[1]}}
+#field:Words={{words::: }}
 #field:Audio={{audio}}
 #field:Word Audio={{word_audio}}
 #field:Image={{image}}

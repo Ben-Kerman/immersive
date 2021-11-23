@@ -1,3 +1,9 @@
+# 1.4 - TBD
+
+Features:
+- Replace field template variable `word` with `words`.
+  **Config change required** for any fields that contained `{{word}}`.
+
 # 1.3 - 2021-10-12
 
 Features:
