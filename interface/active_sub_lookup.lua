@@ -13,14 +13,15 @@ local TextSelect = require "interface.text_select"
 local ActiveSubLookup = {}
 ActiveSubLookup.__index = ActiveSubLookup
 
-function create_text_select(txt, raw)
+local lf_subst = "\226\128\139" -- zero-width -space
+local function create_text_select(txt, raw)
 	if not raw then
 		subst_txt = helper.apply_substitutions(txt, anki.sentence_substitutions(), true)
 		if subst_txt then
 			txt = subst_txt
 		end
 	end
-	return TextSelect:new((txt:gsub("\n", "\226\128\139")))
+	return TextSelect:new((txt:gsub("\n", lf_subst)))
 end
 
 function ActiveSubLookup:new()

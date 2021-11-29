@@ -17,9 +17,10 @@ local sys = require "systems.system"
 local TargetSelect = {}
 TargetSelect.__index = TargetSelect
 
-local function sel_conv(sub) return (sub.text:gsub("\n", "\226\128\139")) end
-local function line_conv(sub) return helper.short_str(sub.text, 24, "\226\128\139") end
-local function sub_change_handler(sub, txt) sub.text = txt end
+local lf_subst = "\226\128\139" -- zero-width -space
+local function sel_conv(sub) return (sub.text:gsub("\n", lf_subst)) end
+local function line_conv(sub) return helper.short_str(sub.text, 24, lf_subst) end
+local function sub_change_handler(sub, txt) sub.text = txt:gsub(lf_subst, "\n") end
 
 function TargetSelect:new(data, menu_lvl)
 	local ts
