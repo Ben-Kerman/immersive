@@ -69,7 +69,7 @@ local function match_keywords(str)
 	for _, values in ipairs(config) do
 		local match = true
 		for _, kw in ipairs(values.keywords) do
-			if not str_lc:find(kw) then
+			if not str_lc:find(kw, 1, true) then
 				match = false
 				break
 			end
