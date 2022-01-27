@@ -92,6 +92,7 @@ local function replace_field_vars(p)
 			data = ext.list_map(p.data.definitions, function(def) return def.definition end),
 			sep = "<br>",
 			transform = function(def)
+				def = ext.string_trim(def)
 				return helper.apply_substitutions(def, p.tgt.definition_substitutions)
 			end
 		}
