@@ -22,7 +22,7 @@ local function sel_conv(sub) return (sub.text:gsub("\n", lf_subst)) end
 local function line_conv(sub) return helper.short_str(sub.text, 24, lf_subst) end
 local function sub_change_handler(sub, txt) sub.text = txt:gsub(lf_subst, "\n") end
 
-function TargetSelect:new(data, menu_lvl)
+function TargetSelect:new(data)
 	local ts
 
 	local ltypes = DefinitionSelect.ltypes
@@ -116,7 +116,6 @@ function TargetSelect:new(data, menu_lvl)
 	data.level = data.level and (data.level + 1) or 1
 	ts = setmetatable({
 		data = data,
-		menu_lvl = menu_lvl and menu_lvl or 1,
 		tgt_word_sel = LineTextSelect:new(data.subtitles, line_conv, sel_conv, 9, init_line, sub_change_handler),
 		word_overlay = BasicOverlay:new(data.definitions, function(defs, ssa_def)
 			for _, def in ipairs(defs) do
