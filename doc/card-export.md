@@ -164,9 +164,14 @@ replaced by underscores in tags):
 		<th colspan="3"><code>field:&lt;field name&gt;</code>/<code>tags</code></th>
 	</tr>
 	<tr>
-		<td><code>word</code></td>
-		<td><code>single</code></td>
-		<td>first target word</td>
+		<td><code>words</code></td>
+		<td><code>list</code></td>
+		<td>all target words</td>
+	</tr>
+	<tr>
+		<td><code>selections</code></td>
+		<td><code>list</code></td>
+		<td>all target words, but exactly as selected from subtitles</td>
 	</tr>
 	<tr>
 		<td><code>sentences</code></td>
