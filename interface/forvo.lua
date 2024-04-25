@@ -165,9 +165,9 @@ end
 local function extract_pronunciations(menu, word, callback)
 	local word_url = "https://forvo.com/word/" .. url.encode(word) .. "/"
 	return html_request(word_url, function(html)
-		local start_pat = [[pronunciation in%s*<a href="https://forvo%.com/languages/]] .. cfg.values.forvo_language .. [[/">]]
-		local end_pat = [[<div class="more_actions">]]
-		local audio_pat = [[onclick="Play%((%d+),'([^']*)','([^']*)',([^,]*),'([^']*)','([^']*)','(.)'%);return false;"]]
+		local start_pat = [[<article class="pronunciations" id="language%-]] .. cfg.values.forvo_language .. [[" >]]
+		local end_pat = [[<article class="pronunciations" id="word%-extra%-info]]
+		local audio_pat = [[onclick="Play%((%d+),'([^']*)','([^']*)',([^,]*),'([^']*)','([^']*)','(.)','[^']*','[^']*'%);return false;"]]
 		local user_prefix_pat = "Pronunciation by%s+"
 		local user_pat = [[^<span class="ofLink" data%-p1="[^"]+" data%-p2="([^"]+)" >]]
 		local user_pat_no_link = "^(%S+)"
