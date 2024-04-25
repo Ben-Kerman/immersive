@@ -26,13 +26,14 @@ local function get_defaults()
 	local p = {
 		str = mp.get_property,
 		bool = mp.get_property_bool,
-		num = mp.get_property_number
+		num = mp.get_property_number,
+		nat = mp.get_property_native
 	}
 
 	local text_col, text_alpha = convert_mpv_color(p.str("osd-color"))
 	local bord_col, bord_alpha = convert_mpv_color(p.str("osd-border-color"))
 	local shad_col, shad_alpha = convert_mpv_color(p.str("osd-shadow-color"))
-	local back_col, back_alpha = convert_mpv_color(p.str("background"))
+	local back_col, back_alpha = convert_mpv_color(p.nat("background-color") or p.nat("background"))
 
 	local bord_size = p.num("osd-border-size")
 	local shad_size = p.num("osd-shadow-offset")
