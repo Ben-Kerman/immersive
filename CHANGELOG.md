@@ -1,9 +1,25 @@
-# 1.4 - TBD
+# 1.4 - 2024-04-25
+
+Mostly changes that were already committed in 2021 but didn't warrant a release on
+their own, and a critical fix for a crash due to changes in mpv property names
 
 Features:
-- Add field template variable `selections`.
+- Add field template variable `selections`
 - Replace field template variable `word` with `words`.
-  **Config change required** for any fields that contained `{{word}}`.
+  **Config change required** for any fields that contained `{{word}}`
+
+Improvements:
+- Improve Japanese deinflection
+- Allow copying selection from target select
+
+Fixes:
+- Fix Windows directory separator when calling `mkdir`
+- Fix crash when trying to add non-existing definition
+- Undo temporary conversion of `\n` to zero-width space when editing lines
+- Match series ID keywords as plain text instead of Lua patterns
+- **Fix crash on startup with mpv 0.38** due to `background` being renamed to `background-color`
+  and `background` becoming a different property
+- Fix Forvo support
 
 # 1.3 - 2021-10-12
 
