@@ -45,7 +45,7 @@ end)
 local player = {}
 
 function player.play(path, start, stop, aid)
-	local cmd = {"loadfile", path, "replace"}
+	local cmd = {"loadfile", path, "replace", 0}
 	if start or stop or aid then
 		table.insert(cmd, {
 			aid = aid and tostring(aid),

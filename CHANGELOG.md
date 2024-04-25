@@ -1,7 +1,7 @@
 # 1.4 - 2024-04-25
 
-Mostly changes that were already committed in 2021 but didn't warrant a release on
-their own, and a critical fix for a crash due to changes in mpv property names
+Mostly changes that were already committed in 2021 but didn't warrant a release on their own,
+but most importantly a critical fix for a crash due to changes in mpv property names
 
 Features:
 - Add field template variable `selections`
@@ -20,6 +20,7 @@ Fixes:
 - **Fix crash on startup with mpv 0.38** due to `background` being renamed to `background-color`
   and `background` becoming a different property
 - Fix Forvo support
+- Fix audio preview
 
 # 1.3 - 2021-10-12
 
